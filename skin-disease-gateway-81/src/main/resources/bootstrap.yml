@@ -1,0 +1,17 @@
+server:
+  port: 81
+spring:
+  application:
+    name: skin-disease-gateway
+  profiles:
+    include: dev
+  cloud:
+    nacos:
+      server-addr: cloud100:8848
+      username: nacos
+      password: nacos
+      config:
+        namespace: ddc49fa0-f320-4292-b80c-9d8957914983
+        file-extension: yml
+      discovery:
+        namespace: ddc49fa0-f320-4292-b80c-9d8957914983
