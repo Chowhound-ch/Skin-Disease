@@ -7,7 +7,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @MapperScan("edu.hfut.innovate.community.dao")
 @EnableDiscoveryClient
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "edu.hfut.innovate")
 public class CommunityApplication {
     public static void main(String[] args) {
         SpringApplication.run(CommunityApplication.class);
