@@ -31,7 +31,7 @@ public class TopicController {
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = topicService.queryPage(params);
 
-        return R.ok().put("page", page);
+        return R.ok(page);
     }
 
 
@@ -43,7 +43,7 @@ public class TopicController {
     public R info(@PathVariable("topicId") Long topicId){
 		TopicEntity topic = topicService.getById(topicId);
 
-        return R.ok().put("topic", topic);
+        return R.ok(topic);
     }
 
     /**

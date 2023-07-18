@@ -31,7 +31,7 @@ public class TopicTagController {
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = topicTagService.queryPage(params);
 
-        return R.ok().put("page", page);
+        return R.ok(page);
     }
 
 
@@ -43,7 +43,7 @@ public class TopicTagController {
     public R info(@PathVariable("tagId") Long tagId){
 		TopicTagEntity topicTag = topicTagService.getById(tagId);
 
-        return R.ok().put("topicTag", topicTag);
+        return R.ok(topicTag);
     }
 
     /**

@@ -31,7 +31,7 @@ public class ReplyController {
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = replyService.queryPage(params);
 
-        return R.ok().put("page", page);
+        return R.ok(page);
     }
 
 
@@ -43,7 +43,7 @@ public class ReplyController {
     public R info(@PathVariable("replyId") Long replyId){
 		ReplyEntity reply = replyService.getById(replyId);
 
-        return R.ok().put("reply", reply);
+        return R.ok(reply);
     }
 
     /**

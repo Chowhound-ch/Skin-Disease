@@ -31,7 +31,7 @@ public class CommentController {
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = commentService.queryPage(params);
 
-        return R.ok().put("page", page);
+        return R.ok(page);
     }
 
 
@@ -43,7 +43,7 @@ public class CommentController {
     public R info(@PathVariable("commentId") Long commentId){
 		CommentEntity comment = commentService.getById(commentId);
 
-        return R.ok().put("comment", comment);
+        return R.ok(comment);
     }
 
     /**
