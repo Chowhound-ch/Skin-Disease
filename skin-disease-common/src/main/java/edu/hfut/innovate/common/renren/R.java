@@ -1,5 +1,6 @@
 package edu.hfut.innovate.common.renren;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,10 +8,10 @@ import java.util.Map;
  * 返回数据
  * 
  * @author chenshun
- * @email sunlightcs@gmail.com
- * @date 2016年10月27日 下午9:59:27
  */
+@SuppressWarnings("unused")
 public class R extends HashMap<String, Object> {
+	@Serial
 	private static final long serialVersionUID = 1L;
 	
 	public R() {
