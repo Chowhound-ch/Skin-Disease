@@ -2,6 +2,7 @@ package edu.hfut.innovate.community.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.io.Serial;
@@ -13,6 +14,7 @@ import java.util.Date;
  * 
  * @author Chowhound
  */
+@ApiModel("回复(评论的回复或者回复的回复)")
 @Data
 @TableName("reply")
 public class ReplyEntity implements Serializable {

@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 /**
@@ -13,6 +15,7 @@ import lombok.Data;
  * 
  * @author Chowhound
  */
+@ApiModel("用户")
 @Data
 @TableName("user")
 public class UserEntity implements Serializable {
