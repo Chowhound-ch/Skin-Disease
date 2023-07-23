@@ -2,8 +2,12 @@ package edu.hfut.innovate.community.controller;
 
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.R;
+import edu.hfut.innovate.common.util.BeanUtil;
+import edu.hfut.innovate.common.vo.community.UserVo;
 import edu.hfut.innovate.community.entity.UserEntity;
 import edu.hfut.innovate.community.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,11 +21,28 @@ import java.util.Map;
  *
  * @author Chowhound
  */
+@Api(tags = "用户相关接口")
 @RestController
 @RequestMapping("user")
 public class UserController {
     @Autowired
     private UserService userService;
+
+
+    /**
+     * 登录
+     */
+    @PostMapping("/login")
+    @ApiOperation("登录")
+    public R login(String username, String password){
+        UserEntity userEntity = userService.login(username, password);
+        if (userEntity == null){
+            return R.error("用户名或密码错误");
+        }
+
+        UserVo userVo = BeanUtil.copyProperties(userEntity, new UserVo());
+        return R.ok(userVo);
+    }
 
     /**
      * 列表

@@ -1,14 +1,14 @@
-package edu.hfut.innovate.community.entity;
+package edu.hfut.innovate.common.vo.community;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
-
-import io.swagger.annotations.ApiModel;
-import lombok.Data;
 
 /**
  * 
@@ -18,7 +18,7 @@ import lombok.Data;
 @ApiModel("用户")
 @Data
 @TableName("user")
-public class UserEntity implements Serializable {
+public class UserVo implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
 
@@ -30,30 +30,27 @@ public class UserEntity implements Serializable {
 	/**
 	 * 
 	 */
+	@ApiModelProperty("用户名")
 	private String username;
-	/**
-	 * 
-	 */
-	private String password;
-	/**
-	 *
-	 */
-	private String phone;
 	/**
 	 * 0：女，1：男，2：未知
 	 */
+	@ApiModelProperty("性别")
 	private Integer sex;
 	/**
 	 * 
 	 */
+	@ApiModelProperty("年龄")
 	private Integer age;
 	/**
 	 * 
 	 */
+	@ApiModelProperty("头像的url")
 	private String avatar;
 	/**
 	 * 
 	 */
+	@ApiModelProperty("点赞数")
 	private Integer likes;
 	/**
 	 * 
@@ -63,9 +60,4 @@ public class UserEntity implements Serializable {
 	 * 
 	 */
 	private Date createTime;
-	/**
-	 * 
-	 */
-	private Integer isDelete;
-
 }

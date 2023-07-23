@@ -4,6 +4,7 @@ import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.R;
 import edu.hfut.innovate.community.entity.TopicEntity;
 import edu.hfut.innovate.community.service.TopicService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import java.util.Map;
  *
  * @author Chowhound
  */
+@Api(tags = "话题相关接口")
 @RestController
 @RequestMapping("topic")
 public class TopicController {

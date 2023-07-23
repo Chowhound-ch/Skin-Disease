@@ -4,6 +4,7 @@ import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.R;
 import edu.hfut.innovate.community.entity.ReplyEntity;
 import edu.hfut.innovate.community.service.ReplyService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import java.util.Map;
  *
  * @author Chowhound
  */
+@Api(tags = "回复相关接口")
 @RestController
 @RequestMapping("reply")
 public class ReplyController {

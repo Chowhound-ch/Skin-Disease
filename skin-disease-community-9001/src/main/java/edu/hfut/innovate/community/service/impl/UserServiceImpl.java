@@ -1,5 +1,6 @@
 package edu.hfut.innovate.community.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,15 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public UserEntity login(String username, String password) {
+        LambdaQueryWrapper<UserEntity> queryWrapper = new LambdaQueryWrapper<UserEntity>()
+                .eq(UserEntity::getUsername, username)
+                .eq(UserEntity::getPassword, password);
+
+        return this.getOne(queryWrapper);
     }
 
 }
