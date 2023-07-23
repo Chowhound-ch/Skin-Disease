@@ -29,6 +29,9 @@
         <druid.version>1.2.12</druid.version>
         <mybatis.plus.version>3.5.3</mybatis.plus.version>
         <hutool.version>5.8.15</hutool.version>
+        <commons.version>2.6</commons.version>
+        <!--   swagger     -->
+        <springfox.version>3.0.0</springfox.version>
     </properties>
 
     <dependencyManagement>
@@ -81,6 +84,23 @@
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-boot-starter</artifactId>
+                <version>${springfox.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>

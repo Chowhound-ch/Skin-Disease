@@ -1,11 +1,8 @@
 package edu.hfut.innovate.common.vo.community;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.catalina.User;
 
 import java.io.Serial;
 import java.io.Serializable;
