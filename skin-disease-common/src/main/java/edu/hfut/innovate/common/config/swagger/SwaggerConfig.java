@@ -1,4 +1,4 @@
-package edu.hfut.innovate.common.swagger;
+package edu.hfut.innovate.common.config.swagger;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

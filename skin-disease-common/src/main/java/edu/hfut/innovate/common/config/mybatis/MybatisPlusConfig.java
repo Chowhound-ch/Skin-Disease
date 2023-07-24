@@ -1,4 +1,4 @@
-package edu.hfut.innovate.common.mybatis;
+package edu.hfut.innovate.common.config.mybatis;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;

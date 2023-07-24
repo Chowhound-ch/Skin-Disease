@@ -15,3 +15,7 @@ spring:
         file-extension: yml
       discovery:
         namespace: ddc49fa0-f320-4292-b80c-9d8957914983
+  security:
+    user:
+      name: user
+      password: 123456
