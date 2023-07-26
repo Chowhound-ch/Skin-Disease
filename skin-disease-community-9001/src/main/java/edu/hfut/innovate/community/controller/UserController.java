@@ -5,6 +5,7 @@ import edu.hfut.innovate.common.renren.R;
 import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.TokenManager;
 import edu.hfut.innovate.common.vo.community.UserVo;
+import edu.hfut.innovate.common.vo.user.LoginInfo;
 import edu.hfut.innovate.community.entity.UserEntity;
 import edu.hfut.innovate.community.service.UserService;
 import io.swagger.annotations.Api;
@@ -34,12 +35,12 @@ public class UserController {
     private TokenManager tokenManager;
 
     /**
-     * 登录
+     * 小程序中根据手机号登录
      */
     @PostMapping("/login/phone")
     @ApiOperation("登录")
-    public R login(String username, String phone){
-        UserEntity userEntity = userService.login(username, phone);
+    public R login(LoginInfo info){
+        UserEntity userEntity = userService.login(info.getUsername(), info.getPhone());
         if (userEntity == null){
             return R.error("用户名或密码错误");
         }

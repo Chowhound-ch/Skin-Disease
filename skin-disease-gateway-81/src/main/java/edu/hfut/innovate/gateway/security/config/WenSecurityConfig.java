@@ -31,6 +31,7 @@ public class WenSecurityConfig {
         return new CustomPasswordEncoder();
     }
 
+    // TODO 开发环境采用httpBasic，生产环境使用jwt
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
         // 认证管理器
