@@ -15,6 +15,6 @@ public class TokenLogoutSuccessHandler implements ServerLogoutSuccessHandler {
     @Override
     public Mono<Void> onLogoutSuccess(WebFilterExchange exchange, Authentication authentication) {
         log.info("logout success");
-        return null;
+        return Mono.empty();
     }
 }

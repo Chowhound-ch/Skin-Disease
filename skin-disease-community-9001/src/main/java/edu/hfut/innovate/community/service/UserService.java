@@ -15,6 +15,6 @@ public interface UserService extends IService<UserEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    UserEntity login(String username, String password);
+    UserEntity login(String username, String password, String phone);
 }
 

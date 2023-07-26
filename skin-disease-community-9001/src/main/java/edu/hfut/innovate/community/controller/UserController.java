@@ -9,8 +9,10 @@ import edu.hfut.innovate.community.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -34,8 +36,8 @@ public class UserController {
      */
     @PostMapping("/login")
     @ApiOperation("登录")
-    public R login(String username, String password){
-        UserEntity userEntity = userService.login(username, password);
+    public R login(String username, String password, String phone){
+        UserEntity userEntity = userService.login(username, password, phone);
         if (userEntity == null){
             return R.error("用户名或密码错误");
         }

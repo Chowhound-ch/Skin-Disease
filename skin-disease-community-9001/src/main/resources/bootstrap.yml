@@ -1,9 +1,6 @@
 server:
   port: 9001
 spring:
-  mvc:
-    pathmatch:
-      matching-strategy: ANT_PATH_MATCHER
   application:
     name: skin-disease-community
   profiles:
@@ -19,6 +16,8 @@ spring:
         namespace: ddc49fa0-f320-4292-b80c-9d8957914983
         extension-configs:
           - data-id: datasource-${spring.profiles.active}.yml
+            refresh: true
+          - data-id: redis-${spring.profiles.active}.yml
             refresh: true
       discovery:
         namespace: ddc49fa0-f320-4292-b80c-9d8957914983

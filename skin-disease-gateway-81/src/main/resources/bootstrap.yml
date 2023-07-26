@@ -4,7 +4,7 @@ spring:
   application:
     name: skin-disease-gateway
   profiles:
-    include: dev
+    active: dev
   cloud:
     nacos:
       server-addr: cloud100:8848
@@ -13,6 +13,11 @@ spring:
       config:
         namespace: ddc49fa0-f320-4292-b80c-9d8957914983
         file-extension: yml
+        extension-configs:
+          - data-id: datasource-${spring.profiles.active}.yml
+            refresh: true
+          - data-id: redis-${spring.profiles.active}.yml
+            refresh: true
       discovery:
         namespace: ddc49fa0-f320-4292-b80c-9d8957914983
   security:
