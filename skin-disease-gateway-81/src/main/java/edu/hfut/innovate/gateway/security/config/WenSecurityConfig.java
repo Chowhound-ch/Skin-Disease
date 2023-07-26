@@ -1,14 +1,13 @@
 package edu.hfut.innovate.gateway.security.config;
 
-import edu.hfut.innovate.common.controller.GlobalExceptionHandler;
 import edu.hfut.innovate.gateway.security.CustomPasswordEncoder;
 import edu.hfut.innovate.gateway.security.CustomReactiveAuthenticationManager;
 import edu.hfut.innovate.gateway.security.CustomServerAccessDeniedHandler;
 import edu.hfut.innovate.gateway.security.jwt.TokenLogoutHandler;
 import edu.hfut.innovate.gateway.security.jwt.TokenLogoutSuccessHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -23,6 +22,8 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableWebFluxSecurity
 @Configuration
 public class WenSecurityConfig {
+    @Autowired
+    private CustomReactiveAuthenticationManager customReactiveAuthenticationManager;
 
     // 密码编码器
     @Bean
@@ -31,9 +32,9 @@ public class WenSecurityConfig {
     }
 
     @Bean
-    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) throws Exception {
+    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
         // 认证管理器
-        http.authenticationManager(new CustomReactiveAuthenticationManager()).httpBasic()
+        http.authenticationManager(customReactiveAuthenticationManager).httpBasic()
                 // 异常处理
                 .and().exceptionHandling().accessDeniedHandler(new CustomServerAccessDeniedHandler())
                 // 登出请求处理

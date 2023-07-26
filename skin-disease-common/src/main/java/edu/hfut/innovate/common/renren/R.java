@@ -1,5 +1,7 @@
 package edu.hfut.innovate.common.renren;
 
+import io.swagger.models.auth.In;
+
 import java.io.Serial;
 import java.util.HashMap;
 
@@ -70,4 +72,9 @@ public class R extends HashMap<String, Object> {
 		super.put("data", value);
 		return this;
 	}
+
+	public Integer getCode(){
+		return (Integer) this.get("code");
+	}
+
 }

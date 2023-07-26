@@ -28,10 +28,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Override
-    public UserEntity login(String username, String password, String phone) {
+    public UserEntity login(String username, String phone) {
         LambdaQueryWrapper<UserEntity> queryWrapper = new LambdaQueryWrapper<UserEntity>()
                 .eq(UserEntity::getUsername, username)
-                .eq(UserEntity::getPassword, password)
                 .eq(UserEntity::getPhone, phone);
 
         return this.getOne(queryWrapper);

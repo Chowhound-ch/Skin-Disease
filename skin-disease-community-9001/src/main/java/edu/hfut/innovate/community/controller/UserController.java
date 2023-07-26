@@ -3,6 +3,7 @@ package edu.hfut.innovate.community.controller;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.R;
 import edu.hfut.innovate.common.util.BeanUtil;
+import edu.hfut.innovate.common.util.TokenManager;
 import edu.hfut.innovate.common.vo.community.UserVo;
 import edu.hfut.innovate.community.entity.UserEntity;
 import edu.hfut.innovate.community.service.UserService;
@@ -29,21 +30,24 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private TokenManager tokenManager;
 
     /**
      * 登录
      */
-    @PostMapping("/login")
+    @PostMapping("/login/phone")
     @ApiOperation("登录")
-    public R login(String username, String password, String phone){
-        UserEntity userEntity = userService.login(username, password, phone);
+    public R login(String username, String phone){
+        UserEntity userEntity = userService.login(username, phone);
         if (userEntity == null){
             return R.error("用户名或密码错误");
         }
-
         UserVo userVo = BeanUtil.copyProperties(userEntity, new UserVo());
-        return R.ok(userVo);
+
+        String token = tokenManager.createToken(userVo);
+
+        return R.ok(Map.entry("token", token));
     }
 
     /**

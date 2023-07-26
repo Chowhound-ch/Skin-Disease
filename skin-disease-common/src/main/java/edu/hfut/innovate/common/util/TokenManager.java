@@ -1,9 +1,13 @@
 package edu.hfut.innovate.common.util;
 
 import cn.hutool.core.date.DateUtil;
+import edu.hfut.innovate.common.jackson.JacksonUtil;
+import edu.hfut.innovate.common.vo.community.UserVo;
 import io.jsonwebtoken.CompressionCodecs;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -15,17 +19,25 @@ import java.util.Date;
 @Component
 public class TokenManager {
     // token过期时间,默认为7天
-    private final long tokenExpireTime = 60 * 60 * 24 * 7;
+    private static final long tokenExpireTime = 60 * 60 * 24 * 7;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
 
     // token加密密钥
     private final String tokenSignKey = "chowhound";
 
-    public String createToken(String username) {
-        return Jwts.builder().setSubject(username)
+    public String createToken(UserVo userVo) {
+
+        String token = Jwts.builder().setSubject(userVo.getUsername())
                 .setExpiration(new Date(System.currentTimeMillis() + tokenExpireTime))
                 .signWith(SignatureAlgorithm.HS512, tokenSignKey)
                 .compressWith(CompressionCodecs.DEFLATE)
                 .compact();
+
+        redisTemplate.opsForValue().set(token, JacksonUtil.toJsonString(userVo), tokenExpireTime);
+
+        return token;
     }
 
     public String getUsernameFromToken(String token) {
