@@ -26,29 +26,6 @@ public class ReplyController {
     private ReplyService replyService;
 
     /**
-     * 列表
-     */
-    @RequestMapping("/list")
-//    @RequiresPermissions("community:reply:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = replyService.queryPage(params);
-
-        return R.ok(page);
-    }
-
-
-    /**
-     * 信息
-     */
-    @RequestMapping("/info/{replyId}")
-//    @RequiresPermissions("community:reply:info")
-    public R info(@PathVariable("replyId") Long replyId){
-		ReplyEntity reply = replyService.getById(replyId);
-
-        return R.ok(reply);
-    }
-
-    /**
      * 保存
      */
     @RequestMapping("/save")

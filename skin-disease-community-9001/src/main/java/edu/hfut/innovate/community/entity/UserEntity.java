@@ -1,6 +1,7 @@
 package edu.hfut.innovate.community.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serial;
@@ -66,6 +67,7 @@ public class UserEntity implements Serializable {
 	/**
 	 * 
 	 */
+	@TableLogic
 	private Integer isDelete;
 
 }
