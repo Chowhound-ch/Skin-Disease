@@ -64,6 +64,8 @@ public class TopicVo implements Serializable {
 
 	@ApiModelProperty("话题的标签")
 	private List<String> tags;
+	@ApiModelProperty("话题的评论")
+	private List<CommentVo> comments;
 
 	/**
 	 * 

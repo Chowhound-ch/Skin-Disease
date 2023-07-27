@@ -28,6 +28,9 @@ public class ReplyVo implements Serializable {
 	 */
 	@ApiModelProperty("回复者")
 	private UserVo user;
+
+	@ApiModelProperty("被回复的帖子")
+	private Long commentId;
 	/**
 	 * 
 	 */

@@ -30,6 +30,11 @@ public class CommentEntity implements Serializable {
 	 * 
 	 */
 	private Long userId;
+
+
+	private Long commentedId;
+
+
 	/**
 	 * 
 	 */

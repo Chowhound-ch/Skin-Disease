@@ -17,13 +17,13 @@ import edu.hfut.innovate.community.service.TopicService;
 public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> implements TopicService {
 
     @Override
-    public PageUtils queryPage(Map<String, Object> params) {
+    public PageUtils<TopicEntity> queryPage(Map<String, Object> params) {
         IPage<TopicEntity> page = this.page(
                 new Query<TopicEntity>().getPage(params),
                 new QueryWrapper<>()
         );
 
-        return new PageUtils(page);
+        return new PageUtils<>(page);
     }
 
 }

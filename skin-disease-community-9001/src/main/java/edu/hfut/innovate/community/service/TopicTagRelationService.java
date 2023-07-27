@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.community.entity.TopicTagRelationEntity;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,6 +15,8 @@ import java.util.Map;
  */
 public interface TopicTagRelationService extends IService<TopicTagRelationEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils<TopicTagRelationEntity> queryPage(Map<String, Object> params);
+
+    Map<Long, List<TopicTagRelationEntity>> mapByTopicIds(Collection<Long> topicIds);
 }
 

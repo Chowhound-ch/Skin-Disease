@@ -25,6 +25,20 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
+//    @RequestMapping("/listAll")
+//    public R listAll(){
+//        List<CommentEntity> list = commentService.list();
+//        List<CommentVo> commentVoList = list.stream()
+//                .map(commentEntity -> {
+//                    CommentVo commentVo = BeanUtil.copyProperties(commentEntity, new CommentVo());
+//
+//                })
+//                .toList();
+//
+//
+//        return R.ok(commentVoList);
+//    }
+
     /**
      * 列表
      */

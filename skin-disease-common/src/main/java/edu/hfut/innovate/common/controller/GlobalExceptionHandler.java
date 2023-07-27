@@ -2,6 +2,7 @@ package edu.hfut.innovate.common.controller;
 
 import edu.hfut.innovate.common.renren.R;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -16,9 +17,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler({Exception.class})
     public R handleException(Exception e) {
+
         e.printStackTrace();
+        if (e instanceof BadSqlGrammarException) {
+            return R.error();
+        }
         return R.error(e.getMessage());
     }
 }

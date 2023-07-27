@@ -34,6 +34,9 @@ public class ReplyEntity implements Serializable {
 	 * 
 	 */
 	private Long replied;
+
+
+	private Long commentId;
 	/**
 	 * 
 	 */

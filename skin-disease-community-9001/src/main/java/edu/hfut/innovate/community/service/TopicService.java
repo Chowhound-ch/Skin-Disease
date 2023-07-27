@@ -13,6 +13,6 @@ import java.util.Map;
  */
 public interface TopicService extends IService<TopicEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils<TopicEntity> queryPage(Map<String, Object> params);
 }
 

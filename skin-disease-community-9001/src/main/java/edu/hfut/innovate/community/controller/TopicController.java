@@ -2,15 +2,23 @@ package edu.hfut.innovate.community.controller;
 
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.R;
+import edu.hfut.innovate.common.util.BeanUtil;
+import edu.hfut.innovate.common.util.CollectionUtil;
+import edu.hfut.innovate.common.vo.community.CommentVo;
+import edu.hfut.innovate.common.vo.community.TopicVo;
+import edu.hfut.innovate.common.vo.community.UserVo;
 import edu.hfut.innovate.community.entity.TopicEntity;
+import edu.hfut.innovate.community.entity.UserEntity;
+import edu.hfut.innovate.community.service.CommentService;
 import edu.hfut.innovate.community.service.TopicService;
+import edu.hfut.innovate.community.service.TopicTagService;
+import edu.hfut.innovate.community.service.UserService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.Map;
-
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -24,16 +32,47 @@ import java.util.Map;
 public class TopicController {
     @Autowired
     private TopicService topicService;
+    @Autowired
+    private CommentService commentService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private TopicTagService topicTagService;
 
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @RequestMapping("/page")
 //    @RequiresPermissions("community:topic:list")
     public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = topicService.queryPage(params);
+        PageUtils<TopicEntity> page = topicService.queryPage(params);
+        // 获取所有的TopicId
+        Collection<Long> topicIds = CollectionUtil.getCollection(page.getList(), TopicEntity::getTopicId);
+        // 根据TopicId分组
+        Map<Long, List<CommentVo>> commentVoMap = commentService.listByTopicIds(topicIds)
+                .stream().collect(Collectors.groupingBy(CommentVo::getTopicId));
 
-        return R.ok(page);
+        List<UserEntity> userEntities = userService.listByIds(
+                // 获取所有的UserId
+                CollectionUtil.getCollection(page.getList(), TopicEntity::getUserId));
+        Map<Long, UserEntity> userEntityMap = CollectionUtil.getMap(userEntities, UserEntity::getUserId);
+        // 将UserEntity转换为UserVo
+        Map<Long, UserVo> userVoMap = userEntityMap.entrySet().stream()
+                .map(entry -> Map.entry(entry.getKey(), BeanUtil.copyProperties(entry.getValue(), new UserVo())))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        Map<Long, List<String>> tagMap = topicTagService.mapByTopicIds(topicIds);
+
+        List<TopicVo> list = page.getList().stream().map(topicEntity -> {
+            TopicVo topicVo = BeanUtil.copyProperties(topicEntity, new TopicVo());
+            topicVo.setComments(commentVoMap.get(topicEntity.getTopicId()));
+            topicVo.setUser(userVoMap.get(topicEntity.getUserId()));
+            topicVo.setTags(tagMap.get(topicEntity.getTopicId()));
+
+            return topicVo;
+        }).toList();
+
+        return R.ok(new PageUtils<>(list, page.getTotalCount(), page.getPageSize(), page.getCurrPage()));
     }
 
 
