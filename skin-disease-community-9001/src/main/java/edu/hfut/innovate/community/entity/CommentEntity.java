@@ -1,7 +1,7 @@
 package edu.hfut.innovate.community.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import edu.hfut.innovate.common.util.BaseEntity;
+import edu.hfut.innovate.common.util.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -45,21 +45,4 @@ public class CommentEntity extends BaseEntity implements Serializable {
 	 * 
 	 */
 	private String content;
-	/**
-	 *
-	 */
-//	@TableField(fill = FieldFill.INSERT_UPDATE)
-//	public Date updateTime;
-//	/**
-//	 *
-//	 */
-//	// 插入时自动填充
-//	@TableField(fill = FieldFill.INSERT)
-//	private Date createTime;
-//	/**
-//	 *
-//	 */
-//	@TableLogic
-//	private Integer isDelete;
-
 }

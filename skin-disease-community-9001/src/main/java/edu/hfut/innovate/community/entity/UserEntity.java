@@ -8,18 +8,21 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
+import edu.hfut.innovate.common.util.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 
  * 
  * @author Chowhound
  */
+@EqualsAndHashCode(callSuper = true)
 @ApiModel("用户")
 @Data
 @TableName("user")
-public class UserEntity implements Serializable {
+public class UserEntity extends BaseEntity implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
 
@@ -56,18 +59,4 @@ public class UserEntity implements Serializable {
 	 * 
 	 */
 	private Integer likes;
-	/**
-	 * 
-	 */
-	private Date updateTime;
-	/**
-	 * 
-	 */
-	private Date createTime;
-	/**
-	 * 
-	 */
-	@TableLogic
-	private Integer isDelete;
-
 }

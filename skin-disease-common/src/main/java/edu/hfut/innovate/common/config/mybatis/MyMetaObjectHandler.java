@@ -4,7 +4,7 @@ import cn.hutool.core.util.ClassUtil;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import edu.hfut.innovate.common.util.BaseEntity;
+import edu.hfut.innovate.common.util.entity.BaseEntity;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 

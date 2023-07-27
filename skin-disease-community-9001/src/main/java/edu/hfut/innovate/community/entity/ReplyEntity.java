@@ -1,24 +1,25 @@
 package edu.hfut.innovate.community.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import edu.hfut.innovate.common.util.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 
  * 
  * @author Chowhound
  */
+@EqualsAndHashCode(callSuper = true)
 @ApiModel("回复(评论的回复或者回复的回复)")
 @Data
 @TableName("reply")
-public class ReplyEntity implements Serializable {
+public class ReplyEntity extends BaseEntity implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
 
@@ -50,18 +51,4 @@ public class ReplyEntity implements Serializable {
 	 * 
 	 */
 	private Integer isReplyTop;
-	/**
-	 * 
-	 */
-	private Date updateTime;
-	/**
-	 * 
-	 */
-	private Date createTime;
-	/**
-	 * 
-	 */
-	@TableLogic
-	private Integer isDelete;
-
 }
