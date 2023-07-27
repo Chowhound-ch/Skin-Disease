@@ -28,8 +28,6 @@ public class CommentVo implements Serializable {
      */
     @ApiModelProperty("评论者")
     private UserVo user;
-    @ApiModelProperty("评论者")
-    private UserVo commentedUser;
     /**
      *
      */
