@@ -9,7 +9,7 @@ import reactivefeign.spring.config.EnableReactiveFeignClients;
 @EnableReactiveFeignClients
 @EnableFeignClients
 @EnableDiscoveryClient
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "edu.hfut.innovate")
 public class GatewayApplication {
     public static void main(String[] args) {
         SpringApplication.run(GatewayApplication.class);

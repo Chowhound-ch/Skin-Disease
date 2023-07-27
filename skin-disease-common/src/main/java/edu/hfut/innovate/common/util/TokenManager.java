@@ -6,11 +6,14 @@ import edu.hfut.innovate.common.vo.community.UserVo;
 import io.jsonwebtoken.CompressionCodecs;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author : Chowhound
@@ -20,12 +23,13 @@ import java.util.Date;
 public class TokenManager {
     // token过期时间,默认为7天
     private static final long tokenExpireTime = 60 * 60 * 24 * 7;
+
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
 
     // token加密密钥
-    private final String tokenSignKey = "chowhound";
+    private static final String tokenSignKey = "chowhound";
 
     public String createToken(UserVo userVo) {
 
@@ -35,7 +39,7 @@ public class TokenManager {
                 .compressWith(CompressionCodecs.DEFLATE)
                 .compact();
 
-        redisTemplate.opsForValue().set(token, JacksonUtil.toJsonString(userVo), tokenExpireTime);
+        redisTemplate.opsForValue().set(token, JacksonUtil.toJsonString(userVo), tokenExpireTime, TimeUnit.SECONDS);
 
         return token;
     }
@@ -44,5 +48,27 @@ public class TokenManager {
         return Jwts.parser().setSigningKey(tokenSignKey).parseClaimsJws(token).getBody().getSubject();
     }
 
+    public UserVo getUserFromToken(String token) {
+        String userVoJson = redisTemplate.opsForValue().get(token);
+        return JacksonUtil.readValue(userVoJson, UserVo.class);
+    }
+
+    public Boolean isTokenExist(String token) {
+        // 判断jwt的token是否过期
+        Date expiration = Jwts.parser().setSigningKey(tokenSignKey).parseClaimsJws(token).getBody()
+                .getExpiration();
+
+        return expiration == null || expiration.before(DateUtil.date());
+    }
+
+
+//
+//    public static void main(String[] args) {
+//        String token = Jwts.builder().setSubject("chowhound")
+//                .signWith(SignatureAlgorithm.HS512, tokenSignKey)
+//                .compressWith(CompressionCodecs.DEFLATE)
+//                .compact();
+//        System.out.println(token);
+//    }
 
 }

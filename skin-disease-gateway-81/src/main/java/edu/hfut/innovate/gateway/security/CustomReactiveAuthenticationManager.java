@@ -1,6 +1,7 @@
 package edu.hfut.innovate.gateway.security;
 
 import edu.hfut.innovate.common.renren.R;
+import edu.hfut.innovate.common.util.TokenManager;
 import edu.hfut.innovate.gateway.security.feign.UserController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
@@ -18,9 +19,12 @@ public class CustomReactiveAuthenticationManager implements ReactiveAuthenticati
 
     @Autowired
     private UserController userController;
+    @Autowired
+    private TokenManager tokenManager;
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
+
         // 获取用户名
         String username = authentication.getName();
         // 获取密码

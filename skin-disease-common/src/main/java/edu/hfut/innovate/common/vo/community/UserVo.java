@@ -33,6 +33,11 @@ public class UserVo implements Serializable {
 	@ApiModelProperty("用户名")
 	private String username;
 	/**
+	 *
+	 */
+	@ApiModelProperty("手机号")
+	private String phone;
+	/**
 	 * 0：女，1：男，2：未知
 	 */
 	@ApiModelProperty("性别")
