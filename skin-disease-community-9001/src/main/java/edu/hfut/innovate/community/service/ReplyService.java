@@ -22,5 +22,7 @@ public interface ReplyService extends IService<ReplyEntity> {
     Map<Long, List<ReplyVo>> mapByCommentIdsWithSizeOf(Collection<Long> idSet, Integer size);
 
     List<ReplyVo> listByCommentId(Long commentId);
+
+    void removeByCommentId(Long commentId);
 }
 

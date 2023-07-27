@@ -17,6 +17,7 @@ import edu.hfut.innovate.community.service.ReplyService;
 import edu.hfut.innovate.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Function;
@@ -87,6 +88,13 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
     @Override
     public List<CommentVo> getByTopicId(Long topicId) {
         return mapByTopicIds(Set.of(topicId), null).get(topicId);
+    }
+
+    @Transactional
+    @Override
+    public void removeByIdWithReply(Long commentId) {
+        this.removeById(commentId);
+        replyService.removeByCommentId(commentId);
     }
 
 }

@@ -97,4 +97,9 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyDao, ReplyEntity> impleme
 
     }
 
+    @Override
+    public void removeByCommentId(Long commentId) {
+        remove(new LambdaQueryWrapper<ReplyEntity>().eq(ReplyEntity::getCommentId, commentId));
+    }
+
 }

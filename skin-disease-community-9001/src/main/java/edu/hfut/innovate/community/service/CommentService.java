@@ -28,5 +28,7 @@ public interface CommentService extends IService<CommentEntity> {
 
 
     List<CommentVo> getByTopicId(Long topicId);
+
+    void removeByIdWithReply(Long commentId);
 }
 

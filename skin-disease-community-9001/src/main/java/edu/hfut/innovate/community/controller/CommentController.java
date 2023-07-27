@@ -1,6 +1,5 @@
 package edu.hfut.innovate.community.controller;
 
-import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.R;
 import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.vo.community.CommentVo;
@@ -14,9 +13,6 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Arrays;
-import java.util.Map;
 
 
 
@@ -52,37 +48,24 @@ public class CommentController {
     }
 
     /**
-     * 保存
+     * 发布评论
      */
-    @RequestMapping("/save")
-    @Transactional
+    @PostMapping("/save")
 //    @RequiresPermissions("community:comment:save")
     public R save(@RequestBody CommentEntity comment){
 		commentService.save(comment);
-        if (comment.getCreateTime() == null) {
-            throw new RuntimeException("创建时间不能为空");
-        }
-        return R.ok();
-    }
-
-    /**
-     * 修改
-     */
-    @RequestMapping("/update")
-//    @RequiresPermissions("community:comment:update")
-    public R update(@RequestBody CommentEntity comment){
-		commentService.updateById(comment);
 
         return R.ok();
     }
 
     /**
-     * 删除
+     * 删除评论
+     * TODO 仅可删除自己的评论，后续应该进行token验证用户身份
      */
-    @RequestMapping("/delete")
+    @RequestMapping("/delete/{comment_id}")
 //    @RequiresPermissions("community:comment:delete")
-    public R delete(@RequestBody Long[] commentIds){
-		commentService.removeByIds(Arrays.asList(commentIds));
+    public R delete(@PathVariable("comment_id") Long commentId){
+		commentService.removeByIdWithReply(commentId);
 
         return R.ok();
     }

@@ -37,23 +37,13 @@ public class ReplyController {
     }
 
     /**
-     * 修改
-     */
-    @RequestMapping("/update")
-//    @RequiresPermissions("community:reply:update")
-    public R update(@RequestBody ReplyEntity reply){
-		replyService.updateById(reply);
-
-        return R.ok();
-    }
-
-    /**
      * 删除
+     * TODO 仅可删除自己的评论，后续应该进行token验证用户身份
      */
-    @RequestMapping("/delete")
+    @RequestMapping("/delete/{reply_id}")
 //    @RequiresPermissions("community:reply:delete")
-    public R delete(@RequestBody Long[] replyIds){
-		replyService.removeByIds(Arrays.asList(replyIds));
+    public R delete(@PathVariable("reply_id") String replyId){
+		replyService.removeById(replyId);
 
         return R.ok();
     }
