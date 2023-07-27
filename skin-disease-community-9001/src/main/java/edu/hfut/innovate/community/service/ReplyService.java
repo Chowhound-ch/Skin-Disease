@@ -19,6 +19,8 @@ public interface ReplyService extends IService<ReplyEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
 
-    Map<Long, List<ReplyVo>> listByCommentIdsWithSizeOf(Collection<Long> idSet, Integer size);
+    Map<Long, List<ReplyVo>> mapByCommentIdsWithSizeOf(Collection<Long> idSet, Integer size);
+
+    List<ReplyVo> listByCommentId(Long commentId);
 }
 

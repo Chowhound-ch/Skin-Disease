@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
 import edu.hfut.innovate.common.util.BeanUtil;
-import edu.hfut.innovate.common.util.CollectionUtil;
 import edu.hfut.innovate.common.vo.community.CommentVo;
 import edu.hfut.innovate.common.vo.community.ReplyVo;
 import edu.hfut.innovate.common.vo.community.UserVo;
@@ -15,7 +14,6 @@ import edu.hfut.innovate.community.dao.CommentDao;
 import edu.hfut.innovate.community.entity.CommentEntity;
 import edu.hfut.innovate.community.service.CommentService;
 import edu.hfut.innovate.community.service.ReplyService;
-import edu.hfut.innovate.community.service.TopicService;
 import edu.hfut.innovate.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,7 +56,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
         });
 
 
-        Map<Long, List<ReplyVo>> replyVoMap = replyService.listByCommentIdsWithSizeOf(commentIds, 2);
+        Map<Long, List<ReplyVo>> replyVoMap = replyService.mapByCommentIdsWithSizeOf(commentIds, 2);
 
         Map<Long, UserVo> userVoMap = userService.listByIds(userIds).stream()
                 .map(userEntity -> BeanUtil.copyProperties(userEntity, new UserVo()))
@@ -68,7 +66,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
             CommentVo commentVo = BeanUtil.copyProperties(commentEntity, new CommentVo());
             commentVo.setTopicId(commentEntity.getTopicId());
             commentVo.setUser(userVoMap.get(commentEntity.getUserId()));
-//            commentVo.setCommentedUser(userVoMap.get(commentEntity.getCommentedId()));
             commentVo.setRepliesByLikes(replyVoMap.get(commentEntity.getCommentId()));
             return commentVo;
         }).collect(Collectors.groupingBy(CommentVo::getTopicId));

@@ -37,9 +37,14 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyDao, ReplyEntity> impleme
     }
 
     @Override
-    public Map<Long, List<ReplyVo>> listByCommentIdsWithSizeOf(Collection<Long> idSet, Integer size) {
+    public Map<Long, List<ReplyVo>> mapByCommentIdsWithSizeOf(Collection<Long> idSet, Integer size) {
         List<ReplyEntity> replyEntities = list(
                 new LambdaQueryWrapper<ReplyEntity>().in(ReplyEntity::getCommentId, idSet));
+        // 该条评论没有回复
+        if (replyEntities.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
         // 根据评论id进行分组
         Map<Long, List<ReplyEntity>> groupMap = replyEntities.stream()
                 .collect(Collectors.groupingBy(ReplyEntity::getCommentId));
@@ -64,6 +69,9 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyDao, ReplyEntity> impleme
             return Map.entry(entry.getKey(), values);
         }).toList();
         // 根据userId获取userVo
+        if (userIdSet.isEmpty()) {
+            return Collections.emptyMap();
+        }
         Map<Long, UserVo> userMap = userService.listByIds(userIdSet).stream()
                 .map(userEntity -> BeanUtil.copyProperties(userEntity, new UserVo()))
                 .collect(Collectors.toMap(UserVo::getUserId, userVo -> userVo));
@@ -80,6 +88,13 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyDao, ReplyEntity> impleme
                     }).toList();
             return Map.entry(entry.getKey(), replyVos);
         }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    @Override
+    public List<ReplyVo> listByCommentId(Long commentId) {
+        return mapByCommentIdsWithSizeOf(Collections.singleton(commentId), null)
+                .getOrDefault(commentId, Collections.emptyList());
+
     }
 
 }
