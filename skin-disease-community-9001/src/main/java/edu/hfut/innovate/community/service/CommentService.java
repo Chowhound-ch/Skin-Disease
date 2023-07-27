@@ -4,12 +4,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.vo.community.CommentVo;
 import edu.hfut.innovate.community.entity.CommentEntity;
-import edu.hfut.innovate.community.entity.TopicEntity;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 
@@ -20,8 +18,15 @@ public interface CommentService extends IService<CommentEntity> {
 
     PageUtils<CommentEntity> queryPage(Map<String, Object> params);
 
-    List<CommentVo> listByTopicIds(Collection<Long> idSet);
+    /**
+     * @author : Chowhound
+     * @since : 2023/07/27 - 20:12
+     * @param idSet : 话题id集合
+     * @param size : 限制每个评论的数量，如果为null则不限制
+     */
+    Map<Long, List<CommentVo>> mapByTopicIds(Collection<Long> idSet, Integer size);
 
 
+    List<CommentVo> getByTopicId(Long topicId);
 }
 

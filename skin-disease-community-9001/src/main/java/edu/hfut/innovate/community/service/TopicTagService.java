@@ -18,6 +18,8 @@ public interface TopicTagService extends IService<TopicTagEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
     Map<Long, List<String>> mapByTopicIds(Collection<Long> topicIds);
+
+    List<String> getByTopicId(Long topicId);
 }
 
 

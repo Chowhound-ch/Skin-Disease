@@ -40,22 +40,20 @@ public class TopicController {
     private TopicTagService topicTagService;
 
     /**
-     * 列表
+     * 分页查询话题
      */
-    @RequestMapping("/page")
+    @GetMapping("/page")
 //    @RequiresPermissions("community:topic:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils<TopicEntity> page = topicService.queryPage(params);
         // 获取所有的TopicId
         Collection<Long> topicIds = CollectionUtil.getCollection(page.getList(), TopicEntity::getTopicId);
         // 根据TopicId分组
-        Map<Long, List<CommentVo>> commentVoMap = commentService.listByTopicIds(topicIds)
-                .stream().collect(Collectors.groupingBy(CommentVo::getTopicId));
+        Map<Long, List<CommentVo>> commentVoMap = commentService.mapByTopicIds(topicIds, 2);
 
-        List<UserEntity> userEntities = userService.listByIds(
+        Map<Long, UserEntity> userEntityMap = userService.mapByIds(
                 // 获取所有的UserId
                 CollectionUtil.getCollection(page.getList(), TopicEntity::getUserId));
-        Map<Long, UserEntity> userEntityMap = CollectionUtil.getMap(userEntities, UserEntity::getUserId);
         // 将UserEntity转换为UserVo
         Map<Long, UserVo> userVoMap = userEntityMap.entrySet().stream()
                 .map(entry -> Map.entry(entry.getKey(), BeanUtil.copyProperties(entry.getValue(), new UserVo())))
@@ -75,6 +73,16 @@ public class TopicController {
         return R.ok(new PageUtils<>(list, page.getTotalCount(), page.getPageSize(), page.getCurrPage()));
     }
 
+    @GetMapping("/{topicId}")
+    public R getTopic(@PathVariable("topicId") Long topicId) {
+        TopicEntity topicEntity = topicService.getById(topicId);
+        TopicVo topicVo = BeanUtil.copyProperties(topicEntity, new TopicVo());
+        topicVo.setTags(topicTagService.getByTopicId(topicId));
+        topicVo.setUser(BeanUtil.copyProperties(userService.getById(topicEntity.getUserId()), new UserVo()));
+        topicVo.setComments(commentService.getByTopicId(topicId));
+
+        return R.ok(topicVo);
+    }
 
     /**
      * 信息

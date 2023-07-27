@@ -8,7 +8,6 @@ import edu.hfut.innovate.community.entity.ReplyEntity;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 
@@ -20,6 +19,6 @@ public interface ReplyService extends IService<ReplyEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
 
-    Map<Long, List<ReplyVo>> listByCommentIdsWithSizeOf(Collection<Long> idSet, int size);
+    Map<Long, List<ReplyVo>> listByCommentIdsWithSizeOf(Collection<Long> idSet, Integer size);
 }
 

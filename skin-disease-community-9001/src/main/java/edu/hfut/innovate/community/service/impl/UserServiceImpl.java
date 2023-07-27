@@ -3,8 +3,15 @@ package edu.hfut.innovate.community.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
+import edu.hfut.innovate.common.util.CollectionUtil;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -34,6 +41,12 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                 .eq(UserEntity::getPhone, phone);
 
         return this.getOne(queryWrapper);
+    }
+
+    @Override
+    public Map<Long, UserEntity> mapByIds(Collection<Long> ids) {
+
+        return CollectionUtil.getMap(this.listByIds(ids), UserEntity::getUserId);
     }
 
 }

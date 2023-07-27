@@ -18,10 +18,7 @@ import edu.hfut.innovate.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -45,7 +42,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
     }
 
     @Override
-    public List<CommentVo> listByTopicIds(Collection<Long> idSet) {
+    public Map<Long, List<CommentVo>> mapByTopicIds(Collection<Long> idSet, Integer size) {
         List<CommentEntity> commentEntities = this.list(
                 new LambdaQueryWrapper<CommentEntity>().in(CommentEntity::getTopicId, idSet));
 
@@ -64,14 +61,32 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
                 .map(userEntity -> BeanUtil.copyProperties(userEntity, new UserVo()))
                 .collect(Collectors.toMap(UserVo::getUserId, Function.identity()));
 
-        return commentEntities.stream().map(commentEntity -> {
+        Map<Long, List<CommentVo>> commentVoMap = commentEntities.stream().map(commentEntity -> {
             CommentVo commentVo = BeanUtil.copyProperties(commentEntity, new CommentVo());
             commentVo.setTopicId(commentEntity.getTopicId());
             commentVo.setUser(userVoMap.get(commentEntity.getUserId()));
             commentVo.setCommentedUser(userVoMap.get(commentEntity.getCommentedId()));
             commentVo.setRepliesByLikes(replyVoMap.get(commentEntity.getCommentId()));
             return commentVo;
-        }).toList();
+        }).collect(Collectors.groupingBy(CommentVo::getTopicId));
+
+        if (size != null) {
+            commentVoMap.entrySet().forEach(entry -> {
+                if (entry.getValue().size() > size) {
+                    // 取like最多的size个
+                    entry.setValue(entry.getValue().stream()
+                            .sorted(Comparator.comparingInt(CommentVo::getLikes).reversed())
+                            .limit(size).toList()) ;
+                }
+            });
+        }
+
+        return commentVoMap;
+    }
+
+    @Override
+    public List<CommentVo> getByTopicId(Long topicId) {
+        return mapByTopicIds(Set.of(topicId), null).get(topicId);
     }
 
 }

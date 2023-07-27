@@ -37,20 +37,24 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyDao, ReplyEntity> impleme
     }
 
     @Override
-    public Map<Long, List<ReplyVo>> listByCommentIdsWithSizeOf(Collection<Long> idSet, int size) {
+    public Map<Long, List<ReplyVo>> listByCommentIdsWithSizeOf(Collection<Long> idSet, Integer size) {
         List<ReplyEntity> replyEntities = list(
                 new LambdaQueryWrapper<ReplyEntity>().in(ReplyEntity::getCommentId, idSet));
         // 根据评论id进行分组
         Map<Long, List<ReplyEntity>> groupMap = replyEntities.stream()
                 .collect(Collectors.groupingBy(ReplyEntity::getCommentId));
         // 获取所有涉及的userId
-        Set<Long> userIdSet = new HashSet<>(idSet.size() * size );
+        Set<Long> userIdSet = new HashSet<>();
 
 
         List<Map.Entry<Long, List<ReplyEntity>>> entryList = groupMap.entrySet().stream().map(entry -> {
-            List<ReplyEntity> values = entry.getValue().stream()
-                    .sorted((o1, o2) -> o2.getLikes() - o1.getLikes())
-                    .limit(size).toList();
+            Stream<ReplyEntity> stream = entry.getValue().stream()
+                    .sorted((o1, o2) -> o2.getLikes() - o1.getLikes());
+            // 如果size不为空，则取前size个
+            if (size != null) {
+                stream = stream.limit(size);
+            }
+            List<ReplyEntity> values = stream.toList();
             // 获取所有涉及的userId
             values.forEach(replyEntity -> {
                 userIdSet.add(replyEntity.getUserId());

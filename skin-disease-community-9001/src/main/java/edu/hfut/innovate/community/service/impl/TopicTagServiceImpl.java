@@ -54,4 +54,9 @@ public class TopicTagServiceImpl extends ServiceImpl<TopicTagDao, TopicTagEntity
                 .collect(Collectors.toList()))).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    @Override
+    public List<String> getByTopicId(Long topicId) {
+        return mapByTopicIds(Set.of(topicId)).get(topicId);
+    }
+
 }

@@ -2,8 +2,11 @@ package edu.hfut.innovate.community.controller;
 
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.R;
+import edu.hfut.innovate.common.util.BeanUtil;
+import edu.hfut.innovate.common.vo.community.CommentVo;
 import edu.hfut.innovate.community.entity.CommentEntity;
 import edu.hfut.innovate.community.service.CommentService;
+import edu.hfut.innovate.community.service.UserService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,20 +27,17 @@ import java.util.Map;
 public class CommentController {
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private UserService userService;
 
-//    @RequestMapping("/listAll")
-//    public R listAll(){
-//        List<CommentEntity> list = commentService.list();
-//        List<CommentVo> commentVoList = list.stream()
-//                .map(commentEntity -> {
-//                    CommentVo commentVo = BeanUtil.copyProperties(commentEntity, new CommentVo());
-//
-//                })
-//                .toList();
-//
-//
-//        return R.ok(commentVoList);
-//    }
+    @GetMapping("/{comment_id}")
+    public R getCommentById(@PathVariable("comment_id") Long commentId){
+        CommentEntity commentEntity = commentService.getById(commentId);
+
+        CommentVo commentVo = BeanUtil.copyProperties(commentEntity, new CommentVo());
+
+        return R.ok(commentEntity);
+    }
 
     /**
      * 列表
