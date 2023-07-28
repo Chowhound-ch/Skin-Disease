@@ -124,7 +124,7 @@ public class TopicController {
         topicEntity.setContent(topic.getContent());
         topicEntity.setTitle(topic.getTitle());
 
-		topicService.updateById(topic);
+		topicService.updateById(topicEntity);
 
         return R.ok();
     }
