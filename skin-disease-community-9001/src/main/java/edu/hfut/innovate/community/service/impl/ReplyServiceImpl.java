@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -56,14 +57,14 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyDao, ReplyEntity> impleme
             Stream<ReplyEntity> stream = entry.getValue().stream()
                     .sorted((o1, o2) -> o2.getLikes() - o1.getLikes());
             // 如果size不为空，则取前size个
-            if (size != null) {
+            if (size != null && size >= 0) {
                 stream = stream.limit(size);
             }
             List<ReplyEntity> values = stream.toList();
             // 获取所有涉及的userId
             values.forEach(replyEntity -> {
                 userIdSet.add(replyEntity.getUserId());
-                userIdSet.add(replyEntity.getReplyId());
+                userIdSet.add(replyEntity.getReplied());
             });
             // 取likes最多的前size个
             return Map.entry(entry.getKey(), values);
@@ -74,7 +75,7 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyDao, ReplyEntity> impleme
         }
         Map<Long, UserVo> userMap = userService.listByIds(userIdSet).stream()
                 .map(userEntity -> BeanUtil.copyProperties(userEntity, new UserVo()))
-                .collect(Collectors.toMap(UserVo::getUserId, userVo -> userVo));
+                .collect(Collectors.toMap(UserVo::getUserId, Function.identity()));
 
         // 将entry.value转化为ReplyVo
         return entryList.stream().map(entry -> {
@@ -82,7 +83,7 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyDao, ReplyEntity> impleme
                     .map(replyEntity -> {
                         ReplyVo replyVo = BeanUtil.copyProperties(replyEntity, new ReplyVo());
                         replyVo.setUser(userMap.get(replyEntity.getUserId()));
-                        replyVo.setReplied(userMap.get(replyVo.getReplyId()));
+                        replyVo.setReplied(userMap.get(replyEntity.getReplied()));
 
                         return replyVo;
                     }).toList();
@@ -91,8 +92,8 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyDao, ReplyEntity> impleme
     }
 
     @Override
-    public List<ReplyVo> listByCommentId(Long commentId) {
-        return mapByCommentIdsWithSizeOf(Collections.singleton(commentId), null)
+    public List<ReplyVo> listByCommentId(Long commentId, Integer replyItemSize) {
+        return mapByCommentIdsWithSizeOf(Collections.singleton(commentId), replyItemSize)
                 .getOrDefault(commentId, Collections.emptyList());
 
     }
@@ -100,6 +101,11 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyDao, ReplyEntity> impleme
     @Override
     public void removeByCommentId(Long commentId) {
         remove(new LambdaQueryWrapper<ReplyEntity>().eq(ReplyEntity::getCommentId, commentId));
+    }
+
+    @Override
+    public void removeAllByCommentIds(Collection<Long> commentIds) {
+        remove(new LambdaQueryWrapper<ReplyEntity>().in(ReplyEntity::getCommentId, commentIds));
     }
 
 }

@@ -1,5 +1,6 @@
 package edu.hfut.innovate.community.service.impl;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -16,21 +17,26 @@ import edu.hfut.innovate.community.service.CommentService;
 import edu.hfut.innovate.community.service.ReplyService;
 import edu.hfut.innovate.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service("commentService")
-public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> implements CommentService {
+public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> implements CommentService, ApplicationRunner {
 
     @Autowired
     private ReplyService replyService;
     @Autowired
     private UserService userService;
+    // 解决事务中调用自己的方法不生效的问题
+    private CommentService commentService;
 
     @Override
     public PageUtils<CommentEntity> queryPage(Map<String, Object> params) {
@@ -43,9 +49,13 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
     }
 
     @Override
-    public Map<Long, List<CommentVo>> mapByTopicIds(Collection<Long> idSet, Integer size) {
+    public Map<Long, List<CommentVo>> mapByTopicIds(Collection<Long> idSet, Integer commentItemSize, Integer replyItemSize) {
         List<CommentEntity> commentEntities = this.list(
                 new LambdaQueryWrapper<CommentEntity>().in(CommentEntity::getTopicId, idSet));
+
+        if (commentEntities.isEmpty()){
+            return Collections.emptyMap();
+        }
 
         // 获取所有的评论id
         Collection<Long> commentIds = new HashSet<>();
@@ -55,9 +65,13 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
             commentIds.add(commentEntity.getCommentId());
             userIds.add(commentEntity.getUserId());
         });
+        Map<Long, List<ReplyVo>> replyVoMap;
 
-
-        Map<Long, List<ReplyVo>> replyVoMap = replyService.mapByCommentIdsWithSizeOf(commentIds, 2);
+        if (replyItemSize == null || replyItemSize > 0){
+            replyVoMap = replyService.mapByCommentIdsWithSizeOf(commentIds, replyItemSize);
+        } else {
+            replyVoMap = null;
+        }
 
         Map<Long, UserVo> userVoMap = userService.listByIds(userIds).stream()
                 .map(userEntity -> BeanUtil.copyProperties(userEntity, new UserVo()))
@@ -67,17 +81,30 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
             CommentVo commentVo = BeanUtil.copyProperties(commentEntity, new CommentVo());
             commentVo.setTopicId(commentEntity.getTopicId());
             commentVo.setUser(userVoMap.get(commentEntity.getUserId()));
-            commentVo.setRepliesByLikes(replyVoMap.get(commentEntity.getCommentId()));
+
+            // 获取评论的回复
+            if (replyVoMap != null){
+                List<ReplyVo> replyVos = replyVoMap.get(commentEntity.getCommentId());
+
+                Stream<ReplyVo> replyVoStream = replyVos == null? Stream.empty() : replyVos.stream()
+                        .sorted(Comparator.comparingInt(ReplyVo::getLikes).reversed());
+                if (replyItemSize == null) {
+                    commentVo.setReplies(replyVoStream.toList());
+                } else { // replyItemSize != null 限制relyItemSize
+                    commentVo.setRepliesByLikes(replyVoStream.limit(replyItemSize).toList());
+                }
+            }
+
             return commentVo;
         }).collect(Collectors.groupingBy(CommentVo::getTopicId));
 
-        if (size != null) {
+        if (commentItemSize != null) {
             commentVoMap.entrySet().forEach(entry -> {
-                if (entry.getValue().size() > size) {
+                if (entry.getValue().size() > commentItemSize) {
                     // 取like最多的size个
                     entry.setValue(entry.getValue().stream()
                             .sorted(Comparator.comparingInt(CommentVo::getLikes).reversed())
-                            .limit(size).toList()) ;
+                            .limit(commentItemSize).toList()) ;
                 }
             });
         }
@@ -86,8 +113,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
     }
 
     @Override
-    public List<CommentVo> getByTopicId(Long topicId) {
-        return mapByTopicIds(Set.of(topicId), null).get(topicId);
+    public List<CommentVo> getByTopicId(Long topicId, Integer commentItemSize, Integer replyItemSize) {
+        return mapByTopicIds(Set.of(topicId), commentItemSize, replyItemSize).get(topicId);
     }
 
     @Transactional
@@ -97,4 +124,14 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
         replyService.removeByCommentId(commentId);
     }
 
+    @Override
+    public void removeAllByIdsWithReply(Collection<Long> commentIds) {
+        commentService.removeByIds(commentIds);
+        replyService.removeAllByCommentIds(commentIds);
+    }
+
+    @Override
+    public void run(ApplicationArguments args) {
+        commentService = SpringUtil.getBean(CommentService.class);
+    }
 }

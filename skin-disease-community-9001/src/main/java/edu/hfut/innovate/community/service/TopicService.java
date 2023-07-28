@@ -14,5 +14,7 @@ import java.util.Map;
 public interface TopicService extends IService<TopicEntity> {
 
     PageUtils<TopicEntity> queryPage(Map<String, Object> params);
+
+    void removeTopicById(Long topicId);
 }
 
