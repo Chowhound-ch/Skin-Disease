@@ -39,5 +39,7 @@ public interface CommentService extends IService<CommentEntity> {
 
 
     void removeAllByIdsWithReply(Collection<Long> commentIds);
+
+    void addLike(Long userId, Long likedId);
 }
 

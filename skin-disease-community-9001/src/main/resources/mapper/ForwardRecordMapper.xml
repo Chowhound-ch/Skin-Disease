@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.hfut.innovate.community.dao.ForwardRecordMapper">
+
+    <resultMap id="BaseResultMap" type="edu.hfut.innovate.community.entity.ForwardRecord">
+            <id property="forwardId" column="forward_id" jdbcType="BIGINT"/>
+            <id property="forwardKey" column="forward_key" jdbcType="BIGINT"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="topicId" column="topic_id" jdbcType="BIGINT"/>
+            <result property="isDelete" column="is_delete" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        forward_id,forward_key,user_id,
+        topic_id,is_delete
+    </sql>
+</mapper>

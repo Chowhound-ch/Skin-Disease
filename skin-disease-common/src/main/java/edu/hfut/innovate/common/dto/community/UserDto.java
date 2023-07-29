@@ -1,14 +1,11 @@
-package edu.hfut.innovate.common.vo.community;
+package edu.hfut.innovate.common.dto.community;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 
@@ -17,14 +14,10 @@ import java.util.Date;
  */
 @ApiModel("用户")
 @Data
-public class UserVo implements Serializable {
+public class UserDto implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	private Long userId;
 	/**
 	 * 
 	 */
@@ -51,16 +44,8 @@ public class UserVo implements Serializable {
 	@ApiModelProperty("头像的url")
 	private String avatar;
 	/**
-	 * 
+	 *
 	 */
 	@ApiModelProperty("总获赞数")
 	private Integer likes;
-	/**
-	 * 
-	 */
-	private Date updateTime;
-	/**
-	 * 
-	 */
-	private Date createTime;
 }

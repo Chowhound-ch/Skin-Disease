@@ -17,7 +17,6 @@ import java.util.List;
  */
 @ApiModel("话题(帖子)")
 @Data
-@TableName("topic")
 public class TopicVo implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
