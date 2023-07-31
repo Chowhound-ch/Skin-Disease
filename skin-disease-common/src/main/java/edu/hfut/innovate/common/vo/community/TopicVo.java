@@ -1,6 +1,5 @@
 package edu.hfut.innovate.common.vo.community;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -58,6 +57,11 @@ public class TopicVo implements Serializable {
 	/**
 	 * 
 	 */
+	@ApiModelProperty("是否被当前用户点赞")
+	private Integer isLike;
+	@ApiModelProperty("是否被当前用户收藏")
+	private Integer isCollect;
+
 	@ApiModelProperty("收藏数")
 	private Integer collect;
 

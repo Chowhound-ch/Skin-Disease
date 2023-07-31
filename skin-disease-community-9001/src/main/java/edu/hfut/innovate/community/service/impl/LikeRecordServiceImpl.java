@@ -7,7 +7,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
+import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.CommunityTypeUtil;
+import edu.hfut.innovate.common.vo.community.LikeRecordVo;
 import edu.hfut.innovate.community.entity.LikeRecord;
 import edu.hfut.innovate.community.entity.TopicEntity;
 import edu.hfut.innovate.community.service.CommentService;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class LikeRecordServiceImpl extends ServiceImpl<LikeRecordMapper, LikeRecord>
@@ -34,13 +37,16 @@ public class LikeRecordServiceImpl extends ServiceImpl<LikeRecordMapper, LikeRec
     private ReplyService replyService;
 
     @Override
-    public PageUtils<LikeRecord> queryPageByUserId(Map<String, Object> params, Long userId) {
+    public PageUtils<LikeRecordVo> queryPageByUserId(Map<String, Object> params, Long userId) {
         IPage<LikeRecord> page = this.page(
                 new Query<LikeRecord>().getPage(params),
                 new LambdaUpdateWrapper<LikeRecord>().eq(LikeRecord::getUserId, userId)
         );
 
-        return new PageUtils<>(page);
+        List<LikeRecordVo> likeRecordVos = page.getRecords().stream()
+                .map(likeRecord -> BeanUtil.copyProperties(likeRecord, new LikeRecordVo()))
+                .toList();
+        return new PageUtils<>(likeRecordVos, page.getTotal(), page.getSize(), page.getCurrent());
     }
     @Transactional
     @Override

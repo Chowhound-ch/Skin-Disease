@@ -70,10 +70,10 @@ public class LikeRecordController {
     public R list(
             @ApiParam("分页查询参数")
             @RequestParam Map<String, Object> params, @PathVariable("user_id") Long userId) {
-        PageUtils<LikeRecord> page = likeRecordService.queryPageByUserId(params, userId);
+        PageUtils<LikeRecordVo> page = likeRecordService.queryPageByUserId(params, userId);
         List<LikeRecordVo> likeRecordVos = page.getList().stream()
                 .map(likeRecord -> BeanUtil.copyProperties(likeRecord, new LikeRecordVo()))
-                .collect(Collectors.toList());
+                .toList();
         return R.ok(new PageUtils<>(likeRecordVos, page.getTotalCount(), page.getPageSize(), page.getCurrPage()));
     }
 

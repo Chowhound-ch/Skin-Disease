@@ -4,6 +4,7 @@ package edu.hfut.innovate.common.util;
  * @author : Chowhound
  * @since : 2023/7/28 - 20:43
  */
+@SuppressWarnings("unused")
 public class CommunityTypeUtil {
 
     public static final String TOPIC = "topic";

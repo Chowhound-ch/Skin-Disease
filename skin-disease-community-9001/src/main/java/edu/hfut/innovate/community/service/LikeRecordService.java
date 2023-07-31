@@ -1,6 +1,7 @@
 package edu.hfut.innovate.community.service;
 
 import edu.hfut.innovate.common.renren.PageUtils;
+import edu.hfut.innovate.common.vo.community.LikeRecordVo;
 import edu.hfut.innovate.community.entity.LikeRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -17,5 +18,5 @@ public interface LikeRecordService extends IService<LikeRecord> {
 
     void removeLikeRecord(Long likeId);
 
-    PageUtils<LikeRecord> queryPageByUserId(Map<String, Object> params, Long userId);
+    PageUtils<LikeRecordVo> queryPageByUserId(Map<String, Object> params, Long userId);
 }
