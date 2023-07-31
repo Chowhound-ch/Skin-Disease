@@ -3,6 +3,7 @@ package edu.hfut.innovate.community.service.impl;
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hfut.innovate.common.renren.PageUtils;
@@ -129,6 +130,14 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
         commentService.removeByIds(commentIds);
         replyService.removeAllByCommentIds(commentIds);
     }
+
+    @Override
+    public void offsetCommentLikeCount(Long commentId, Integer offset) {
+        update(new LambdaUpdateWrapper<>(CommentEntity.class)
+                .eq(CommentEntity::getCommentId, commentId)
+                .setSql("likes = likes + " + offset));
+    }
+
 
     @Override
     public void run(ApplicationArguments args) {

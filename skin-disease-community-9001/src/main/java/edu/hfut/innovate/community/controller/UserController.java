@@ -68,39 +68,16 @@ public class UserController {
         return R.ok(Map.entry("token", token));
     }
 
-//    @ApiOperation(value = "用户详情")
-//    @GetMapping("/{user_id}")
-//    public R getCommentById(@PathVariable("user_id") Long userId){
-//        UserEntity userEntity = userService.getById(userId);
-//        if (userEntity == null){
-//            return R.error(404,  "用户不存在");
-//        }
-//        return R.ok(BeanUtil.copyProperties(userEntity, new UserVo()));
-//    }
-//    @ApiOperation(value = "点赞")
-//    @PostMapping("/like")
-//    public R like(
-//            @ApiParam(value = "", required = true)
-//            @RequestBody LikeRecord likeRecord){
-//        UserEntity userEntity = userService.getById(userId);
-//        if (userEntity == null){
-//            return R.error(404,  "用户不存在");
-//        }
-//        LikeRecord likeRecord = new LikeRecord();
-//        if (type.equals(CommunityTypeUtil.COMMENT)){
-//            likeRecordService
-//
-//        }else if (type.equals(CommunityTypeUtil.TOPIC)){
-//        }else if (type.equals(CommunityTypeUtil.REPLY)){
-//        }else {
-//            return R.error(403, "点赞类型错误");
-//        }
-//
-//
-//
-//
-//        return R.ok();
-//    }
+    @ApiOperation(value = "用户详情")
+    @GetMapping("/{user_id}")
+    public R getCommentById(@PathVariable("user_id") Long userId){
+        UserEntity userEntity = userService.getById(userId);
+        if (userEntity == null){
+            return R.error(404,  "用户不存在");
+        }
+        return R.ok(BeanUtil.copyProperties(userEntity, new UserVo()));
+    }
+
     /**
      * 列表
      */

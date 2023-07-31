@@ -2,6 +2,7 @@ package edu.hfut.innovate.community.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hfut.innovate.common.renren.PageUtils;
@@ -106,6 +107,13 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyDao, ReplyEntity> impleme
     @Override
     public void removeAllByCommentIds(Collection<Long> commentIds) {
         remove(new LambdaQueryWrapper<ReplyEntity>().in(ReplyEntity::getCommentId, commentIds));
+    }
+
+    @Override
+    public void offsetReplyLikeCount(Long replyId, Integer offset) {
+        update(new LambdaUpdateWrapper<ReplyEntity>()
+                .eq(ReplyEntity::getReplyId, replyId)
+                .setSql("likes = likes + " + offset));
     }
 
 }

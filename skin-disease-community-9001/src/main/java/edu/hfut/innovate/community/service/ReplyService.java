@@ -26,5 +26,7 @@ public interface ReplyService extends IService<ReplyEntity> {
     void removeByCommentId(Long commentId);
 
     void removeAllByCommentIds(Collection<Long> commentIds);
+
+    void offsetReplyLikeCount(Long replyId, Integer offset);
 }
 

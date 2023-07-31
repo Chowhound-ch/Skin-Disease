@@ -1,10 +1,12 @@
 package edu.hfut.innovate.community.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
 import edu.hfut.innovate.common.util.CollectionUtil;
 import edu.hfut.innovate.common.util.ItemSize;
 import edu.hfut.innovate.common.vo.community.CommentVo;
+import edu.hfut.innovate.community.entity.ReplyEntity;
 import edu.hfut.innovate.community.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,13 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
             commentService.removeAllByIdsWithReply(
                     CollectionUtil.getCollection(commentVos, CommentVo::getCommentId));
         }
+    }
+
+    @Override
+    public void offsetTopicLikeCount(Long topicId, Integer offset) {
+        update(new LambdaUpdateWrapper<TopicEntity>()
+                .eq(TopicEntity::getTopicId, topicId)
+                .setSql("likes = likes + " + offset));
     }
 
 }
