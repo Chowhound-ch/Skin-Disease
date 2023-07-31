@@ -3,13 +3,10 @@ package edu.hfut.innovate.community.controller;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.R;
 import edu.hfut.innovate.common.util.BeanUtil;
-import edu.hfut.innovate.common.util.CollectionUtil;
 import edu.hfut.innovate.common.util.ItemSize;
-import edu.hfut.innovate.common.vo.community.CommentVo;
 import edu.hfut.innovate.common.vo.community.TopicVo;
 import edu.hfut.innovate.common.vo.community.UserVo;
 import edu.hfut.innovate.community.entity.TopicEntity;
-import edu.hfut.innovate.community.entity.UserEntity;
 import edu.hfut.innovate.community.service.CommentService;
 import edu.hfut.innovate.community.service.TopicService;
 import edu.hfut.innovate.community.service.TopicTagService;
@@ -21,8 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 
 /**
@@ -47,37 +43,15 @@ public class TopicController {
      * 分页查询话题
      */
     @ApiOperation("分页查询话题")
-    @GetMapping("/page")
+    @GetMapping("/page/{user_id}")
 //    @RequiresPermissions("community:topic:list")
     public R list(
             @ApiParam("分页查询参数")
-            @RequestParam Map<String, Object> params){
-        PageUtils<TopicEntity> page = topicService.queryPage(params);
-        // 获取所有的TopicId
-        Collection<Long> topicIds = CollectionUtil.getCollection(page.getList(), TopicEntity::getTopicId);
-        // 根据TopicId分组
-        Map<Long, List<CommentVo>> commentVoMap = commentService.mapByTopicIds(topicIds, 2, 0);
+            @RequestParam Map<String, Object> params,
+            @PathVariable("user_id") Long userId){
+        PageUtils<TopicVo> page = topicService.queryPageByUserId(params, userId);
 
-        Map<Long, UserEntity> userEntityMap = userService.mapByIds(
-                // 获取所有的UserId
-                CollectionUtil.getCollection(page.getList(), TopicEntity::getUserId));
-        // 将UserEntity转换为UserVo
-        Map<Long, UserVo> userVoMap = userEntityMap.entrySet().stream()
-                .map(entry -> Map.entry(entry.getKey(), BeanUtil.copyProperties(entry.getValue(), new UserVo())))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-        Map<Long, List<String>> tagMap = topicTagService.mapByTopicIds(topicIds);
-
-        List<TopicVo> list = page.getList().stream().map(topicEntity -> {
-            TopicVo topicVo = BeanUtil.copyProperties(topicEntity, new TopicVo());
-            topicVo.setComments(commentVoMap.get(topicEntity.getTopicId()));
-            topicVo.setUser(userVoMap.get(topicEntity.getUserId()));
-            topicVo.setTags(tagMap.get(topicEntity.getTopicId()));
-
-            return topicVo;
-        }).toList();
-
-        return R.ok(new PageUtils<>(list, page.getTotalCount(), page.getPageSize(), page.getCurrPage()));
+        return R.ok(page);
     }
 
     @ApiOperation("根据话题id查询话题(详细信息)")

@@ -2,6 +2,7 @@ package edu.hfut.innovate.community.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import edu.hfut.innovate.common.renren.PageUtils;
+import edu.hfut.innovate.common.vo.community.TopicVo;
 import edu.hfut.innovate.community.entity.TopicEntity;
 
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.Map;
  */
 public interface TopicService extends IService<TopicEntity> {
 
-    PageUtils<TopicEntity> queryPage(Map<String, Object> params);
+    PageUtils<TopicVo> queryPageByUserId(Map<String, Object> params, Long userId);
 
     void removeTopicById(Long topicId);
 
