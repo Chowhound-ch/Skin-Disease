@@ -8,8 +8,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
 import edu.hfut.innovate.common.util.BeanUtil;
+import edu.hfut.innovate.common.util.CollectionUtil;
 import edu.hfut.innovate.common.util.CommunityTypeUtil;
 import edu.hfut.innovate.common.vo.community.LikeRecordVo;
+import edu.hfut.innovate.common.vo.community.UserVo;
 import edu.hfut.innovate.community.entity.LikeRecord;
 import edu.hfut.innovate.community.entity.TopicEntity;
 import edu.hfut.innovate.community.service.CommentService;
@@ -21,9 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,6 +48,19 @@ public class LikeRecordServiceImpl extends ServiceImpl<LikeRecordMapper, LikeRec
                 .toList();
         return new PageUtils<>(likeRecordVos, page.getTotal(), page.getSize(), page.getCurrent());
     }
+
+    @Override
+    public Set<Long> setOfLikedTopics(Collection<Long> topicIds, Long userId) {
+        List<LikeRecord> likeRecords = list(new LambdaQueryWrapper<LikeRecord>()
+                .in(LikeRecord::getDesId, topicIds)
+                .eq(LikeRecord::getDesType, CommunityTypeUtil.TOPIC_TYPE)
+                .eq(LikeRecord::getUserId, userId)
+        );
+
+        return likeRecords.stream().map(LikeRecord::getDesId).collect(Collectors.toSet());
+    }
+
+
     @Transactional
     @Override
     public void saveLikeRecord(LikeRecord likeRecord) {

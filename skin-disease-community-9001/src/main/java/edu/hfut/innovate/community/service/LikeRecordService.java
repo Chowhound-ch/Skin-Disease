@@ -5,8 +5,10 @@ import edu.hfut.innovate.common.vo.community.LikeRecordVo;
 import edu.hfut.innovate.community.entity.LikeRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface LikeRecordService extends IService<LikeRecord> {
 
@@ -19,4 +21,6 @@ public interface LikeRecordService extends IService<LikeRecord> {
     void removeLikeRecord(Long likeId);
 
     PageUtils<LikeRecordVo> queryPageByUserId(Map<String, Object> params, Long userId);
+
+    Set<Long> setOfLikedTopics(Collection<Long> topicIds, Long userId);
 }

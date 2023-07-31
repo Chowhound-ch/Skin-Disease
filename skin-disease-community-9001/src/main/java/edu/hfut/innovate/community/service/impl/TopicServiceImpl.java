@@ -15,16 +15,14 @@ import edu.hfut.innovate.common.vo.community.UserVo;
 import edu.hfut.innovate.community.dao.TopicDao;
 import edu.hfut.innovate.community.entity.TopicEntity;
 import edu.hfut.innovate.community.entity.UserEntity;
-import edu.hfut.innovate.community.service.CommentService;
-import edu.hfut.innovate.community.service.TopicService;
-import edu.hfut.innovate.community.service.TopicTagService;
-import edu.hfut.innovate.community.service.UserService;
+import edu.hfut.innovate.community.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -36,6 +34,11 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
     private UserService userService;
     @Autowired
     private TopicTagService topicTagService;
+    @Autowired
+    private LikeRecordService likeRecordService;
+    @Autowired
+    private CollectionRecordService collectionRecordService;
+
     @Override
     public PageUtils<TopicVo> queryPageByUserId(Map<String, Object> params, Long userId) {
         IPage<TopicEntity> page = this.page(
@@ -57,12 +60,18 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         Map<Long, List<String>> tagMap = topicTagService.mapByTopicIds(topicIds);
+        // 设置本人是否点赞，是否收藏
+        Set<Long> likeSet = likeRecordService.setOfLikedTopics(topicIds, userId);
+        Set<Long> collectionSet = collectionRecordService.setOfCollectedTopics(topicIds, userId);
+
 
         List<TopicVo> list = page.getRecords().stream().map(topicEntity -> {
             TopicVo topicVo = BeanUtil.copyProperties(topicEntity, new TopicVo());
             topicVo.setComments(commentVoMap.get(topicEntity.getTopicId()));
             topicVo.setUser(userVoMap.get(topicEntity.getUserId()));
             topicVo.setTags(tagMap.get(topicEntity.getTopicId()));
+            topicVo.setIsLike(likeSet.contains(topicEntity.getTopicId()) ? 1 : 0);
+            topicVo.setIsCollect(collectionSet.contains(topicEntity.getTopicId()) ? 1 : 0);
 
             return topicVo;
         }).toList();
