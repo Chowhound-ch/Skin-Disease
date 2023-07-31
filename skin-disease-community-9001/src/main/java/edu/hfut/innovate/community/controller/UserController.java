@@ -3,25 +3,16 @@ package edu.hfut.innovate.community.controller;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.R;
 import edu.hfut.innovate.common.util.BeanUtil;
-import edu.hfut.innovate.common.util.CommunityTypeUtil;
-import edu.hfut.innovate.common.util.ItemSize;
 import edu.hfut.innovate.common.util.TokenManager;
-import edu.hfut.innovate.common.vo.community.CommentVo;
 import edu.hfut.innovate.common.vo.community.UserVo;
 import edu.hfut.innovate.common.vo.user.LoginInfo;
-import edu.hfut.innovate.community.entity.CollectionRecord;
-import edu.hfut.innovate.community.entity.CommentEntity;
-import edu.hfut.innovate.community.entity.LikeRecord;
 import edu.hfut.innovate.community.entity.UserEntity;
-import edu.hfut.innovate.community.service.*;
+import edu.hfut.innovate.community.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -38,16 +29,6 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
-//    @Autowired
-//    private CommentService commentService;
-//    @Autowired
-//    private TopicTagService topicTagService;
-//    @Autowired
-//    private ReplyService replyService;
-    @Autowired
-    private LikeRecordService likeRecordService;
-    @Autowired
-    private CollectionRecordService collectionRecordService;
     @Autowired
     private TokenManager tokenManager;
 

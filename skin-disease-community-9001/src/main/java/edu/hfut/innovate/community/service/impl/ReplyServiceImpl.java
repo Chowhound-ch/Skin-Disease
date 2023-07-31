@@ -8,10 +8,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
 import edu.hfut.innovate.common.util.BeanUtil;
+import edu.hfut.innovate.common.util.CollectionUtil;
+import edu.hfut.innovate.common.util.CommunityTypeUtil;
 import edu.hfut.innovate.common.vo.community.ReplyVo;
 import edu.hfut.innovate.common.vo.community.UserVo;
 import edu.hfut.innovate.community.dao.ReplyDao;
 import edu.hfut.innovate.community.entity.ReplyEntity;
+import edu.hfut.innovate.community.service.LikeRecordService;
 import edu.hfut.innovate.community.service.ReplyService;
 import edu.hfut.innovate.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,8 @@ import java.util.stream.Stream;
 public class ReplyServiceImpl extends ServiceImpl<ReplyDao, ReplyEntity> implements ReplyService {
     @Autowired
     private UserService userService;
+    @Autowired
+    private LikeRecordService likeRecordService;
 
     @Override
     public PageUtils<ReplyEntity> queryPage(Map<String, Object> params) {
@@ -114,6 +119,20 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyDao, ReplyEntity> impleme
         update(new LambdaUpdateWrapper<ReplyEntity>()
                 .eq(ReplyEntity::getReplyId, replyId)
                 .setSql("likes = likes + " + offset));
+    }
+
+    @Override
+    public List<ReplyVo> listByCommentIdWithLikes(Long commentId, Long userId, Integer replyItemSize) {
+        List<ReplyVo> replyVos = listByCommentId(commentId, replyItemSize);
+        if (replyVos.isEmpty()) {
+            return Collections.emptyList();
+        }
+        // 获取所有的点赞信息
+        Collection<Long> ids = CollectionUtil.getCollection(replyVos, ReplyVo::getReplyId);
+        Set<Long> likeSet = likeRecordService.setOfLikedDesIds(ids, userId, CommunityTypeUtil.REPLY_TYPE);
+
+        replyVos.forEach(replyVo -> replyVo.setIsLiked(likeSet.contains(replyVo.getReplyId()) ? 1 : 0));
+        return replyVos;
     }
 
 }

@@ -8,6 +8,7 @@ import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
 import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.CollectionUtil;
+import edu.hfut.innovate.common.util.CommunityTypeUtil;
 import edu.hfut.innovate.common.util.ItemSize;
 import edu.hfut.innovate.common.vo.community.CommentVo;
 import edu.hfut.innovate.common.vo.community.TopicVo;
@@ -61,7 +62,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
 
         Map<Long, List<String>> tagMap = topicTagService.mapByTopicIds(topicIds);
         // 设置本人是否点赞，是否收藏
-        Set<Long> likeSet = likeRecordService.setOfLikedTopics(topicIds, userId);
+        Set<Long> likeSet = likeRecordService.setOfLikedDesIds(topicIds, userId, CommunityTypeUtil.TOPIC_TYPE);
         Set<Long> collectionSet = collectionRecordService.setOfCollectedTopics(topicIds, userId);
 
 
@@ -70,8 +71,8 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
             topicVo.setComments(commentVoMap.get(topicEntity.getTopicId()));
             topicVo.setUser(userVoMap.get(topicEntity.getUserId()));
             topicVo.setTags(tagMap.get(topicEntity.getTopicId()));
-            topicVo.setIsLike(likeSet.contains(topicEntity.getTopicId()) ? 1 : 0);
-            topicVo.setIsCollect(collectionSet.contains(topicEntity.getTopicId()) ? 1 : 0);
+            topicVo.setIsLiked(likeSet.contains(topicEntity.getTopicId()) ? 1 : 0);
+            topicVo.setIsCollected(collectionSet.contains(topicEntity.getTopicId()) ? 1 : 0);
 
             return topicVo;
         }).toList();
@@ -98,4 +99,19 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
                 .setSql("likes = likes + " + offset));
     }
 
+    @Override
+    public TopicVo getTopicById(Long topicId, Long userId) {
+        TopicEntity topicEntity = getById(topicId);
+        if (topicEntity == null) {
+            return null;
+        }
+        TopicVo topicVo = BeanUtil.copyProperties(topicEntity, new TopicVo());
+        topicVo.setTags(topicTagService.getByTopicId(topicId));
+        topicVo.setUser(BeanUtil.copyProperties(userService.getById(topicEntity.getUserId()), new UserVo()));
+        topicVo.setComments(commentService.getByTopicIdWithLikes(topicId, userId, ItemSize.ALL, ItemSize.PARTS_BY_LIKES));
+        topicVo.setIsLiked(likeRecordService.isLikedDesId(topicId, userId, CommunityTypeUtil.TOPIC_TYPE));
+
+
+        return topicVo;
+    }
 }

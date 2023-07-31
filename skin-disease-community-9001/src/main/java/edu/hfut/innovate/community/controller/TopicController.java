@@ -1,16 +1,9 @@
 package edu.hfut.innovate.community.controller;
 
-import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.R;
-import edu.hfut.innovate.common.util.BeanUtil;
-import edu.hfut.innovate.common.util.ItemSize;
 import edu.hfut.innovate.common.vo.community.TopicVo;
-import edu.hfut.innovate.common.vo.community.UserVo;
 import edu.hfut.innovate.community.entity.TopicEntity;
-import edu.hfut.innovate.community.service.CommentService;
 import edu.hfut.innovate.community.service.TopicService;
-import edu.hfut.innovate.community.service.TopicTagService;
-import edu.hfut.innovate.community.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -32,12 +25,6 @@ import java.util.Map;
 public class TopicController {
     @Autowired
     private TopicService topicService;
-    @Autowired
-    private CommentService commentService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private TopicTagService topicTagService;
 
     /**
      * 分页查询话题
@@ -49,22 +36,17 @@ public class TopicController {
             @ApiParam("分页查询参数")
             @RequestParam Map<String, Object> params,
             @PathVariable("user_id") Long userId){
-        PageUtils<TopicVo> page = topicService.queryPageByUserId(params, userId);
 
-        return R.ok(page);
+        return R.ok(topicService.queryPageByUserId(params, userId));
     }
 
     @ApiOperation("根据话题id查询话题(详细信息)")
-    @GetMapping("/{topicId}")
-    public R getTopic(@PathVariable("topicId") Long topicId) {
-        TopicEntity topicEntity = topicService.getById(topicId);
-        if (topicEntity == null) {
+    @GetMapping("/{topicId}/{userId}")
+    public R getTopic(@PathVariable("topicId") Long topicId, @PathVariable("userId") Long userId) {
+        TopicVo topicVo = topicService.getTopicById(topicId, userId);
+        if (topicVo == null) {
             return R.error("话题不存在");
         }
-        TopicVo topicVo = BeanUtil.copyProperties(topicEntity, new TopicVo());
-        topicVo.setTags(topicTagService.getByTopicId(topicId));
-        topicVo.setUser(BeanUtil.copyProperties(userService.getById(topicEntity.getUserId()), new UserVo()));
-        topicVo.setComments(commentService.getByTopicId(topicId, ItemSize.ALL, ItemSize.PARTS_BY_LIKES));
 
         return R.ok(topicVo);
     }

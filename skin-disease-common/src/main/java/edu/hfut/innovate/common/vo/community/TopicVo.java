@@ -58,9 +58,9 @@ public class TopicVo implements Serializable {
 	 * 
 	 */
 	@ApiModelProperty("是否被当前用户点赞")
-	private Integer isLike;
+	private Integer isLiked;
 	@ApiModelProperty("是否被当前用户收藏")
-	private Integer isCollect;
+	private Integer isCollected;
 
 	@ApiModelProperty("收藏数")
 	private Integer collect;

@@ -1,25 +1,23 @@
 package edu.hfut.innovate.community.service.impl;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
 import edu.hfut.innovate.common.util.BeanUtil;
-import edu.hfut.innovate.common.util.CollectionUtil;
 import edu.hfut.innovate.common.util.CommunityTypeUtil;
 import edu.hfut.innovate.common.vo.community.LikeRecordVo;
-import edu.hfut.innovate.common.vo.community.UserVo;
+import edu.hfut.innovate.community.dao.LikeRecordMapper;
 import edu.hfut.innovate.community.entity.LikeRecord;
-import edu.hfut.innovate.community.entity.TopicEntity;
 import edu.hfut.innovate.community.service.CommentService;
 import edu.hfut.innovate.community.service.LikeRecordService;
-import edu.hfut.innovate.community.dao.LikeRecordMapper;
 import edu.hfut.innovate.community.service.ReplyService;
 import edu.hfut.innovate.community.service.TopicService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,12 +26,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class LikeRecordServiceImpl extends ServiceImpl<LikeRecordMapper, LikeRecord>
-    implements LikeRecordService{
-    @Autowired
+    implements LikeRecordService, ApplicationRunner {
     private TopicService topicService;
-    @Autowired
     private CommentService commentService;
-    @Autowired
     private ReplyService replyService;
 
     @Override
@@ -50,14 +45,20 @@ public class LikeRecordServiceImpl extends ServiceImpl<LikeRecordMapper, LikeRec
     }
 
     @Override
-    public Set<Long> setOfLikedTopics(Collection<Long> topicIds, Long userId) {
+    public Set<Long> setOfLikedDesIds(Collection<Long> desIds, Long userId, Integer desType) {
         List<LikeRecord> likeRecords = list(new LambdaQueryWrapper<LikeRecord>()
-                .in(LikeRecord::getDesId, topicIds)
-                .eq(LikeRecord::getDesType, CommunityTypeUtil.TOPIC_TYPE)
+                .in(LikeRecord::getDesId, desIds)
+                .eq(LikeRecord::getDesType, desType)
                 .eq(LikeRecord::getUserId, userId)
         );
 
         return likeRecords.stream().map(LikeRecord::getDesId).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Integer isLikedDesId(Long desId, Long userId, Integer desType) {
+
+        return setOfLikedDesIds(Set.of(desId), userId, desType).size();
     }
 
 
@@ -104,6 +105,14 @@ public class LikeRecordServiceImpl extends ServiceImpl<LikeRecordMapper, LikeRec
         return new LambdaQueryWrapper<LikeRecord>().eq(LikeRecord::getUserId, userId)
                 .eq(LikeRecord::getDesId, desId)
                 .eq(LikeRecord::getDesType, desType);
+    }
+
+    // 解决循环依赖
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        topicService = SpringUtil.getBean(TopicService.class);
+        commentService = SpringUtil.getBean(CommentService.class);
+        replyService = SpringUtil.getBean(ReplyService.class);
     }
 }
 

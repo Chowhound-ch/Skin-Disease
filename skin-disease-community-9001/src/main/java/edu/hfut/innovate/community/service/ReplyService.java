@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public interface ReplyService extends IService<ReplyEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils<ReplyEntity> queryPage(Map<String, Object> params);
 
 
     Map<Long, List<ReplyVo>> mapByCommentIdsWithSizeOf(Collection<Long> idSet, Integer size);
@@ -28,5 +28,7 @@ public interface ReplyService extends IService<ReplyEntity> {
     void removeAllByCommentIds(Collection<Long> commentIds);
 
     void offsetReplyLikeCount(Long replyId, Integer offset);
+
+    List<ReplyVo> listByCommentIdWithLikes(Long commentId, Long userId, Integer replyItemSize);
 }
 

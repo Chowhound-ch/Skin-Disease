@@ -33,7 +33,6 @@ public interface CommentService extends IService<CommentEntity> {
      * @since : 2023/07/28 - 17:11
      */
 
-    List<CommentVo> getByTopicId(Long topicId, Integer commentItemSize, Integer replyItemSize);
 
     void removeByIdWithReply(Long commentId);
 
@@ -41,6 +40,13 @@ public interface CommentService extends IService<CommentEntity> {
     void removeAllByIdsWithReply(Collection<Long> commentIds);
 
     void offsetCommentLikeCount(Long commentId, Integer offset);
+
+    List<CommentVo> getByTopicId(Long topicId, Integer commentItemSize, Integer replyItemSize);
+
+
+    List<CommentVo> getByTopicIdWithLikes(Long topicId, Long userId, Integer commentItemSize, Integer replyItemSize);
+
+    CommentVo getCommentById(Long commentId, Long userId);
 
 //    void addLike(Long userId, Long likedId);
 }

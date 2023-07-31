@@ -19,5 +19,7 @@ public interface TopicService extends IService<TopicEntity> {
     void removeTopicById(Long topicId);
 
     void offsetTopicLikeCount(Long topicId, Integer offset);
+
+    TopicVo getTopicById(Long topicId, Long userId);
 }
 

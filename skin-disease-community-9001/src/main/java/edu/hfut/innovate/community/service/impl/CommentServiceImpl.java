@@ -9,12 +9,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
 import edu.hfut.innovate.common.util.BeanUtil;
+import edu.hfut.innovate.common.util.CollectionUtil;
+import edu.hfut.innovate.common.util.CommunityTypeUtil;
+import edu.hfut.innovate.common.util.ItemSize;
 import edu.hfut.innovate.common.vo.community.CommentVo;
 import edu.hfut.innovate.common.vo.community.ReplyVo;
 import edu.hfut.innovate.common.vo.community.UserVo;
 import edu.hfut.innovate.community.dao.CommentDao;
 import edu.hfut.innovate.community.entity.CommentEntity;
+import edu.hfut.innovate.community.entity.UserEntity;
 import edu.hfut.innovate.community.service.CommentService;
+import edu.hfut.innovate.community.service.LikeRecordService;
 import edu.hfut.innovate.community.service.ReplyService;
 import edu.hfut.innovate.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +41,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
     private ReplyService replyService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private LikeRecordService likeRecordService;
+    // 自身的引用
     // 解决事务中调用自己的方法不生效的问题
     private CommentService commentService;
+
 
     @Override
     public PageUtils<CommentEntity> queryPage(Map<String, Object> params) {
@@ -50,7 +59,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
     }
 
     @Override
-    public Map<Long, List<CommentVo>> mapByTopicIds(Collection<Long> idSet, Integer commentItemSize, Integer replyItemSize) {
+    public Map<Long, List<CommentVo>> mapByTopicIds(Collection<Long> idSet,
+                                                    Integer commentItemSize,
+                                                    Integer replyItemSize) {
         List<CommentEntity> commentEntities = this.list(
                 new LambdaQueryWrapper<CommentEntity>().in(CommentEntity::getTopicId, idSet));
 
@@ -118,6 +129,38 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
         return mapByTopicIds(Set.of(topicId), commentItemSize, replyItemSize).get(topicId);
     }
 
+    @Override
+    public List<CommentVo> getByTopicIdWithLikes(Long topicId, Long userId, Integer commentItemSize, Integer replyItemSize) {
+        List<CommentVo> commentVos = getByTopicId(topicId, commentItemSize, replyItemSize);
+        // 获取用户点赞的评论id
+        Collection<Long> ids = CollectionUtil.getCollection(commentVos, CommentVo::getCommentId);
+        Set<Long> likedDesIds = likeRecordService.setOfLikedDesIds(ids, userId, CommunityTypeUtil.COMMENT_TYPE);
+        commentVos.forEach(commentVo -> {
+            commentVo.setIsLiked(likedDesIds.contains(commentVo.getCommentId()) ? 1 : 0);
+        });
+
+        return commentVos;
+    }
+
+    @Override
+    public CommentVo getCommentById(Long commentId, Long userId) {
+        CommentEntity commentEntity = getById(commentId);
+        if (commentEntity == null){
+            return null;
+        }
+        CommentVo commentVo = BeanUtil.copyProperties(commentEntity, new CommentVo());
+        // 设置UserVo
+        UserEntity userEntity = userService.getById(commentEntity.getUserId());
+        commentVo.setUser(BeanUtil.copyProperties(userEntity, new UserVo()));
+
+        // 设置ReplyVo
+        commentVo.setReplies(replyService.listByCommentIdWithLikes(commentId, userId, ItemSize.ALL));
+        // 设置是否点赞
+        commentVo.setIsLiked(likeRecordService.isLikedDesId(commentId, userId, CommunityTypeUtil.COMMENT_TYPE));
+
+        return commentVo;
+    }
+
     @Transactional
     @Override
     public void removeByIdWithReply(Long commentId) {
@@ -142,5 +185,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
     @Override
     public void run(ApplicationArguments args) {
         commentService = SpringUtil.getBean(CommentService.class);
+        likeRecordService = SpringUtil.getBean(LikeRecordService.class);
     }
 }

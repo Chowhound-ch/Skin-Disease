@@ -44,6 +44,9 @@ public class CommentVo implements Serializable {
     @ApiModelProperty("评论内容")
     private String content;
 
+    @ApiModelProperty("是否被当前用户点赞")
+    private Integer isLiked;
+
     @ApiModelProperty("评论的回复(所有)")
     private List<ReplyVo> replies;
 

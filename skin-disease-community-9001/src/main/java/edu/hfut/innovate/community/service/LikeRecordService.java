@@ -22,5 +22,7 @@ public interface LikeRecordService extends IService<LikeRecord> {
 
     PageUtils<LikeRecordVo> queryPageByUserId(Map<String, Object> params, Long userId);
 
-    Set<Long> setOfLikedTopics(Collection<Long> topicIds, Long userId);
+    Set<Long> setOfLikedDesIds(Collection<Long> desIds, Long userId, Integer desType);
+
+    Integer isLikedDesId(Long desId, Long userId, Integer desType);
 }

@@ -54,6 +54,8 @@ public class ReplyVo implements Serializable {
 	 */
 	@ApiModelProperty("是否回复层主")
 	private Integer isReplyTop;
+	@ApiModelProperty("是否被当前用户点赞")
+	private Integer isLiked;
 	/**
 	 * 
 	 */
