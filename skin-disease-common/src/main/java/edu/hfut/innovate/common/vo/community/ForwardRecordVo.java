@@ -19,7 +19,7 @@ public class ForwardRecordVo implements Serializable {
      * 
      */
     @ApiModelProperty("转发记录的key")
-    private Long forwardKey;
+    private String forwardKey;
 
     /**
      * 

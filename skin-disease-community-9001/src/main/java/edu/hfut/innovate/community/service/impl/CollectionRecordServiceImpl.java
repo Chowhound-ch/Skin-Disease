@@ -54,7 +54,12 @@ public class CollectionRecordServiceImpl extends ServiceImpl<CollectionRecordMap
     @Override
     public void removeCollectionRecord(Long collectionId) {
 
-        topicService.offsetTopicCollectionCount(getById(collectionId).getTopicId(), -1);
+        CollectionRecord collectionRecord = getById(collectionId);
+        if (collectionRecord == null) { // 没有收藏记录
+            return;
+        }
+
+        topicService.offsetTopicCollectionCount(collectionRecord.getTopicId(), -1);
         removeById(collectionId);
 
     }
