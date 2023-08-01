@@ -16,7 +16,7 @@ public interface LikeRecordService extends IService<LikeRecord> {
 
     LikeRecord getLikeRecord(Long userId, Long desId, Integer desType);
 
-    List<LikeRecord> listTopicLikedByUserId(Long userId);
+    List<LikeRecordVo> listTopicLikedByUserId(Long userId);
 
     void removeLikeRecord(Long likeId);
 

@@ -5,6 +5,7 @@ import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.vo.community.TopicVo;
 import edu.hfut.innovate.community.entity.TopicEntity;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -21,5 +22,9 @@ public interface TopicService extends IService<TopicEntity> {
     void offsetTopicLikeCount(Long topicId, Integer offset);
 
     TopicVo getTopicById(Long topicId, Long userId);
+
+    void offsetTopicCollectionCount(Long topicId, Integer offset);
+
+    Map<Long, TopicVo> mapByTopicIds(Collection<Long> topicIds);
 }
 

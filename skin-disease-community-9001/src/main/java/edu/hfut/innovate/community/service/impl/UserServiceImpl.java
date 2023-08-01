@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
+import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.CollectionUtil;
+import edu.hfut.innovate.common.vo.community.UserVo;
 import edu.hfut.innovate.community.dao.UserDao;
 import edu.hfut.innovate.community.entity.UserEntity;
 import edu.hfut.innovate.community.service.UserService;
@@ -39,9 +41,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Override
-    public Map<Long, UserEntity> mapByIds(Collection<Long> ids) {
+    public Map<Long, UserVo> mapByIds(Collection<Long> ids) {
 
-        return CollectionUtil.getMap(this.listByIds(ids), UserEntity::getUserId);
+        return CollectionUtil.getMap(this.listByIds(ids).stream()
+                .map(userEntity -> BeanUtil.copyProperties(userEntity, new UserVo()))
+                .toList(), UserVo::getUserId);
     }
 
 }

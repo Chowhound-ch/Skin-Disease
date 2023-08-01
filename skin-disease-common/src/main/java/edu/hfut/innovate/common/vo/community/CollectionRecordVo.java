@@ -26,7 +26,7 @@ public class CollectionRecordVo implements Serializable {
      * 
      */
     @ApiModelProperty("收藏的帖子")
-    private Long topicId;
+    private TopicVo topic;
 
     /**
      *

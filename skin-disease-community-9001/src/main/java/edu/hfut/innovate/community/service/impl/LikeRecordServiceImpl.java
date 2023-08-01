@@ -84,10 +84,15 @@ public class LikeRecordServiceImpl extends ServiceImpl<LikeRecordMapper, LikeRec
     }
 
     @Override
-    public List<LikeRecord> listTopicLikedByUserId(Long userId) {
-        return list(new LambdaQueryWrapper<LikeRecord>().eq(LikeRecord::getUserId, userId));
+    public List<LikeRecordVo> listTopicLikedByUserId(Long userId) {
+        List<LikeRecord> likeRecordList = list(new LambdaQueryWrapper<LikeRecord>().eq(LikeRecord::getUserId, userId));
+
+        return likeRecordList.stream()
+                .map(likeRecord -> BeanUtil.copyProperties(likeRecord, new LikeRecordVo()))
+                .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public void removeLikeRecord(Long likeId) {
         LikeRecord likeRecord = getById(likeId);
@@ -98,6 +103,8 @@ public class LikeRecordServiceImpl extends ServiceImpl<LikeRecordMapper, LikeRec
         } else if (Objects.equals(likeRecord.getDesType(), CommunityTypeUtil.REPLY_TYPE)) {
             replyService.offsetReplyLikeCount(likeRecord.getDesId(), -1);
         }
+        removeById(likeId);
+
     }
 
 
@@ -109,7 +116,7 @@ public class LikeRecordServiceImpl extends ServiceImpl<LikeRecordMapper, LikeRec
 
     // 解决循环依赖
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         topicService = SpringUtil.getBean(TopicService.class);
         commentService = SpringUtil.getBean(CommentService.class);
         replyService = SpringUtil.getBean(ReplyService.class);

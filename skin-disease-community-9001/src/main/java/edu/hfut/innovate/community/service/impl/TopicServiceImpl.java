@@ -15,7 +15,6 @@ import edu.hfut.innovate.common.vo.community.TopicVo;
 import edu.hfut.innovate.common.vo.community.UserVo;
 import edu.hfut.innovate.community.dao.TopicDao;
 import edu.hfut.innovate.community.entity.TopicEntity;
-import edu.hfut.innovate.community.entity.UserEntity;
 import edu.hfut.innovate.community.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -52,13 +52,10 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
         // 根据TopicId分组
         Map<Long, List<CommentVo>> commentVoMap = commentService.mapByTopicIds(topicIds, 2, 0);
 
-        Map<Long, UserEntity> userEntityMap = userService.mapByIds(
+        Map<Long, UserVo> userVoMap = userService.mapByIds(
                 // 获取所有的UserId
                 CollectionUtil.getCollection(page.getRecords(), TopicEntity::getUserId));
-        // 将UserEntity转换为UserVo
-        Map<Long, UserVo> userVoMap = userEntityMap.entrySet().stream()
-                .map(entry -> Map.entry(entry.getKey(), BeanUtil.copyProperties(entry.getValue(), new UserVo())))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
 
         Map<Long, List<String>> tagMap = topicTagService.mapByTopicIds(topicIds);
         // 设置本人是否点赞，是否收藏
@@ -113,5 +110,30 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
 
 
         return topicVo;
+    }
+
+    @Override
+    public void offsetTopicCollectionCount(Long topicId, Integer offset) {
+        update(new LambdaUpdateWrapper<TopicEntity>()
+                .eq(TopicEntity::getTopicId, topicId)
+                .setSql("collect = collect + " + offset));
+    }
+
+    @Override
+    public Map<Long, TopicVo> mapByTopicIds(Collection<Long> topicIds) {
+
+        List<TopicEntity> topicEntities = listByIds(topicIds);
+
+        Collection<Long> userIds = CollectionUtil.getCollection(topicEntities, TopicEntity::getUserId);
+        Map<Long, UserVo> userVoMap = userService.mapByIds(userIds);
+        Map<Long, List<String>> tagMap = topicTagService.mapByTopicIds(topicIds);
+
+        return topicEntities.stream().map(topicEntity -> {
+            TopicVo topicVo = BeanUtil.copyProperties(topicEntity, new TopicVo());
+            topicVo.setUser(userVoMap.get(topicEntity.getUserId()));
+            topicVo.setTags(tagMap.get(topicEntity.getTopicId()));
+            return topicVo;
+        }).collect(Collectors.toMap(TopicVo::getTopicId, Function.identity()));
+
     }
 }

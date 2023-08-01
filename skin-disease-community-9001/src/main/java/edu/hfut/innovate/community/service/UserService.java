@@ -2,10 +2,10 @@ package edu.hfut.innovate.community.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import edu.hfut.innovate.common.renren.PageUtils;
+import edu.hfut.innovate.common.vo.community.UserVo;
 import edu.hfut.innovate.community.entity.UserEntity;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,6 +27,6 @@ public interface UserService extends IService<UserEntity> {
      *     key: 用户id
      *     value: 用户信息
      */
-    Map<Long, UserEntity> mapByIds(Collection<Long> ids);
+    Map<Long, UserVo> mapByIds(Collection<Long> ids);
 }
 

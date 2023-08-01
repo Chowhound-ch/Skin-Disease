@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author : Chowhound
@@ -55,14 +54,12 @@ public class LikeRecordController {
     @ApiOperation(value = "查询点赞记录")
     @GetMapping("/{user_id}")
     public R get(
-            @ApiParam(value = "点赞记录id", required = true)
+            @ApiParam(value = "用户id", required = true)
             @PathVariable("user_id") Long userId){
 
-        List<LikeRecord> likeRecordList = likeRecordService.listTopicLikedByUserId(userId);
+        List<LikeRecordVo> likeRecordList = likeRecordService.listTopicLikedByUserId(userId);
 
-        return R.ok(likeRecordList.stream()
-                .map(likeRecord -> BeanUtil.copyProperties(likeRecord, new LikeRecordVo()))
-                .collect(Collectors.toList()));
+        return R.ok(likeRecordList);
     }
 
     @ApiOperation("分页查询点赞记录")
