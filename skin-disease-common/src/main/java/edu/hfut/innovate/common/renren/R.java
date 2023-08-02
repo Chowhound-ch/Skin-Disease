@@ -1,7 +1,5 @@
 package edu.hfut.innovate.common.renren;
 
-import io.swagger.models.auth.In;
-
 import java.io.Serial;
 import java.util.HashMap;
 

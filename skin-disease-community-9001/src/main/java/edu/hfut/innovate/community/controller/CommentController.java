@@ -1,8 +1,10 @@
 package edu.hfut.innovate.community.controller;
 
+import edu.hfut.innovate.common.domain.dto.community.CommentDto;
 import edu.hfut.innovate.common.domain.entity.UserAuth;
 import edu.hfut.innovate.common.domain.vo.community.CommentVo;
 import edu.hfut.innovate.common.renren.R;
+import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.TokenManager;
 import edu.hfut.innovate.community.entity.CommentEntity;
 import edu.hfut.innovate.community.service.CommentService;
@@ -43,8 +45,9 @@ public class CommentController {
      * 发布评论
      */
     @PostMapping("/save")
-    public R save(@RequestBody CommentEntity comment){
-		commentService.save(comment);
+    public R save(@RequestBody CommentDto comment){
+        CommentEntity commentEntity = BeanUtil.copyProperties(comment, new CommentEntity());
+        commentService.save(commentEntity);
 
         return R.ok();
     }

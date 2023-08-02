@@ -4,17 +4,16 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import edu.hfut.innovate.common.domain.vo.community.CollectionRecordVo;
+import edu.hfut.innovate.common.domain.vo.community.TopicVo;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
 import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.CollectionUtil;
-import edu.hfut.innovate.common.domain.vo.community.CollectionRecordVo;
-import edu.hfut.innovate.common.domain.vo.community.TopicVo;
 import edu.hfut.innovate.community.dao.CollectionRecordMapper;
 import edu.hfut.innovate.community.entity.CollectionRecord;
 import edu.hfut.innovate.community.service.CollectionRecordService;
 import edu.hfut.innovate.community.service.TopicService;
-import edu.hfut.innovate.community.service.UserService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
@@ -108,7 +107,6 @@ public class CollectionRecordServiceImpl extends ServiceImpl<CollectionRecordMap
     @Override
     public void run(ApplicationArguments args) {
         topicService = SpringUtil.getBean(TopicService.class);
-        UserService userService = SpringUtil.getBean(UserService.class);
     }
 }
 

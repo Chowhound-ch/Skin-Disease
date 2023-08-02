@@ -1,7 +1,6 @@
 package edu.hfut.innovate.community.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import edu.hfut.innovate.common.util.entity.LogicEntity;
 import lombok.Data;

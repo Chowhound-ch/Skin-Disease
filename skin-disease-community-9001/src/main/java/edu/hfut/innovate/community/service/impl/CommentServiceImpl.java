@@ -135,9 +135,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
         // 获取用户点赞的评论id
         Collection<Long> ids = CollectionUtil.getCollection(commentVos, CommentVo::getCommentId);
         Set<Long> likedDesIds = likeRecordService.setOfLikedDesIds(ids, userId, CommunityTypeUtil.COMMENT_TYPE);
-        commentVos.forEach(commentVo -> {
-            commentVo.setIsLiked(likedDesIds.contains(commentVo.getCommentId()) ? 1 : 0);
-        });
+        commentVos.forEach(commentVo -> commentVo.setIsLiked(likedDesIds.contains(commentVo.getCommentId()) ? 1 : 0));
 
         return commentVos;
     }

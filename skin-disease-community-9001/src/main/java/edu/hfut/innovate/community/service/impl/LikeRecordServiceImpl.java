@@ -77,13 +77,6 @@ public class LikeRecordServiceImpl extends ServiceImpl<LikeRecordMapper, LikeRec
     }
 
     @Override
-    public LikeRecord getLikeRecord(Long userId, Long desId, Integer desType) {
-        return getOne(new LambdaQueryWrapper<LikeRecord>().eq(LikeRecord::getUserId, userId)
-                .eq(LikeRecord::getDesId, desId)
-                .eq(LikeRecord::getDesType, desType));
-    }
-
-    @Override
     public List<LikeRecordVo> listTopicLikedByUserId(Long userId) {
         List<LikeRecord> likeRecordList = list(new LambdaQueryWrapper<LikeRecord>().eq(LikeRecord::getUserId, userId));
 
