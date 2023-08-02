@@ -1,4 +1,4 @@
-package edu.hfut.innovate.common.dto.community;
+package edu.hfut.innovate.common.domain.dto.community;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

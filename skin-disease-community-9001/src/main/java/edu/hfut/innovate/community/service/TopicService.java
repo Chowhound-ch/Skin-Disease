@@ -2,7 +2,7 @@ package edu.hfut.innovate.community.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import edu.hfut.innovate.common.renren.PageUtils;
-import edu.hfut.innovate.common.vo.community.TopicVo;
+import edu.hfut.innovate.common.domain.vo.community.TopicVo;
 import edu.hfut.innovate.community.entity.TopicEntity;
 
 import java.util.Collection;
@@ -26,5 +26,7 @@ public interface TopicService extends IService<TopicEntity> {
     void offsetTopicCollectionCount(Long topicId, Integer offset);
 
     Map<Long, TopicVo> mapByTopicIds(Collection<Long> topicIds);
+
+    void addForwardCount(Long topicId);
 }
 

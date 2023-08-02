@@ -9,7 +9,7 @@ import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
 import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.CommunityTypeUtil;
-import edu.hfut.innovate.common.vo.community.LikeRecordVo;
+import edu.hfut.innovate.common.domain.vo.community.LikeRecordVo;
 import edu.hfut.innovate.community.dao.LikeRecordMapper;
 import edu.hfut.innovate.community.entity.LikeRecord;
 import edu.hfut.innovate.community.service.CommentService;

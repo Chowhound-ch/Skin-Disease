@@ -2,6 +2,7 @@ package edu.hfut.innovate.common.controller;
 
 import edu.hfut.innovate.common.renren.R;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -24,6 +25,6 @@ public class GlobalExceptionHandler {
         if (e instanceof BadSqlGrammarException) {
             return R.error();
         }
-        return R.error(e.getMessage());
+        return R.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
     }
 }

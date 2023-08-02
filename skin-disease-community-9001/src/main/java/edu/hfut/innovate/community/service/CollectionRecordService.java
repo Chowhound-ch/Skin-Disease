@@ -1,7 +1,7 @@
 package edu.hfut.innovate.community.service;
 
 import edu.hfut.innovate.common.renren.PageUtils;
-import edu.hfut.innovate.common.vo.community.CollectionRecordVo;
+import edu.hfut.innovate.common.domain.vo.community.CollectionRecordVo;
 import edu.hfut.innovate.community.entity.CollectionRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 

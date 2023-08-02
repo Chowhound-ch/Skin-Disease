@@ -1,4 +1,4 @@
-package edu.hfut.innovate.common.vo.community;
+package edu.hfut.innovate.common.domain.vo.community;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

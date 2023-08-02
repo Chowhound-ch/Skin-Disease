@@ -2,7 +2,7 @@ package edu.hfut.innovate.community.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import edu.hfut.innovate.common.renren.PageUtils;
-import edu.hfut.innovate.common.vo.community.UserVo;
+import edu.hfut.innovate.common.domain.vo.community.UserVo;
 import edu.hfut.innovate.community.entity.UserEntity;
 
 import java.util.Collection;

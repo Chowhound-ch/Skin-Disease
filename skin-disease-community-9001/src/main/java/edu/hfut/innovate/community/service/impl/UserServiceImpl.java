@@ -8,7 +8,7 @@ import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
 import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.CollectionUtil;
-import edu.hfut.innovate.common.vo.community.UserVo;
+import edu.hfut.innovate.common.domain.vo.community.UserVo;
 import edu.hfut.innovate.community.dao.UserDao;
 import edu.hfut.innovate.community.entity.UserEntity;
 import edu.hfut.innovate.community.service.UserService;

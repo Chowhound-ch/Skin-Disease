@@ -10,19 +10,16 @@ import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.CollectionUtil;
 import edu.hfut.innovate.common.util.CommunityTypeUtil;
 import edu.hfut.innovate.common.util.ItemSize;
-import edu.hfut.innovate.common.vo.community.CommentVo;
-import edu.hfut.innovate.common.vo.community.TopicVo;
-import edu.hfut.innovate.common.vo.community.UserVo;
+import edu.hfut.innovate.common.domain.vo.community.CommentVo;
+import edu.hfut.innovate.common.domain.vo.community.TopicVo;
+import edu.hfut.innovate.common.domain.vo.community.UserVo;
 import edu.hfut.innovate.community.dao.TopicDao;
 import edu.hfut.innovate.community.entity.TopicEntity;
 import edu.hfut.innovate.community.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -122,6 +119,10 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
     @Override
     public Map<Long, TopicVo> mapByTopicIds(Collection<Long> topicIds) {
 
+        if (topicIds == null || topicIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
         List<TopicEntity> topicEntities = listByIds(topicIds);
 
         Collection<Long> userIds = CollectionUtil.getCollection(topicEntities, TopicEntity::getUserId);
@@ -135,5 +136,12 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
             return topicVo;
         }).collect(Collectors.toMap(TopicVo::getTopicId, Function.identity()));
 
+    }
+
+    @Override
+    public void addForwardCount(Long topicId) {
+        update(new LambdaUpdateWrapper<TopicEntity>()
+                .eq(TopicEntity::getTopicId, topicId)
+                .setSql("forward = forward + 1"));
     }
 }

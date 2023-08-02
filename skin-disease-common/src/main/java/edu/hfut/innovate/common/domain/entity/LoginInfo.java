@@ -1,4 +1,4 @@
-package edu.hfut.innovate.common.vo.user;
+package edu.hfut.innovate.common.domain.entity;
 
 import lombok.Data;
 
@@ -10,7 +10,6 @@ import lombok.Data;
  */
 @Data
 public class LoginInfo {
-
     private String username;
 
     private String phone;

@@ -1,4 +1,4 @@
-package edu.hfut.innovate.common.vo.community;
+package edu.hfut.innovate.common.domain.dto.community;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -6,7 +6,6 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 
@@ -15,19 +14,14 @@ import java.util.Date;
  */
 @ApiModel("回复(评论的回复或者回复的回复)")
 @Data
-public class ReplyVo implements Serializable {
+public class ReplyDto implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * 
-	 */
-	private Long replyId;
 	/**
 	 * 
 	 */
 	@ApiModelProperty("回复者")
-	private UserVo user;
+	private Long userId;
 
 	@ApiModelProperty("被回复的帖子")
 	private Long commentId;
@@ -35,17 +29,12 @@ public class ReplyVo implements Serializable {
 	 * 
 	 */
 	@ApiModelProperty("被回复者")
-	private UserVo replied;
+	private Long replied;
 	/**
 	 * 
 	 */
 	@ApiModelProperty("回复内容")
 	private String content;
-	/**
-	 * 
-	 */
-	@ApiModelProperty("点赞数")
-	private Integer likes;
 	/**
 	 * 1：回复层主（评论），0：回复其他人（其他人的回复）
 	 *
@@ -54,15 +43,5 @@ public class ReplyVo implements Serializable {
 	 */
 	@ApiModelProperty("是否回复层主")
 	private Integer isReplyTop;
-	@ApiModelProperty("是否被当前用户点赞")
-	private Integer isLiked;
-	/**
-	 * 
-	 */
-	private Date updateTime;
-	/**
-	 * 
-	 */
-	private Date createTime;
 
 }

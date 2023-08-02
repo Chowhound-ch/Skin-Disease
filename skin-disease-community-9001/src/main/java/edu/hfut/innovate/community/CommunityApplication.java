@@ -7,7 +7,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableSwagger2
-@MapperScan("edu.hfut.innovate.community.dao")
+@MapperScan({"edu.hfut.innovate.community.dao", "edu.hfut.innovate.common.mapper"})
 @EnableDiscoveryClient
 @SpringBootApplication(scanBasePackages = "edu.hfut.innovate")
 public class CommunityApplication {

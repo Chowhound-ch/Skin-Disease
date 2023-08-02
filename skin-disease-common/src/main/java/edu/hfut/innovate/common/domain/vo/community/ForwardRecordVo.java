@@ -1,17 +1,20 @@
-package edu.hfut.innovate.common.dto.community;
+package edu.hfut.innovate.common.domain.vo.community;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
 
-@ApiModel("转发记录")
 @Data
-public class ForwardRecordDto implements Serializable {
+public class ForwardRecordVo implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private Long forwardId;
+
     /**
      * 
      */
@@ -24,6 +27,10 @@ public class ForwardRecordDto implements Serializable {
     @ApiModelProperty("转发者")
     private Long userId;
 
+    /**
+     * 
+     */
     @ApiModelProperty("转发的目标id")
     private Long topicId;
+
 }

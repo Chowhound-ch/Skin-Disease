@@ -4,13 +4,14 @@ import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.R;
 import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.TokenManager;
-import edu.hfut.innovate.common.vo.community.UserVo;
-import edu.hfut.innovate.common.vo.user.LoginInfo;
+import edu.hfut.innovate.common.domain.vo.community.UserVo;
+import edu.hfut.innovate.common.domain.entity.LoginInfo;
 import edu.hfut.innovate.community.entity.UserEntity;
 import edu.hfut.innovate.community.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -37,10 +38,10 @@ public class UserController {
      */
     @PostMapping("/login/phone")
     @ApiOperation("登录")
-    public R login(LoginInfo info){
+    public R login(@RequestBody LoginInfo info){
         UserEntity userEntity = userService.login(info.getUsername(), info.getPhone());
         if (userEntity == null){
-            return R.error("用户名或密码错误");
+            return R.error(HttpStatus.FORBIDDEN.value(), "用户名或密码错误");
         }
         UserVo userVo = BeanUtil.copyProperties(userEntity, new UserVo());
 

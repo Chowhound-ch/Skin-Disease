@@ -1,21 +1,17 @@
-package edu.hfut.innovate.common.vo.community;
+package edu.hfut.innovate.common.domain.dto.community;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
+@ApiModel("收藏记录")
 @Data
-public class CollectionRecordVo implements Serializable {
+public class CollectionRecordDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    /**
-     * 
-     */
-    private Long collectionId;
-
     /**
      * 
      */
@@ -26,14 +22,6 @@ public class CollectionRecordVo implements Serializable {
      * 
      */
     @ApiModelProperty("收藏的帖子")
-    private TopicVo topic;
+    private Long topicId;
 
-    /**
-     *
-     */
-    private Date updateTime;
-    /**
-     *
-     */
-    private Date createTime;
 }
