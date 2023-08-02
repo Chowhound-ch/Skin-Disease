@@ -3,11 +3,7 @@ package edu.hfut.innovate.common.util;
 import cn.hutool.core.date.DateUtil;
 import edu.hfut.innovate.common.jackson.JacksonUtil;
 import edu.hfut.innovate.common.vo.community.UserVo;
-import io.jsonwebtoken.CompressionCodecs;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -55,7 +51,14 @@ public class TokenManager {
 
     public Boolean isTokenExist(String token) {
         // 判断jwt的token是否过期
-        Date expiration = Jwts.parser().setSigningKey(tokenSignKey).parseClaimsJws(token).getBody()
+        Jws<Claims> jws;
+        try {
+            jws = Jwts.parser().setSigningKey(tokenSignKey).parseClaimsJws(token);
+        } catch (Exception e) {
+            return false;
+        }
+
+        Date expiration = jws.getBody()
                 .getExpiration();
 
         return expiration == null || expiration.before(DateUtil.date());
