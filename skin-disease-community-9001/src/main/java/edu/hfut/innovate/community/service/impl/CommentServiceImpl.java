@@ -2,19 +2,15 @@ package edu.hfut.innovate.community.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import edu.hfut.innovate.common.renren.PageUtils;
-import edu.hfut.innovate.common.renren.Query;
+import edu.hfut.innovate.common.domain.vo.community.CommentVo;
+import edu.hfut.innovate.common.domain.vo.community.ReplyVo;
+import edu.hfut.innovate.common.domain.vo.community.UserVo;
 import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.CollectionUtil;
 import edu.hfut.innovate.common.util.CommunityTypeUtil;
 import edu.hfut.innovate.common.util.ItemSize;
-import edu.hfut.innovate.common.domain.vo.community.CommentVo;
-import edu.hfut.innovate.common.domain.vo.community.ReplyVo;
-import edu.hfut.innovate.common.domain.vo.community.UserVo;
 import edu.hfut.innovate.community.dao.CommentDao;
 import edu.hfut.innovate.community.entity.CommentEntity;
 import edu.hfut.innovate.community.entity.UserEntity;
@@ -46,17 +42,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
     // 自身的引用
     // 解决事务中调用自己的方法不生效的问题
     private CommentService commentService;
-
-
-    @Override
-    public PageUtils<CommentEntity> queryPage(Map<String, Object> params) {
-        IPage<CommentEntity> page = this.page(
-                new Query<CommentEntity>().getPage(params),
-                new QueryWrapper<>()
-        );
-
-        return new PageUtils<>(page);
-    }
 
     @Override
     public Map<Long, List<CommentVo>> mapByTopicIds(Collection<Long> idSet,

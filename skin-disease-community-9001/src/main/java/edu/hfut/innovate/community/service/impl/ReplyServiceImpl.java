@@ -1,17 +1,13 @@
 package edu.hfut.innovate.community.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import edu.hfut.innovate.common.renren.PageUtils;
-import edu.hfut.innovate.common.renren.Query;
+import edu.hfut.innovate.common.domain.vo.community.ReplyVo;
+import edu.hfut.innovate.common.domain.vo.community.UserVo;
 import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.CollectionUtil;
 import edu.hfut.innovate.common.util.CommunityTypeUtil;
-import edu.hfut.innovate.common.domain.vo.community.ReplyVo;
-import edu.hfut.innovate.common.domain.vo.community.UserVo;
 import edu.hfut.innovate.community.dao.ReplyDao;
 import edu.hfut.innovate.community.entity.ReplyEntity;
 import edu.hfut.innovate.community.service.LikeRecordService;
@@ -32,16 +28,6 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyDao, ReplyEntity> impleme
     private UserService userService;
     @Autowired
     private LikeRecordService likeRecordService;
-
-    @Override
-    public PageUtils<ReplyEntity> queryPage(Map<String, Object> params) {
-        IPage<ReplyEntity> page = this.page(
-                new Query<ReplyEntity>().getPage(params),
-                new QueryWrapper<>()
-        );
-
-        return new PageUtils<>(page);
-    }
 
     @Override
     public Map<Long, List<ReplyVo>> mapByCommentIdsWithSizeOf(Collection<Long> idSet, Integer size) {
