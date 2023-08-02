@@ -7,4 +7,6 @@ import edu.hfut.innovate.community.entity.ForwardRecord;
 public interface ForwardRecordService extends IService<ForwardRecord> {
 
     ForwardRecordVo getForwardRecordByUserId(Long topicId, Long userId);
+
+    ForwardRecordVo getForwardRecordByKey(String forwardKey);
 }

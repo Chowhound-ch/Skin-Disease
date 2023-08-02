@@ -21,18 +21,21 @@ public class ForwardRecordServiceImpl extends ServiceImpl<ForwardRecordMapper, F
 
         ForwardRecord forwardRecord = this.getOne(new LambdaQueryWrapper<ForwardRecord>()
                 .eq(ForwardRecord::getForwardKey, forwardKey));
-//        ForwardRecord forwardRecord = ;
-//        forwardRecord.setForwardKey(forwardKey);
 
         if (forwardRecord == null) {
             forwardRecord = new ForwardRecord(userId, topicId, forwardKey);
-            save(forwardRecord);
+            this.save(forwardRecord);
         }
 
-        this.saveOrUpdate(forwardRecord, new LambdaQueryWrapper<ForwardRecord>()
+        return BeanUtil.copyProperties(forwardRecord, new ForwardRecordVo());
+    }
+
+    @Override
+    public ForwardRecordVo getForwardRecordByKey(String forwardKey) {
+        ForwardRecord record = getOne(new LambdaQueryWrapper<ForwardRecord>()
                 .eq(ForwardRecord::getForwardKey, forwardKey));
 
-        return BeanUtil.copyProperties(forwardRecord, new ForwardRecordVo());
+        return BeanUtil.copyProperties(record, new ForwardRecordVo());
     }
 }
 

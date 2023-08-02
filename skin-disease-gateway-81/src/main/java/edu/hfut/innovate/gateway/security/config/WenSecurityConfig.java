@@ -1,6 +1,5 @@
 package edu.hfut.innovate.gateway.security.config;
 
-import edu.hfut.innovate.common.util.TokenManager;
 import edu.hfut.innovate.gateway.security.CustomPasswordEncoder;
 import edu.hfut.innovate.gateway.security.CustomReactiveAuthenticationManager;
 import edu.hfut.innovate.gateway.security.CustomServerAccessDeniedHandler;
@@ -36,7 +35,6 @@ public class WenSecurityConfig {
         return new CustomPasswordEncoder();
     }
 
-    // TODO 暂时关闭
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
         // 认证管理器
@@ -53,7 +51,7 @@ public class WenSecurityConfig {
                 // 任何请求需要身份认证
 //                .anyExchange().authenticated().and()
                 .anyExchange().permitAll().and()
-                .formLogin()//TODO 测试使用
+                .formLogin()
                 .and().csrf().disable()
                 .addFilterAt(jwtTokenAuthenticationFilter, SecurityWebFiltersOrder.HTTP_BASIC);
         return http.build();

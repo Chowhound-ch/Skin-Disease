@@ -1,13 +1,9 @@
 package edu.hfut.innovate.community.controller;
 
-import edu.hfut.innovate.common.dto.community.ForwardRecordDto;
 import edu.hfut.innovate.common.renren.R;
 import edu.hfut.innovate.community.service.ForwardRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author : Chowhound
@@ -21,11 +17,16 @@ public class ForwardRecordController {
     private ForwardRecordService forwardRecordService;
 
     @GetMapping("/")
-    public R getForwardRecordByUserId(
-            @RequestBody ForwardRecordDto forwardRecordDto){
+    public R getForwardRecordByUserId(@RequestParam("user_id") Long userId,
+                                      @RequestParam("topic_id") Long topicId){
 
-        return R.ok(forwardRecordService.getForwardRecordByUserId(
-                forwardRecordDto.getTopicId(), forwardRecordDto.getUserId()));
+        return R.ok(forwardRecordService.getForwardRecordByUserId(topicId, userId));
+    }
+
+    @GetMapping("/{forward_key}")
+    public R saveForwardRecord(@PathVariable("forward_key") String forwardKey){
+
+        return R.ok(forwardRecordService.getForwardRecordByKey(forwardKey));
     }
 
 
