@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -41,6 +42,9 @@ public class JacksonUtil{
         return objectMapper.getTypeFactory().constructCollectionType(List.class, elementClasses);
     }
 
+    public static JavaType getMapOf(Class<?> keyClass, Class<?> valueClass) {
+        return objectMapper.getTypeFactory().constructMapType(Map.class, keyClass, valueClass);
+    }
     /**
      * 将content转换为json字符串再调用{@code ObjectMapper。readTree(String)}方法
      *

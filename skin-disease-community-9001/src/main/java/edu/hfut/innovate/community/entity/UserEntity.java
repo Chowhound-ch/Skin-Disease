@@ -28,6 +28,12 @@ public class UserEntity extends BaseEntity implements Serializable {
 	 */
 	@TableId
 	private Long userId;
+
+
+	private String openid;
+
+	private String nickName;
+
 	/**
 	 * 
 	 */

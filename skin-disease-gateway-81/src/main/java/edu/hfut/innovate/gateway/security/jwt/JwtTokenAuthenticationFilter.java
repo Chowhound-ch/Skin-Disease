@@ -42,6 +42,10 @@ public class JwtTokenAuthenticationFilter implements WebFilter {
         if (StrUtil.isNotBlank(token) && tokenManager.isTokenExist(token)){
 
             UserAuth auth = tokenManager.getUserFromToken(token);
+            // token存在，但是用户不存在，返回一个空的认证信息
+            if (auth == null) {
+                return new UsernamePasswordAuthenticationToken(null, null);
+            }
 
             return new UsernamePasswordAuthenticationToken(auth.getUsername(), auth.getPhone(), Collections.emptyList());
         }

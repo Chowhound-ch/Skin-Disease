@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -26,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class TokenManager {
     // token过期时间,默认为7天
-    private static final long tokenExpireTime = 60 * 60 * 24 * 7;
+    private static final Long tokenExpireTime = 60 * 60 * 24 * 7L;
     public static final String HEADER_PREFIX = "Bearer ";
     @Autowired
     private AuthService authService;
@@ -39,10 +38,14 @@ public class TokenManager {
     @Value("${custom.token.sign-key}")
     private String tokenSignKey;
 
-    public String createToken(UserVo userVo) {
+    public String createTokenWithExpireTime(UserVo userVo, Long expireTime) {
 
-        String token = Jwts.builder().setSubject(userVo.getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + tokenExpireTime))
+        JwtBuilder jwtBuilder = Jwts.builder().setSubject(userVo.getUsername());
+        if (expireTime != null){
+            jwtBuilder.setExpiration(new Date(System.currentTimeMillis() + expireTime));
+
+        }
+        String token = jwtBuilder
                 .signWith(SignatureAlgorithm.HS512, tokenSignKey)
                 .compressWith(CompressionCodecs.DEFLATE)
                 .compact();
@@ -51,15 +54,32 @@ public class TokenManager {
 
         UserAuth userAuth = BeanUtil.copyProperties(userVo, new UserAuth());
         userAuth.setRoles(authStrList);
-        redisTemplate.opsForValue().set(
-                token, JacksonUtil.toJsonString(userAuth), tokenExpireTime, TimeUnit.SECONDS);
+
+        // 将token存入redis中, 不设置过期时间
+        redisTemplate.opsForValue().set(token, JacksonUtil.toJsonString(userAuth));
 
         return token;
+    }
+
+    public String createToken(UserVo userVo) {
+        return createTokenWithExpireTime(userVo, tokenExpireTime);
+    }
+
+    public String createTokenNoLimit(UserVo userVo) {
+        return createTokenWithExpireTime(userVo, null);
     }
 
     public String getUsernameFromToken(String token) {
         return Jwts.parser().setSigningKey(tokenSignKey).parseClaimsJws(token).getBody().getSubject();
     }
+
+    public void deleteToken(String token) {
+        redisTemplate.delete(token);
+    }
+    public void deleteTokenWithBearer(String tokenWithBearer) {
+        redisTemplate.delete(resolveToken(tokenWithBearer));
+    }
+
     /**
      * 从token中获取用户名, token格式为Bearer token
      *
@@ -70,8 +90,8 @@ public class TokenManager {
         return getUsernameFromToken(resolveToken(tokenWithBearer));
     }
     public UserAuth getUserFromToken(String token) {
-        String userVoJson = redisTemplate.opsForValue().get(token);
-        return JacksonUtil.readValue(userVoJson, UserAuth.class);
+        return JacksonUtil.readValue(
+                redisTemplate.opsForValue().get(token), UserAuth.class);
     }
     /**
      * 从token中获取用户信息, token格式为Bearer token
@@ -81,6 +101,14 @@ public class TokenManager {
      */
     public UserAuth getUserFromTokenWithBearer(String tokenWithBearer) {
         return getUserFromToken(resolveToken(tokenWithBearer));
+    }
+
+    public UserVo getUserVoFromToken(String token) {
+        return JacksonUtil.readValue(
+                redisTemplate.opsForValue().get(token), UserVo.class);
+    }
+    public UserVo getUserVoFromTokenWithBearer(String tokenWithBearer) {
+        return getUserVoFromToken(resolveToken(tokenWithBearer));
     }
 
     public String resolveToken(String tokenWithBearer) {
@@ -107,12 +135,12 @@ public class TokenManager {
 
 
 
-    public static void main(String[] args) {
-        String token = Jwts.builder().setSubject("root")
-                .signWith(SignatureAlgorithm.HS512, "B*1$w9^OrEn%nIRcT_ke7if5R:-*EMnOW")
-                .compressWith(CompressionCodecs.DEFLATE)
-                .compact();
-        System.out.println(token);
-    }
+//    public static void main(String[] args) {
+//        String token = Jwts.builder().setSubject("root")
+//                .signWith(SignatureAlgorithm.HS512, "B*1$w9^OrEn%nIRcT_ke7if5R:-*EMnOW")
+//                .compressWith(CompressionCodecs.DEFLATE)
+//                .compact();
+//        System.out.println(token);
+//    }
 
 }

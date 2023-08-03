@@ -27,11 +27,21 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Override
+    public UserEntity wechatLogin(String code) {
+        return this.getOne(new LambdaQueryWrapper<UserEntity>().eq(UserEntity::getUsername, code));
+    }
+
+    @Override
     public Map<Long, UserVo> mapByIds(Collection<Long> ids) {
 
         return CollectionUtil.getMap(this.listByIds(ids).stream()
                 .map(userEntity -> BeanUtil.copyProperties(userEntity, new UserVo()))
                 .toList(), UserVo::getUserId);
+    }
+
+    @Override
+    public void register(UserEntity userEntity) {
+
     }
 
 }

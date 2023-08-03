@@ -15,4 +15,6 @@ public class LoginInfo {
     private String phone;
 
     private String password;
+
+    private String jsCode;
 }

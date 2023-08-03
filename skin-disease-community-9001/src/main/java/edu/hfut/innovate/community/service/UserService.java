@@ -16,6 +16,8 @@ public interface UserService extends IService<UserEntity> {
 
     UserEntity login(String username, String phone);
 
+    UserEntity wechatLogin(String code);
+
     /**
      * @author : Chowhound
      * @since : 2023/07/27 - 20:04
@@ -25,5 +27,7 @@ public interface UserService extends IService<UserEntity> {
      *     value: 用户信息
      */
     Map<Long, UserVo> mapByIds(Collection<Long> ids);
+
+    void register(UserEntity userEntity);
 }
 
