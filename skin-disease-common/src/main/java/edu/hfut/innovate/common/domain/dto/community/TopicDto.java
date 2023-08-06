@@ -34,7 +34,13 @@ public class TopicDto implements Serializable {
 	@ApiModelProperty("内容")
 	private String content;
 
+	@ApiModelProperty("是否匿名")
+	private Integer isAnonymous;
+
+	@ApiModelProperty("位置的id")
+	private Long locationId;
+
 
 	@ApiModelProperty("话题的标签")
-	private List<String> tags;
+	private List<Long> tagIds;
 }

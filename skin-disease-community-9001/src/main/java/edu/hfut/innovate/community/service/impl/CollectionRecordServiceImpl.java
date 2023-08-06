@@ -97,6 +97,13 @@ public class CollectionRecordServiceImpl extends ServiceImpl<CollectionRecordMap
         return new PageUtils<>(collectionRecordVos, page.getTotal(), page.getSize(), page.getCurrent());
     }
 
+    @Override
+    public Integer isCollectedTopic(Long topicId, Long userId) {
+
+        CollectionRecord collectionRecord = getOne(getEQWrapper(userId, topicId));
+        return collectionRecord == null ? 0 : 1;
+    }
+
 
     private LambdaQueryWrapper<CollectionRecord> getEQWrapper(Long userId, Long topicId) {
         return new LambdaQueryWrapper<CollectionRecord>()

@@ -61,4 +61,16 @@ public class UserVo implements Serializable {
 	 * 
 	 */
 	private Date createTime;
+
+	public static UserVo anonymousUser() {
+		UserVo userVo = new UserVo();
+		userVo.setUserId(0L);
+		userVo.setUsername("匿名用户");
+		userVo.setPhone("00000000000");
+		userVo.setSex(2);
+		userVo.setAge(0);
+		userVo.setAvatar("https://innovate-1300566518.cos.ap-nanjing.myqcloud.com/anonymous.png");
+		userVo.setLikes(0);
+		return userVo;
+	}
 }

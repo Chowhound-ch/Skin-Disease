@@ -9,6 +9,9 @@ import org.springframework.beans.BeanUtils;
 public class BeanUtil {
 
     public static <T> T copyProperties(Object source, T targetClass) {
+        if (source == null) {
+            return null;
+        }
         BeanUtils.copyProperties(source, targetClass);
         return targetClass;
     }

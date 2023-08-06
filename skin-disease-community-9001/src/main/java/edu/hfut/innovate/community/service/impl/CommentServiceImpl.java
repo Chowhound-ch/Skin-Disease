@@ -117,6 +117,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
     @Override
     public List<CommentVo> getByTopicIdWithLikes(Long topicId, Long userId, Integer commentItemSize, Integer replyItemSize) {
         List<CommentVo> commentVos = getByTopicId(topicId, commentItemSize, replyItemSize);
+        if (commentVos == null || commentVos.isEmpty()){
+            return Collections.emptyList();
+        }
         // 获取用户点赞的评论id
         Collection<Long> ids = CollectionUtil.getCollection(commentVos, CommentVo::getCommentId);
         Set<Long> likedDesIds = likeRecordService.setOfLikedDesIds(ids, userId, CommunityTypeUtil.COMMENT_TYPE);

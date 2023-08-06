@@ -40,6 +40,12 @@ public class TopicEntity extends BaseEntity implements Serializable {
 	 * 
 	 */
 	private String content;
+
+	private Integer isAnonymous;
+
+	private String anonymousName;
+
+	private Long locationId;
 	/**
 	 * 
 	 */

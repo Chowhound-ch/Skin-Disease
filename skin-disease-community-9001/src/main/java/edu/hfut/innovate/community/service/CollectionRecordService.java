@@ -21,4 +21,6 @@ public interface CollectionRecordService extends IService<CollectionRecord> {
     List<CollectionRecordVo> listTopicCollectedByUserId(Long userId);
 
     PageUtils<CollectionRecordVo> queryPageByUserId(Map<String, Object> params, Long userId);
+
+    Integer isCollectedTopic(Long topicId, Long userId);
 }

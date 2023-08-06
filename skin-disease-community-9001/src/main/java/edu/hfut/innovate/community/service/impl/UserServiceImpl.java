@@ -7,6 +7,7 @@ import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.CollectionUtil;
 import edu.hfut.innovate.community.dao.UserDao;
 import edu.hfut.innovate.community.entity.UserEntity;
+import edu.hfut.innovate.community.exception.UserHasRegistered;
 import edu.hfut.innovate.community.service.UserService;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     @Override
     public UserEntity wechatLogin(String code) {
-        return this.getOne(new LambdaQueryWrapper<UserEntity>().eq(UserEntity::getUsername, code));
+        return this.getOne(new LambdaQueryWrapper<UserEntity>().eq(UserEntity::getOpenid, code));
     }
 
     @Override
@@ -41,7 +42,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     @Override
     public void register(UserEntity userEntity) {
-
+        if (this.getOne(new LambdaQueryWrapper<UserEntity>()
+                .eq(UserEntity::getOpenid, userEntity.getOpenid())) != null) {
+            throw new UserHasRegistered("该用户已经注册过了");
+        }
+        this.save(userEntity);
     }
 
 }

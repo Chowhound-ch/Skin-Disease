@@ -34,6 +34,12 @@ public class TopicVo implements Serializable {
 	 */
 	@ApiModelProperty("用户")
 	private UserVo user;
+
+	@ApiModelProperty("是否匿名")
+	private Integer isAnonymous;
+
+	@ApiModelProperty("位置的id")
+	private TopicLocationVo location;
 	/**
 	 * 
 	 */
@@ -66,7 +72,7 @@ public class TopicVo implements Serializable {
 	private Integer collect;
 
 	@ApiModelProperty("话题的标签")
-	private List<String> tags;
+	private List<TopicTagVo> tags;
 	@ApiModelProperty("话题的评论")
 	private List<CommentVo> comments;
 

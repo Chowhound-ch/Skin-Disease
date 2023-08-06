@@ -1,6 +1,5 @@
 package edu.hfut.innovate.community.controller;
 
-import edu.hfut.innovate.common.domain.dto.community.UserDto;
 import edu.hfut.innovate.common.domain.dto.community.WeChatUserInfoDto;
 import edu.hfut.innovate.common.domain.entity.LoginInfo;
 import edu.hfut.innovate.common.domain.vo.community.UserVo;
@@ -9,6 +8,7 @@ import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.MiniProgramUtil;
 import edu.hfut.innovate.common.util.TokenManager;
 import edu.hfut.innovate.community.entity.UserEntity;
+import edu.hfut.innovate.community.exception.UserHasRegistered;
 import edu.hfut.innovate.community.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,6 +48,7 @@ public class UserController {
     @Autowired
     private MiniProgramUtil miniProgramUtil;
 
+    // region 微信小程序登录
     @PostMapping("/login/wechat")
     @ApiOperation("微信小程序登录")
     public R wechatLogin(@RequestBody LoginInfo info){
@@ -74,15 +75,21 @@ public class UserController {
     @PostMapping("/register/wechat")
     @ApiOperation("微信小程序授权")
     public R wechatEmpower(@RequestBody WeChatUserInfoDto info){
+        String openId = miniProgramUtil.getOpenId(info.getJsCode());
+        if (openId == null){
+            log.error("jsCode无效");
+            return R.error(HttpStatus.FORBIDDEN.value(), "未传入jsCode或jsCode无效");
+        }
 
         UserEntity userEntity = new UserEntity();
         userEntity.setAvatar(info.getAvatarUrl());
         userEntity.setNickName(info.getNickName());
         userEntity.setSex(2); // 2: 未知
+        userEntity.setOpenid(openId);
 
         try {
-            userService.save(userEntity);
-        } catch (Exception e) {
+            userService.register(userEntity);
+        } catch (UserHasRegistered e) {
             log.error("用户已存在");
             return R.error(HttpStatus.FORBIDDEN.value(), "用户已存在");
         }
@@ -111,6 +118,8 @@ public class UserController {
         return R.ok(Map.entry("token", token));
     }
 
+    // endregion
+
     @ApiOperation(value = "用户详情")
     @GetMapping("/{user_id}")
     public R getCommentById(@PathVariable("user_id") Long userId){
@@ -120,14 +129,4 @@ public class UserController {
         }
         return R.ok(BeanUtil.copyProperties(userEntity, new UserVo()));
     }
-
-    @ApiOperation(value = "注册")
-    @PostMapping("/register")
-    public R register(@RequestBody UserDto userDto){
-        UserEntity userEntity = BeanUtil.copyProperties(userDto, new UserEntity());
-
-        userService.register(userEntity);
-        return R.ok();
-    }
-
 }

@@ -1,6 +1,8 @@
 package edu.hfut.innovate.community.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import edu.hfut.innovate.common.domain.vo.community.TopicTagVo;
+import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.CollectionUtil;
 import edu.hfut.innovate.community.dao.TopicTagDao;
 import edu.hfut.innovate.community.entity.TopicTagEntity;
@@ -23,23 +25,28 @@ public class TopicTagServiceImpl extends ServiceImpl<TopicTagDao, TopicTagEntity
     private TopicTagRelationService topicTagRelationService;
 
     @Override
-    public Map<Long, List<String>> mapByTopicIds(Collection<Long> topicIds) {
+    public Map<Long, List<TopicTagVo>> mapByTopicIds(Collection<Long> topicIds) {
 
         Map<Long, List<TopicTagRelationEntity>> mapByTopicIds = topicTagRelationService.mapByTopicIds(topicIds);
         Set<Long> tagIds = mapByTopicIds.entrySet().stream()
                 .flatMap(entry -> entry.getValue().stream())
                 .map(TopicTagRelationEntity::getTagId)
                 .collect(Collectors.toSet());
-
+        if (tagIds.isEmpty()) {
+            return Map.of();
+        }
         Map<Long, TopicTagEntity> topicTagEntityMap = CollectionUtil.getMap(this.listByIds(tagIds), TopicTagEntity::getTagId);
 
-        return mapByTopicIds.entrySet().stream().map( entry -> Map.entry(entry.getKey(), entry.getValue().stream()
-                .map(topicTagRelationEntity -> topicTagEntityMap.get(topicTagRelationEntity.getTagId()).getName())
-                .collect(Collectors.toList()))).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return mapByTopicIds.entrySet().stream()
+                .map( entry -> Map.entry(entry.getKey(), entry.getValue().stream()
+                        .map(topicTagRelationEntity ->
+                                BeanUtil.copyProperties(topicTagEntityMap.get(topicTagRelationEntity.getTagId()), new TopicTagVo()))
+                        .toList()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override
-    public List<String> getByTopicId(Long topicId) {
+    public List<TopicTagVo> getByTopicId(Long topicId) {
         return mapByTopicIds(Set.of(topicId)).get(topicId);
     }
 

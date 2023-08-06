@@ -44,7 +44,8 @@ public class WenSecurityConfig {
                 // 设置认证规则
                 .authorizeExchange( exchangeSpec -> exchangeSpec
                         .pathMatchers(HttpMethod.OPTIONS).permitAll()
-                        .pathMatchers("/community/*/login/**").permitAll()
+                        .pathMatchers("/community/user/login/*").permitAll()
+                        .pathMatchers("/community/user/register/*").permitAll()
                         // 任何请求需要身份认证
                         .anyExchange().access(accessDecision))
                 // 异常处理
