@@ -24,6 +24,8 @@ public class UserAuth {
      *
      */
     private String username;
+
+    private String openid;
     /**
      *
      */

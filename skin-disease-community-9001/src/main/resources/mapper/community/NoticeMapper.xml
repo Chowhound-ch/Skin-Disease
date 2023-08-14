@@ -13,10 +13,4 @@
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
     </resultMap>
-
-    <sql id="Base_Column_List">
-        notice_id,name,title,
-        administrator_id,create_time,update_time,
-        is_delete,content
-    </sql>
 </mapper>

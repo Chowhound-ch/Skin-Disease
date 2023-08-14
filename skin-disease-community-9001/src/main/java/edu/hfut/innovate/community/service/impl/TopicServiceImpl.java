@@ -37,6 +37,8 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
     private CollectionRecordService collectionRecordService;
     @Autowired
     private TopicLocationService topicLocationService;
+    @Autowired
+    private
     // endregion
 
     @Transactional
@@ -186,5 +188,12 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
         update(new LambdaUpdateWrapper<TopicEntity>()
                 .eq(TopicEntity::getTopicId, topicId)
                 .setSql("forward = forward + 1"));
+    }
+
+    @Override
+    public List<TopicVo> search(String keyword, Long userId) {
+
+
+
     }
 }

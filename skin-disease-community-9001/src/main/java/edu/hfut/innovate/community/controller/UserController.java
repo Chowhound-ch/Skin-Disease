@@ -1,5 +1,6 @@
 package edu.hfut.innovate.community.controller;
 
+import edu.hfut.innovate.common.domain.dto.community.UserDto;
 import edu.hfut.innovate.common.domain.dto.community.WeChatUserInfoDto;
 import edu.hfut.innovate.common.domain.entity.LoginInfo;
 import edu.hfut.innovate.common.domain.vo.community.UserVo;
@@ -129,4 +130,17 @@ public class UserController {
         }
         return R.ok(BeanUtil.copyProperties(userEntity, new UserVo()));
     }
+
+    @ApiOperation(value = "更新用户信息")
+    @PostMapping("/update")
+    public R updateUserInfo(@RequestBody UserDto userDto,
+                            @RequestHeader("Authorization") String token){
+        UserVo userVo = tokenManager.getUserVoFromTokenWithBearer(token);
+        UserEntity userEntity = BeanUtil.copyProperties(userDto, new UserEntity());
+        userEntity.setUserId(userVo.getUserId());
+        userEntity.setLikes(null);
+        userService.updateById(userEntity);
+        return R.ok();
+    }
+
 }

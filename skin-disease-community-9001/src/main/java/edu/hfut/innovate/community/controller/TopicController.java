@@ -122,4 +122,15 @@ public class TopicController {
         return R.ok();
     }
 
+
+    @ApiOperation("模糊查询")
+    @GetMapping("/search")
+    public R search(@RequestParam("keyword") String keyword,
+                    @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        UserAuth auth = tokenManager.getUserFromTokenWithBearer(token);
+
+//        topicService.
+        return R.ok(topicService.search(keyword, auth.getUserId()));
+    }
+
 }

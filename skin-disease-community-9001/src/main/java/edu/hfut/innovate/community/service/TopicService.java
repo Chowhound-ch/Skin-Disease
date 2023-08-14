@@ -6,6 +6,7 @@ import edu.hfut.innovate.common.domain.vo.community.TopicVo;
 import edu.hfut.innovate.community.entity.TopicEntity;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,5 +29,7 @@ public interface TopicService extends IService<TopicEntity> {
     Map<Long, TopicVo> mapByTopicIds(Collection<Long> topicIds);
 
     void addForwardCount(Long topicId);
+
+    List<TopicVo> search(String keyword, Long userId);
 }
 

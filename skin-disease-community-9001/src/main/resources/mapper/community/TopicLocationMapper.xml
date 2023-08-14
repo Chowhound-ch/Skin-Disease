@@ -9,8 +9,4 @@
             <result property="locationName" column="location_name" jdbcType="VARCHAR"/>
             <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
     </resultMap>
-
-    <sql id="Base_Column_List">
-        location_id,location_name,is_delete
-    </sql>
 </mapper>

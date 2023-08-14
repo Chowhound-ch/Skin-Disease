@@ -10,11 +10,14 @@ import edu.hfut.innovate.common.service.AuthService;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -23,12 +26,13 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 @Component
-public class TokenManager {
+public class TokenManager implements ApplicationRunner {
     // token过期时间,默认为7天
-    private static final Long tokenExpireTime = 60 * 60 * 24 * 7L;
+    private static final Long tokenExpireSecond = 60 * 60 * 24 * 7L;
     public static final String HEADER_PREFIX = "Bearer ";
     @Autowired
     private AuthService authService;
+
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -55,14 +59,15 @@ public class TokenManager {
         UserAuth userAuth = BeanUtil.copyProperties(userVo, new UserAuth());
         userAuth.setRoles(authStrList);
 
-        // 将token存入redis中, 不设置过期时间
-        redisTemplate.opsForValue().set(token, JacksonUtil.toJsonString(userAuth));
+        // 将token存入redis中
+        redisTemplate.opsForValue().set(token, JacksonUtil.toJsonString(userAuth),
+                tokenExpireSecond * 2, TimeUnit.SECONDS);
 
         return token;
     }
 
     public String createToken(UserVo userVo) {
-        return createTokenWithExpireTime(userVo, tokenExpireTime);
+        return createTokenWithExpireTime(userVo, tokenExpireSecond * 1000);
     }
 
     public String createTokenNoLimit(UserVo userVo) {
@@ -133,6 +138,10 @@ public class TokenManager {
         return expiration == null || expiration.after(DateUtil.date());
     }
 
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+
+    }
 
 
 //    public static void main(String[] args) {
