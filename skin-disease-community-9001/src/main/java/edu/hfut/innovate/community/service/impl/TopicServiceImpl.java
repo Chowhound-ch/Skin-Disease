@@ -3,6 +3,8 @@ package edu.hfut.innovate.community.service.impl;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import edu.hfut.innovate.common.domain.es.ElasticTopicVo;
+import edu.hfut.innovate.common.domain.es.HighlightVo;
 import edu.hfut.innovate.common.domain.vo.community.*;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
@@ -13,7 +15,12 @@ import edu.hfut.innovate.common.util.ItemSize;
 import edu.hfut.innovate.community.dao.TopicDao;
 import edu.hfut.innovate.community.entity.TopicEntity;
 import edu.hfut.innovate.community.service.*;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +45,8 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
     @Autowired
     private TopicLocationService topicLocationService;
     @Autowired
-    private
+    private ElasticsearchRestTemplate elasticsearchTemplate;
+
     // endregion
 
     @Transactional
@@ -191,9 +199,35 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
     }
 
     @Override
-    public List<TopicVo> search(String keyword, Long userId) {
+    public List<HighlightVo<TopicVo>> search(String keyword, Long userId) {
+        NativeSearchQueryBuilder builder = new NativeSearchQueryBuilder();
 
+        builder.withQuery(QueryBuilders.multiMatchQuery(keyword,
+                "title", "content", "tags.name", "user.username", "comments.content"));
 
+        HighlightBuilder highlightBuilder = new HighlightBuilder()
+                .field("title").field("content").field("tags.name")
+                .field("user.username").field("comments.content")
+                .preTags("<span style='color:red'>").postTags("</span>");
+        builder.withHighlightBuilder(highlightBuilder);
+        SearchHits<ElasticTopicVo> hits = elasticsearchTemplate.search(builder.build(), ElasticTopicVo.class);
 
+        return hits.get().map(hit -> {
+            ElasticTopicVo elasticTopicVo = hit.getContent();
+            TopicVo topicVo = BeanUtil.copyProperties(elasticTopicVo, new TopicVo());
+
+            topicVo.setUser(BeanUtil.copyProperties(elasticTopicVo.getUser(), new UserVo()));
+            topicVo.setTags(BeanUtil.copyPropertiesList(elasticTopicVo.getTags(), TopicTagVo.class));
+            topicVo.setLocation(BeanUtil.copyProperties(elasticTopicVo.getLocation(), new TopicLocationVo()));
+
+            List<CommentVo> commentVos = elasticTopicVo.getComments().stream().map(elasticCommentVo -> {
+                CommentVo commentVo = BeanUtil.copyProperties(elasticCommentVo, new CommentVo());
+                commentVo.setUser(BeanUtil.copyProperties(elasticCommentVo.getUser(), new UserVo()));
+                return commentVo;
+            }).toList();
+
+            topicVo.setComments(commentVos);
+            return new HighlightVo<>(topicVo, hit.getHighlightFields());
+        }).toList();
     }
 }

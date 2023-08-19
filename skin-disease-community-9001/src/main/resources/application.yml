@@ -5,3 +5,7 @@ spring:
   jackson:
     serialization:
       write-dates-as-timestamps: true
+  elasticsearch:
+    uris: http://cloud100:9200
+    username: elastic
+    password: 123456

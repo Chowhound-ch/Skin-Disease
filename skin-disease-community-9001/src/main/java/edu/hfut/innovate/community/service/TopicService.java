@@ -1,6 +1,7 @@
 package edu.hfut.innovate.community.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import edu.hfut.innovate.common.domain.es.HighlightVo;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.domain.vo.community.TopicVo;
 import edu.hfut.innovate.community.entity.TopicEntity;
@@ -30,6 +31,6 @@ public interface TopicService extends IService<TopicEntity> {
 
     void addForwardCount(Long topicId);
 
-    List<TopicVo> search(String keyword, Long userId);
+    List<HighlightVo<TopicVo>> search(String keyword, Long userId);
 }
 

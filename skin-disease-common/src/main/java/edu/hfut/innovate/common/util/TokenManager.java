@@ -28,7 +28,9 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class TokenManager implements ApplicationRunner {
     // token过期时间,默认为7天
-    private static final Long tokenExpireSecond = 60 * 60 * 24 * 7L;
+//    private static final Long tokenExpireSecond = 60 * 60 * 24 * 7L;
+    // TODO 测试时
+    private static final Long tokenExpireSecond = 60 * 60 * 24 * 7 * 100L;
     public static final String HEADER_PREFIX = "Bearer ";
     @Autowired
     private AuthService authService;
