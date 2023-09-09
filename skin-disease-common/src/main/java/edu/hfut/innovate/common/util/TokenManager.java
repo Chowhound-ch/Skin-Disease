@@ -10,8 +10,6 @@ import edu.hfut.innovate.common.service.AuthService;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  */
 @SuppressWarnings("unused")
 @Component
-public class TokenManager implements ApplicationRunner {
+public class TokenManager {
     // token过期时间,默认为7天
 //    private static final Long tokenExpireSecond = 60 * 60 * 24 * 7L;
     // TODO 测试时
@@ -139,19 +137,4 @@ public class TokenManager implements ApplicationRunner {
 
         return expiration == null || expiration.after(DateUtil.date());
     }
-
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
-
-    }
-
-
-//    public static void main(String[] args) {
-//        String token = Jwts.builder().setSubject("root")
-//                .signWith(SignatureAlgorithm.HS512, "B*1$w9^OrEn%nIRcT_ke7if5R:-*EMnOW")
-//                .compressWith(CompressionCodecs.DEFLATE)
-//                .compact();
-//        System.out.println(token);
-//    }
-
 }

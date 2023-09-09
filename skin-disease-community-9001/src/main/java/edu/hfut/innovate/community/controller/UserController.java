@@ -23,6 +23,7 @@ import java.util.Map;
 
 
 
+
 /**
  * <p> 前端若存储有token，则请求/community/user/check/wechat, 若token有效则后端会刷新token，并将新token返回给前端
  *     若token无效则响应的code会是403</p>
