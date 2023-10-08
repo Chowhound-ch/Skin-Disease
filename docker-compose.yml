@@ -1,0 +1,63 @@
+version: "3"
+
+services:
+  # redis: docker run -v /data/redis/conf:/usr/local/etc/redis -p 6379:6379 -v /data/redis/data:/data  --name redis redis:7.0.12  redis-server /usr/local/etc/redis/redis.conf
+  redis:
+    image: redis:7.0.12
+    command: "redis-server /usr/local/etc/redis/redis.conf"
+    container_name: redis
+    networks:
+      - mysql_network
+    ports:
+      - "6379:6379"
+    volumes:
+     - /data/redis/conf:/usr/local/etc/redis
+     - /data/redis/data:/data/redis/data
+  elasticsearch:
+    image: elasticsearch:8.8.1
+    container_name: elasticsearch
+    networks:
+      - mysql_network
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xmx1024m
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - /data/elasticsearch/data:/usr/share/elasticsearch/data
+      - /data/elasticsearch/config:/usr/share/elasticsearch/config
+      - /data/elasticsearch/plugins:/usr/share/elasticsearch/plugins
+  mysql:
+    image: mysql:8.0.30
+    container_name: mysql
+    networks:
+      - mysql_network
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - "3306:3306"
+    volumes:
+      - /data/mysql/conf:/etc/mysql
+      - /data/mysql/data:/var/lib/mysql
+  # nacos：docker run --name nacos -e MODE=standalone -p 8848:8848 -p 9848:9848  -v /data/nacos:/home/nacos  -d nacos/nacos-server:v2.2.2
+  nacos:
+    image: nacos/nacos-server:v2.2.2
+    container_name: nacos
+    networks:
+      - mysql_network
+    environment:
+      - MODE=standalone
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    volumes:
+      - /data/nacos:/home/nacos
+    depends_on:
+      - mysql
+
+
+
+
+networks:
+  mysql_network:

@@ -17,7 +17,7 @@ public class WikiItemEntity {
     // 病因
     private String etiology;
 
-    // 病因
+    // 描述
     private String description;
 
     // 临床表现

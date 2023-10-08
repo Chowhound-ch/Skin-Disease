@@ -1,6 +1,5 @@
 package edu.hfut.innovate.wiki.jsoup;
 
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.URLUtil;
 import edu.hfut.innovate.wiki.entity.WikiItemEntity;
 import org.jsoup.Jsoup;
@@ -15,7 +14,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author : Chowhound
@@ -46,8 +44,16 @@ public class WikiSearch {
         try {
             Document desDoc = null;
             Document document = Jsoup.connect(encodedUrl).get();
-            String url = document.location();
-            if (!StrUtil.isNumeric(url.substring(url.lastIndexOf('/') + 1))){// 多义
+            boolean isMulti = false;
+
+
+            for (Element el : document.getElementsByClass("lemmaWgt-subLemmaListTitle")) {
+                if (el.text().contains("多义")){
+                    isMulti = true;
+                    break;
+                }
+            }
+            if (isMulti){// 多义
                 Elements els = document.getElementsByClass("para");
                 for (Element element : els) {
                     String desUrl = element.getElementsByTag("a").attr("href");
@@ -61,7 +67,7 @@ public class WikiSearch {
             }
 
             if (desDoc != null){
-                WikiItemEntity wikiItem = analysisWikiItem(desDoc);
+                WikiItemEntity wikiItem = analysisWikiItem(name, desDoc);
                 wikiItem.setName(name);
                 Element descriptionEl = desDoc.head().getElementsByAttributeValue("name", "description").first();
                 if (descriptionEl != null){
@@ -78,10 +84,9 @@ public class WikiSearch {
 
         return null;
     }
-    private static WikiItemEntity analysisWikiItem(Document doc) {
+    private static WikiItemEntity analysisWikiItem(String name, Document doc) {
         WikiItemEntity wikiItem = new WikiItemEntity();
-        String title = doc.title();
-        wikiItem.setName(title.substring(title.indexOf("（")));
+        wikiItem.setName(name);
 
         Element descriptionEl = doc.head().getElementsByAttributeValue("name", "description").first();
         if (descriptionEl != null){
@@ -95,18 +100,26 @@ public class WikiSearch {
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
             Node node = element.getElementsByClass("title-text").get(0).childNodes().get(1);
-            if (node instanceof TextNode){
+            if (node instanceof TextNode) {
 
                 try {
-                    Field field = clazz.getDeclaredField(FIELD_MAP.get(node.toString()));
+
+                    Field field;
+                    try {
+                        field = clazz.getDeclaredField(FIELD_MAP.get(node.toString()));
+                    } catch (Exception e) {
+                        continue;
+                    }
                     field.setAccessible(true);
                     StringBuilder text = new StringBuilder();
                     Element tempEl = element;
+                    boolean nextContain = true;
 
                     do {
                         tempEl = tempEl.nextElementSibling();
+                        boolean ii =  (tempEl != null) && (i + 1 >= elements.size() || !tempEl.equals(elements.get(i + 1)));
 
-                        if (tempEl != null){
+                        if (ii && nextContain) {
                             Elements imgEls = tempEl.getElementsByAttribute("alt");
                             List<String> imgTagList = new ArrayList<>();
                             for (Element imgEl : imgEls) {
@@ -118,8 +131,14 @@ public class WikiSearch {
                         } else {
                             break;
                         }
+                        Element next = tempEl.nextElementSibling();
+                        if ( next != null){
+                            nextContain = tempEl != element && tempEl.className().equals(next.className());
+                        } else {
+                            break;
+                        }
 
-                    } while ((i + 1) != elements.size() && !Objects.equals(tempEl.nextElementSibling(), elements.get(i + 1)));
+                    } while (true);
 
                     field.set(wikiItem, text.toString());
                 } catch (Exception e) {
@@ -149,8 +168,8 @@ public class WikiSearch {
         return false;
     }
 
-//    public static void main(String[] args) {
-//        WikiItemEntity wikiItem = getWikiItem("湿疹");
-//        System.out.println(wikiItem);
-//    }
+    public static void main(String[] args) {
+        WikiItemEntity wikiItem = getWikiItem("湿疹");
+        System.out.println(wikiItem);
+    }
 }
