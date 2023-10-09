@@ -1,4 +1,4 @@
-package edu.hfut.innovate.wiki.entity;
+package edu.hfut.innovate.third.wiki.entity;
 
 import lombok.Data;
 

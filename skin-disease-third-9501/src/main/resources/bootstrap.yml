@@ -2,7 +2,7 @@ server:
   port: 9501
 spring:
   application:
-    name: skin-disease-wiki
+    name: skin-disease-third
   profiles:
     active: dev
   cloud:

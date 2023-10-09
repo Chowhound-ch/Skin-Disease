@@ -1,7 +1,7 @@
-package edu.hfut.innovate.wiki.jsoup;
+package edu.hfut.innovate.third.wiki.jsoup;
 
 import cn.hutool.core.util.URLUtil;
-import edu.hfut.innovate.wiki.entity.WikiItemEntity;
+import edu.hfut.innovate.third.wiki.entity.WikiItemEntity;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
