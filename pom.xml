@@ -30,7 +30,7 @@
         <druid.version>1.2.12</druid.version>
         <mybatis.plus.version>3.5.3</mybatis.plus.version>
         <hutool.version>5.8.15</hutool.version>
-        <commons.version>2.6</commons.version>
+        <commons.version>2.7</commons.version>
         <!--   swagger     -->
         <springfox.version>3.0.0</springfox.version>
     </properties>
