@@ -26,9 +26,8 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class TokenManager {
     // token过期时间,默认为7天
-//    private static final Long tokenExpireSecond = 60 * 60 * 24 * 7L;
-    // TODO 测试时
-    private static final Long tokenExpireSecond = 60 * 60 * 24 * 7 * 100L;
+    private static final Long tokenExpireSecond = 60 * 60 * 24 * 7L;
+//    private static final Long tokenExpireSecond = 60 * 60 * 24 * 7 * 100L;
     public static final String HEADER_PREFIX = "Bearer ";
     @Autowired
     private AuthService authService;
@@ -44,7 +43,7 @@ public class TokenManager {
 
     public String createTokenWithExpireTime(UserVo userVo, Long expireTime) {
 
-        JwtBuilder jwtBuilder = Jwts.builder().setSubject(userVo.getUsername());
+        JwtBuilder jwtBuilder = Jwts.builder().setSubject(userVo.getNickName());
         if (expireTime != null){
             jwtBuilder.setExpiration(new Date(System.currentTimeMillis() + expireTime));
 
@@ -108,11 +107,11 @@ public class TokenManager {
         return getUserFromToken(resolveToken(tokenWithBearer));
     }
 
-    public UserVo getUserVoFromToken(String token) {
+    public UserAuth getUserVoFromToken(String token) {
         return JacksonUtil.readValue(
-                redisTemplate.opsForValue().get(token), UserVo.class);
+                redisTemplate.opsForValue().get(token), UserAuth.class);
     }
-    public UserVo getUserVoFromTokenWithBearer(String tokenWithBearer) {
+    public UserAuth getUserVoFromTokenWithBearer(String tokenWithBearer) {
         return getUserVoFromToken(resolveToken(tokenWithBearer));
     }
 

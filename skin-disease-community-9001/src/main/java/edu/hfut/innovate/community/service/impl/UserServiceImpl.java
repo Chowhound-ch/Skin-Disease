@@ -49,4 +49,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         this.save(userEntity);
     }
 
+    @Override
+    public UserVo getVoById(Long id) {
+        return BeanUtil.copyProperties(getById(id), new UserVo());
+    }
+
 }

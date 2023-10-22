@@ -3,6 +3,7 @@ package edu.hfut.innovate.community.controller;
 import edu.hfut.innovate.common.domain.dto.community.UserDto;
 import edu.hfut.innovate.common.domain.dto.community.WeChatUserInfoDto;
 import edu.hfut.innovate.common.domain.entity.LoginInfo;
+import edu.hfut.innovate.common.domain.entity.UserAuth;
 import edu.hfut.innovate.common.domain.vo.community.UserVo;
 import edu.hfut.innovate.common.renren.R;
 import edu.hfut.innovate.common.util.BeanUtil;
@@ -63,16 +64,17 @@ public class UserController {
         }
         UserVo userVo = BeanUtil.copyProperties(userEntity, new UserVo());
 
-        return R.ok(Map.entry("token", tokenManager.createToken(userVo)));
+        return R.ok(Map.of("token", tokenManager.createToken(userVo),
+                "user", userVo));
     }
 
     @GetMapping("/check/wechat")
     @ApiOperation("刷新token存在时间")
     public R wechatLoginCheck(@RequestHeader("Authorization") String token){
-        UserVo user = tokenManager.getUserVoFromTokenWithBearer(token);
+        UserAuth user = tokenManager.getUserVoFromTokenWithBearer(token);
         tokenManager.deleteTokenWithBearer(token);
 
-        return R.ok(Map.entry("token", tokenManager.createToken(user)));
+        return R.ok(Map.of("token", tokenManager.createToken(userService.getVoById(user.getUserId())), "user", user));
     }
     @PostMapping("/register/wechat")
     @ApiOperation("微信小程序授权")
@@ -98,7 +100,7 @@ public class UserController {
 
         UserVo userVo = BeanUtil.copyProperties(userEntity, new UserVo());
 
-        return R.ok(Map.entry("token", tokenManager.createToken(userVo)));
+        return R.ok(Map.of("token", tokenManager.createToken(userVo), "user", userVo));
     }
 
     /**
@@ -117,7 +119,7 @@ public class UserController {
 
         String token = tokenManager.createToken(userVo);
 
-        return R.ok(Map.entry("token", token));
+        return R.ok(Map.of("token", token, "user", userVo));
     }
 
     // endregion
@@ -125,18 +127,27 @@ public class UserController {
     @ApiOperation(value = "用户详情")
     @GetMapping("/{user_id}")
     public R getCommentById(@PathVariable("user_id") Long userId){
-        UserEntity userEntity = userService.getById(userId);
-        if (userEntity == null){
+        UserVo userVo = userService.getVoById(userId);
+        if (userVo == null){
             return R.error(404,  "用户不存在");
         }
-        return R.ok(BeanUtil.copyProperties(userEntity, new UserVo()));
+        return R.ok(userVo);
     }
+    @ApiOperation(value = "个人信息")
+    @GetMapping("/")
+    public R getCommentById(@RequestHeader("Authorization") String token){
+        UserAuth userAu = tokenManager.getUserVoFromTokenWithBearer(token);
+        if (userAu == null){
+            return R.error(404,  "用户不存在");
+        }
 
+        return R.ok(userService.getVoById(userAu.getUserId()));
+    }
     @ApiOperation(value = "更新用户信息")
     @PostMapping("/update")
     public R updateUserInfo(@RequestBody UserDto userDto,
                             @RequestHeader("Authorization") String token){
-        UserVo userVo = tokenManager.getUserVoFromTokenWithBearer(token);
+        UserAuth userVo = tokenManager.getUserVoFromTokenWithBearer(token);
         UserEntity userEntity = BeanUtil.copyProperties(userDto, new UserEntity());
         userEntity.setUserId(userVo.getUserId());
         userEntity.setLikes(null);

@@ -27,7 +27,7 @@ public class UserVo implements Serializable {
 	 * 
 	 */
 	@ApiModelProperty("用户名")
-	private String username;
+	private String nickName;
 	/**
 	 *
 	 */
@@ -65,7 +65,7 @@ public class UserVo implements Serializable {
 	public static UserVo anonymousUser() {
 		UserVo userVo = new UserVo();
 		userVo.setUserId(0L);
-		userVo.setUsername("匿名用户");
+		userVo.setNickName("匿名用户");
 		userVo.setPhone("00000000000");
 		userVo.setSex(2);
 		userVo.setAge(0);
