@@ -30,7 +30,8 @@
         <druid.version>1.2.12</druid.version>
         <mybatis.plus.version>3.5.3</mybatis.plus.version>
         <hutool.version>5.8.15</hutool.version>
-        <commons.version>2.7</commons.version>
+        <commons.io.version>2.7</commons.io.version>
+        <commons.lang.version>2.6</commons.lang.version>
         <!--   swagger     -->
         <springfox.version>3.0.0</springfox.version>
     </properties>
@@ -96,12 +97,12 @@
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
-                <version>${commons.version}</version>
+                <version>${commons.lang.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>${commons.version}</version>
+                <version>${commons.io.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.springfox</groupId>
