@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hfut.innovate.common.domain.vo.community.CommentVo;
+import edu.hfut.innovate.common.domain.vo.community.ReplyVo;
 import edu.hfut.innovate.common.domain.vo.community.UserVo;
 import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.CollectionUtil;
@@ -51,11 +52,15 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
         if (commentEntities.isEmpty()) {
             return Collections.emptyMap();
         }
-
+        Collection<Long> ids = CollectionUtil.getCollection(commentEntities, CommentEntity::getCommentId);
+        Map<Long, List<ReplyVo>> replyMap = replyService.mapByCommentIdsWithSizeOf(ids);
         // 获取所有的评论id
-
         return commentEntities.stream()
-                .map(commentEntity -> BeanUtil.copyProperties(commentEntity, new CommentVo()))
+                .map(commentEntity -> {
+                    CommentVo commentVo = BeanUtil.copyProperties(commentEntity, new CommentVo());
+                    commentVo.setReplies(replyMap.get(commentVo.getCommentId()));
+                    return commentVo;
+                })
                 .collect(Collectors.groupingBy(CommentVo::getTopicId));
     }
 
@@ -81,8 +86,13 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
         }
         // 获取用户点赞的评论id
         Collection<Long> ids = CollectionUtil.getCollection(commentVos, CommentVo::getCommentId);
+        Map<Long, List<ReplyVo>> replyMap = replyService.mapByCommentIdsWithSizeOf(ids);
         Set<Long> likedDesIds = likeRecordService.setOfLikedDesIds(ids, userId, CommunityTypeUtil.COMMENT_TYPE);
-        commentVos.forEach(commentVo -> commentVo.setIsLiked(likedDesIds.contains(commentVo.getCommentId()) ? 1 : 0));
+        commentVos.forEach(commentVo -> {
+            commentVo.setIsLiked(likedDesIds.contains(commentVo.getCommentId()) ? 1 : 0);
+            commentVo.setReplies(replyMap.get(commentVo.getCommentId()));
+        }
+        );
 
         return commentVos;
     }

@@ -12,8 +12,10 @@
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
-        <association property="replies" column="comment_id" select="edu.hfut.innovate.community.dao.ReplyMapper.getByCommentId"/>
-        <association property="user" column="user_id" select="edu.hfut.innovate.community.dao.UserMapper.getUserById"/>
+        <result property="content" column="content" jdbcType="BLOB"/>
+        <association property="user"
+                     columnPrefix="u_"
+                     resultMap="edu.hfut.innovate.community.dao.UserMapper.BaseResultMap"/>
     </resultMap>
 
     <sql id="comment_fields">
@@ -33,12 +35,21 @@
         ${tb_alias}.is_delete as ${prefix}is_delete,${tb_alias}.content as ${prefix}content
     </sql>
     <select id="listByTopicIds" resultMap="BaseResultMap">
-        select <include refid="comment_fields"/>
-        from comment
-        where topic_id in
+        select
+            <include refid="comment_t_as_fields">
+                <property name="tb_alias" value="com"/>
+                <property name="prefix" value=""/>
+            </include>
+            ,
+        <include refid="edu.hfut.innovate.community.dao.UserMapper.user_t_as_fields">
+            <property name="tb_alias" value="u"/>
+            <property name="prefix" value="u_"/>
+        </include>
+        from comment com join `user` u on com.user_id = u.user_id
+        where com.topic_id in
         <foreach collection="topicIds" item="topicId" open="(" separator="," close=")">
             #{topicId}
         </foreach>
-        order by likes desc
+        order by com.likes desc
     </select>
 </mapper>

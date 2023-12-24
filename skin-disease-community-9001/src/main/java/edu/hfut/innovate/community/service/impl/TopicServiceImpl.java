@@ -1,14 +1,12 @@
 package edu.hfut.innovate.community.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hfut.innovate.common.domain.es.ElasticTopicVo;
 import edu.hfut.innovate.common.domain.es.HighlightVo;
 import edu.hfut.innovate.common.domain.vo.community.*;
-import edu.hfut.innovate.common.renren.PageUtils;
-import edu.hfut.innovate.common.renren.Query;
 import edu.hfut.innovate.common.util.BeanUtil;
+import edu.hfut.innovate.common.util.CollectionUtil;
 import edu.hfut.innovate.common.util.CommunityTypeUtil;
 import edu.hfut.innovate.community.dao.TopicMapper;
 import edu.hfut.innovate.community.entity.TopicEntity;
@@ -49,64 +47,26 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, TopicEntity> impl
 
     @Transactional
     @Override
-    public PageUtils<TopicVo> queryPageByUserId(Map<String, Object> params, Long userId, Long locationId) {
-        IPage<TopicEntity> page = this.page(
-                new Query<TopicEntity>().getPage(params),
-//                new LambdaUpdateWrapper<TopicEntity>().eq(locationId != null, TopicEntity::getLocationId, locationId)
-                new LambdaUpdateWrapper<TopicEntity>()
-        );
+    public List<TopicVo> queryPageByUserId(Integer page, Integer limit, Long userId, Long locationId) {
+        List<TopicEntity> topicEntities = baseMapper.listTopics(page == null ? 0 : (page - 1) * limit, limit == null ? 10 : limit, locationId);
         // 获取所有的TopicId
-        Collection<Long> topicIds = new HashSet<>();
-        Collection<Long> userIds = new HashSet<>();
-        Collection<Long> locationIds = new HashSet<>();
-
-        for (TopicEntity record : page.getRecords()) {
-            topicIds.add(record.getTopicId());
-//            userIds.add(record.getUser());
-            // 如果locationId为空则是按locationId查询，所有的locationId都是一样的
-            if (locationId == null) {
-//                locationIds.add(record.getLocationId());
-            }
-        }
+        Collection<Long> topicIds = CollectionUtil.getCollection(topicEntities, TopicEntity::getTopicId);
 
         // 根据TopicId分组
         Map<Long, List<CommentVo>> commentVoMap = commentService.mapByTopicIds(topicIds);
-        // 获取所有的UserId
-        Map<Long, UserVo> userVoMap = userService.mapByIds(userIds);
 
 
-        Map<Long, List<TopicTagVo>> tagMap = topicTagService.mapByTopicIds(topicIds);
         // 设置本人是否点赞，是否收藏
         Set<Long> likeSet = likeRecordService.setOfLikedDesIds(topicIds, userId, CommunityTypeUtil.TOPIC_TYPE);
         Set<Long> collectionSet = collectionRecordService.setOfCollectedTopics(topicIds, userId);
 
-
-        // 8.6 设置location
-        Map<Long, TopicLocationVo> locationMap;
-        if (locationId == null) {
-            locationMap = topicLocationService.listByIds(locationIds).stream()
-                    .map(topicLocationEntity -> BeanUtil.copyProperties(topicLocationEntity, new TopicLocationVo()))
-                    .collect(Collectors.toMap(TopicLocationVo::getLocationId, Function.identity()));
-        } else {
-            locationMap = new HashMap<>(1);
-            locationMap.put(locationId,
-                    BeanUtil.copyProperties(topicLocationService.getById(locationId), new TopicLocationVo()));
-        }
-
-        Map<Long, TopicLocationVo> finalLocationMap = locationMap;
-        List<TopicVo> list = page.getRecords().stream().map(topicEntity -> {
+        return topicEntities.stream().map(topicEntity -> {
             TopicVo topicVo = BeanUtil.copyProperties(topicEntity, new TopicVo());
             topicVo.setComments(commentVoMap.get(topicEntity.getTopicId()));
-            topicVo.setUser(userVoMap.get(topicEntity.getUser()));
-            topicVo.setTags(tagMap.get(topicEntity.getTopicId()));
             topicVo.setIsLiked(likeSet.contains(topicEntity.getTopicId()) ? 1 : 0);
             topicVo.setIsCollected(collectionSet.contains(topicEntity.getTopicId()) ? 1 : 0);
-//            topicVo.setLocation(finalLocationMap.get(topicEntity.getLocationId()));
-
             return topicVo;
         }).toList();
-
-        return new PageUtils<>(list, page.getTotal(), page.getSize(), page.getCurrent());
     }
 
     @Override
@@ -227,7 +187,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, TopicEntity> impl
      */
     @Override
     public TopicVo getTopicById(Long topicId) {
-        return BeanUtil.copyProperties(baseMapper.selectOneTopic(topicId), new TopicVo());
+        return BeanUtil.copyProperties(baseMapper.getTopicById(topicId), new TopicVo());
     }
 
     @Override

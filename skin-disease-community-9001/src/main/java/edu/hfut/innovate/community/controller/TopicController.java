@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -46,13 +45,14 @@ public class TopicController {
     @GetMapping("/page/")
     public R list(
             @ApiParam("分页查询参数")
-            @RequestParam Map<String, Object> params,
+            @RequestParam Integer page,
+            @RequestParam Integer limit,
+            @RequestParam Long locationId,
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         UserAuth auth = tokenManager.getUserFromTokenWithBearer(token);
-        Long locationId = params.get("locationId") == null ?
-                null : Long.parseLong(params.get("locationId").toString());
 
-        return R.ok(topicService.queryPageByUserId(params, auth.getUserId(), locationId));
+
+        return R.ok(topicService.queryPageByUserId(page, limit, auth.getUserId(), locationId));
     }
 
     @ApiOperation("根据话题id查询话题(详细信息)")

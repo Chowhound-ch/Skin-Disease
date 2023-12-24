@@ -1,9 +1,11 @@
 package edu.hfut.innovate.community.dao;
 
-import edu.hfut.innovate.community.entity.TopicEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import edu.hfut.innovate.community.entity.TopicEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 
@@ -12,6 +14,7 @@ import org.apache.ibatis.annotations.Param;
  */
 @Mapper
 public interface TopicMapper extends BaseMapper<TopicEntity> {
-	TopicEntity selectOneTopic(@Param("topicId")Long topicId);
+	TopicEntity getTopicById(@Param("topicId")Long topicId);
 
+	List<TopicEntity> listTopics(@Param("page") Integer page, @Param("limit") Integer limit, @Param("locationId") Long locationId);
 }

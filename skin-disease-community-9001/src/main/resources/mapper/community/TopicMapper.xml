@@ -72,7 +72,7 @@
         ${tb_alias}.content as ${prefix}content
     </sql>
     <!--	TopicEntity selectOneTopic(@Param("topicId")Long topicId);-->
-    <select id="selectOneTopic" resultMap="BaseResultMap">
+    <select id="getTopicById" resultMap="BaseResultMap">
         select
             <include refid="topic_t_as_fields">
                 <property name="tb_alias" value="t"/>
@@ -93,8 +93,30 @@
         join topic_location loc on loc.location_id = t.location_id
         where t.topic_id = #{topicId};
     </select>
-
-
+    <select id="listTopics" resultMap="BaseResultMap">
+        select
+        <include refid="topic_t_as_fields">
+            <property name="tb_alias" value="t"/>
+            <property name="prefix" value=""/>
+        </include>
+        ,
+        <include refid="edu.hfut.innovate.community.dao.UserMapper.user_t_as_fields">
+            <property name="tb_alias" value="u"/>
+            <property name="prefix" value="u_"/>
+        </include>
+        ,
+        <include refid="edu.hfut.innovate.community.dao.TopicLocationMapper.topicLocation_t_as_fields">
+            <property name="tb_alias" value="loc"/>
+            <property name="prefix" value="loc_"/>
+        </include>
+        from topic t
+        join `user` u on t.user_id = u.user_id
+        join topic_location loc on loc.location_id = t.location_id
+        <if test="locationId != null">
+            where t.location_id = #{locationId}
+        </if>
+        limit ${page}, ${limit}
+    </select>
 
 
 </mapper>

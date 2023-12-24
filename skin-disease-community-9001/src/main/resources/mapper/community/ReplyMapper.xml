@@ -16,7 +16,6 @@
         <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
         <result property="commentId" column="comment_id" jdbcType="BIGINT"/>
         <association property="user"
-                     column="user_id"
                      columnPrefix="u_"
                      resultMap="edu.hfut.innovate.community.dao.UserMapper.BaseResultMap"/>
         <association property="repliedUser"

@@ -34,8 +34,7 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, ReplyEntity> impl
 
         // 将entry.value转化为ReplyVo
         return replyEntities.stream()
-                .map(entity-> BeanUtil.copyProperties(replyEntities, new ReplyVo()))
-                .sorted(Comparator.comparingInt(ReplyVo::getLikes).reversed())
+                .map(entity-> BeanUtil.copyProperties(entity, new ReplyVo()))
                 .collect(Collectors.groupingBy(ReplyVo::getCommentId));
     }
 
