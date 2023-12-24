@@ -5,13 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hfut.innovate.common.domain.vo.community.CommentVo;
-import edu.hfut.innovate.common.domain.vo.community.ReplyVo;
 import edu.hfut.innovate.common.domain.vo.community.UserVo;
 import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.CollectionUtil;
 import edu.hfut.innovate.common.util.CommunityTypeUtil;
-import edu.hfut.innovate.common.util.ItemSize;
-import edu.hfut.innovate.community.dao.CommentDao;
+import edu.hfut.innovate.community.dao.CommentMapper;
 import edu.hfut.innovate.community.entity.CommentEntity;
 import edu.hfut.innovate.community.entity.UserEntity;
 import edu.hfut.innovate.community.service.CommentService;
@@ -25,13 +23,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 @Service("commentService")
-public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> implements CommentService, ApplicationRunner {
+public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity> implements CommentService, ApplicationRunner {
 
     @Autowired
     private ReplyService replyService;
@@ -43,80 +39,43 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
     // 解决事务中调用自己的方法不生效的问题
     private CommentService commentService;
 
+    /**
+     *
+     * @param idSet : 话题id集合
+     * @return
+     */
     @Override
-    public Map<Long, List<CommentVo>> mapByTopicIds(Collection<Long> idSet,
-                                                    Integer commentItemSize,
-                                                    Integer replyItemSize) {
-        List<CommentEntity> commentEntities = this.list(
-                new LambdaQueryWrapper<CommentEntity>().in(CommentEntity::getTopicId, idSet));
+    public Map<Long, List<CommentVo>> mapByTopicIds(Collection<Long> idSet) {
+        List<CommentEntity> commentEntities = baseMapper.listByTopicIds(idSet);
 
-        if (commentEntities.isEmpty()){
+        if (commentEntities.isEmpty()) {
             return Collections.emptyMap();
         }
 
         // 获取所有的评论id
-        Collection<Long> commentIds = new HashSet<>();
-        // 获取所有的用户id
-        Collection<Long> userIds = new HashSet<>();
-        commentEntities.forEach(commentEntity -> {
-            commentIds.add(commentEntity.getCommentId());
-            userIds.add(commentEntity.getUserId());
-        });
-        Map<Long, List<ReplyVo>> replyVoMap;
 
-        if (replyItemSize == null || replyItemSize > 0){
-            replyVoMap = replyService.mapByCommentIdsWithSizeOf(commentIds, replyItemSize);
-        } else {
-            replyVoMap = null;
-        }
-
-        Map<Long, UserVo> userVoMap = userService.listByIds(userIds).stream()
-                .map(userEntity -> BeanUtil.copyProperties(userEntity, new UserVo()))
-                .collect(Collectors.toMap(UserVo::getUserId, Function.identity()));
-
-        Map<Long, List<CommentVo>> commentVoMap = commentEntities.stream().map(commentEntity -> {
-            CommentVo commentVo = BeanUtil.copyProperties(commentEntity, new CommentVo());
-            commentVo.setTopicId(commentEntity.getTopicId());
-            commentVo.setUser(userVoMap.get(commentEntity.getUserId()));
-
-            // 获取评论的回复
-            if (replyVoMap != null){
-                List<ReplyVo> replyVos = replyVoMap.get(commentEntity.getCommentId());
-
-                Stream<ReplyVo> replyVoStream = replyVos == null? Stream.empty() : replyVos.stream()
-                        .sorted(Comparator.comparingInt(ReplyVo::getLikes).reversed());
-                if (replyItemSize == null) {
-                    commentVo.setReplies(replyVoStream.toList());
-                } else { // replyItemSize != null 限制relyItemSize
-                    commentVo.setRepliesByLikes(replyVoStream.limit(replyItemSize).toList());
-                }
-            }
-
-            return commentVo;
-        }).collect(Collectors.groupingBy(CommentVo::getTopicId));
-
-        if (commentItemSize != null) {
-            commentVoMap.entrySet().forEach(entry -> {
-                if (entry.getValue().size() > commentItemSize) {
-                    // 取like最多的size个
-                    entry.setValue(entry.getValue().stream()
-                            .sorted(Comparator.comparingInt(CommentVo::getLikes).reversed())
-                            .limit(commentItemSize).toList()) ;
-                }
-            });
-        }
-
-        return commentVoMap;
+        return commentEntities.stream()
+                .map(commentEntity -> BeanUtil.copyProperties(commentEntity, new CommentVo()))
+                .collect(Collectors.groupingBy(CommentVo::getTopicId));
     }
 
     @Override
-    public List<CommentVo> getByTopicId(Long topicId, Integer commentItemSize, Integer replyItemSize) {
-        return mapByTopicIds(Set.of(topicId), commentItemSize, replyItemSize).get(topicId);
+    public List<CommentVo> getByTopicId(Long topicId) {
+        return mapByTopicIds(Set.of(topicId)).get(topicId);
     }
 
     @Override
-    public List<CommentVo> getByTopicIdWithLikes(Long topicId, Long userId, Integer commentItemSize, Integer replyItemSize) {
-        List<CommentVo> commentVos = getByTopicId(topicId, commentItemSize, replyItemSize);
+    public List<Long> listIdByTopicId(Long topicId) {
+        LambdaQueryWrapper<CommentEntity> wrapper = new LambdaQueryWrapper<CommentEntity>()
+                .select(CommentEntity::getCommentId)
+                .eq(CommentEntity::getTopicId, topicId);
+
+        return listObjs(wrapper, (obj) -> Long.valueOf(obj.toString()));
+    }
+
+    @Override
+    public List<CommentVo> getByTopicIdWithLikes(Long topicId, Long userId) {
+        List<CommentVo> commentVos = getByTopicId(topicId);
         if (commentVos == null || commentVos.isEmpty()){
             return Collections.emptyList();
         }
@@ -140,7 +99,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
         commentVo.setUser(BeanUtil.copyProperties(userEntity, new UserVo()));
 
         // 设置ReplyVo
-        commentVo.setReplies(replyService.listByCommentIdWithLikes(commentId, userId, ItemSize.ALL));
+        commentVo.setReplies(replyService.listByCommentIdWithLikes(commentId, userId));
         // 设置是否点赞
         commentVo.setIsLiked(likeRecordService.isLikedDesId(commentId, userId, CommunityTypeUtil.COMMENT_TYPE));
 

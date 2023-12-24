@@ -60,7 +60,7 @@ public class TopicController {
     public R getTopic(@PathVariable("topicId") Long topicId,
                       @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         UserAuth auth = tokenManager.getUserFromTokenWithBearer(token);
-        TopicVo topicVo = topicService.getTopicById(topicId, auth.getUserId());
+        TopicVo topicVo = topicService.getTopicByIdWithLikeInfo(topicId, auth.getUserId());
         if (topicVo == null) {
             return R.error(HttpStatus.NOT_FOUND.value(), "话题不存在");
         }

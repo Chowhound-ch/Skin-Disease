@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.hfut.innovate.community.dao.TopicTagRelationMapper">
+
+    <resultMap id="BaseResultMap" type="edu.hfut.innovate.community.entity.TopicTagRelationEntity">
+            <id property="tagRelationId" column="tag_relation_id" jdbcType="BIGINT"/>
+            <result property="topicId" column="topic_id" jdbcType="BIGINT"/>
+            <result property="tagId" column="tag_id" jdbcType="BIGINT"/>
+            <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="topicTagRelation_fields">
+        tag_relation_id,topic_id,tag_id,
+        is_delete
+    </sql>
+
+    <sql id="topicTagRelation_as_fields">
+        tag_relation_id as ${prefix}tag_relation_id,topic_id as ${prefix}topic_id,tag_id as ${prefix}tag_id,
+        is_delete as ${prefix}is_delete
+    </sql>
+    <sql id="topicTagRelation_t_as_fields">
+        ${tb_alias}.tag_relation_id as ${prefix}tag_relation_id,${tb_alias}.topic_id as ${prefix}topic_id,${tb_alias}.tag_id as ${prefix}tag_id,
+        ${tb_alias}.is_delete as ${prefix}is_delete
+    </sql>
+</mapper>

@@ -1,6 +1,6 @@
 package edu.hfut.innovate.community.dao;
 
-import edu.hfut.innovate.community.entity.ReplyEntity;
+import edu.hfut.innovate.community.entity.TopicTagRelationEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -10,6 +10,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @author Chowhound
  */
 @Mapper
-public interface ReplyDao extends BaseMapper<ReplyEntity> {
+public interface TopicTagRelationMapper extends BaseMapper<TopicTagRelationEntity> {
 	
 }

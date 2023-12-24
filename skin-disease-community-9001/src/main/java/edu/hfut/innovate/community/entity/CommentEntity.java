@@ -1,6 +1,7 @@
 package edu.hfut.innovate.community.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import edu.hfut.innovate.common.domain.vo.community.ReplyVo;
 import edu.hfut.innovate.common.util.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 
@@ -45,4 +47,9 @@ public class CommentEntity extends BaseEntity implements Serializable {
 	 * 
 	 */
 	private String content;
+
+	@TableField(exist = false)
+	private List<ReplyVo> replies;
+	@TableField(exist = false)
+	private UserEntity user;
 }

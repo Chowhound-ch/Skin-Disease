@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.hfut.innovate.community.dao.TopicMapper">
+
+    <resultMap id="BaseResultMap" type="edu.hfut.innovate.community.entity.TopicEntity">
+        <id property="topicId" column="topic_id" jdbcType="BIGINT"/>
+        <result property="title" column="title" jdbcType="CHAR"/>
+        <result property="likes" column="likes" jdbcType="INTEGER"/>
+        <result property="click" column="click" jdbcType="INTEGER"/>
+        <result property="forward" column="forward" jdbcType="INTEGER"/>
+        <result property="collect" column="collect" jdbcType="INTEGER"/>
+        <result property="isAnonymous" column="is_anonymous" jdbcType="INTEGER"/>
+        <result property="anonymousName" column="anonymous_name" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+        <result property="content" column="content" jdbcType="BLOB"/>
+
+        <result property="locationId" column="location_id" jdbcType="BIGINT"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <association property="location"
+                     resultMap="edu.hfut.innovate.community.dao.TopicLocationMapper.BaseResultMap"
+                     columnPrefix="loc_"/>
+        <association property="user"
+                     resultMap="edu.hfut.innovate.community.dao.UserMapper.BaseResultMap"
+                     columnPrefix="u_"/>
+        <collection property="tags"
+                    ofType="TopicTagEntity"
+                    column="topic_id"
+                    select="edu.hfut.innovate.community.dao.TopicTagMapper.listByTopicId"/>
+    </resultMap>
+
+    <sql id="topic_fields">
+        topic_id,title,user_id,
+        likes,click,forward,
+        collect,is_anonymous,anonymous_name,
+        update_time,create_time,is_delete,
+        location_id,content
+    </sql>
+    <sql id="topic_as_fields">
+        topic_id as ${prefix}topic_id,
+        title as ${prefix}title,
+        user_id as ${prefix}user_id,
+        likes as ${prefix}likes,
+        click as ${prefix}click,
+        forward as ${prefix}forward,
+        collect as ${prefix}collect,
+        is_anonymous as ${prefix}is_anonymous,
+        anonymous_name as ${prefix}anonymous_name,
+        update_time as ${prefix}update_time,
+        create_time as ${prefix}create_time,
+        is_delete as ${prefix}is_delete,
+        location_id as ${prefix}location_id,
+        content as ${prefix}content
+    </sql>
+    <sql id="topic_t_as_fields">
+        ${tb_alias}.topic_id as ${prefix}topic_id,
+        ${tb_alias}.title as ${prefix}title,
+        ${tb_alias}.user_id as ${prefix}user_id,
+        ${tb_alias}.likes as ${prefix}likes,
+        ${tb_alias}.click as ${prefix}click,
+        ${tb_alias}.forward as ${prefix}forward,
+        ${tb_alias}.collect as ${prefix}collect,
+        ${tb_alias}.is_anonymous as ${prefix}is_anonymous,
+        ${tb_alias}.anonymous_name as ${prefix}anonymous_name,
+        ${tb_alias}.update_time as ${prefix}update_time,
+        ${tb_alias}.create_time as ${prefix}create_time,
+        ${tb_alias}.is_delete as ${prefix}is_delete,
+        ${tb_alias}.location_id as ${prefix}location_id,
+        ${tb_alias}.content as ${prefix}content
+    </sql>
+    <!--	TopicEntity selectOneTopic(@Param("topicId")Long topicId);-->
+    <select id="selectOneTopic" resultMap="BaseResultMap">
+        select
+            <include refid="topic_t_as_fields">
+                <property name="tb_alias" value="t"/>
+                <property name="prefix" value=""/>
+            </include>
+            ,
+            <include refid="edu.hfut.innovate.community.dao.UserMapper.user_t_as_fields">
+                <property name="tb_alias" value="u"/>
+                <property name="prefix" value="u_"/>
+            </include>
+            ,
+            <include refid="edu.hfut.innovate.community.dao.TopicLocationMapper.topicLocation_t_as_fields">
+                <property name="tb_alias" value="loc"/>
+                <property name="prefix" value="loc_"/>
+            </include>
+        from topic t
+        join `user` u on t.user_id = u.user_id
+        join topic_location loc on loc.location_id = t.location_id
+        where t.topic_id = #{topicId};
+    </select>
+
+
+
+
+</mapper>

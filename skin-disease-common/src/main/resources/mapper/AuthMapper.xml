@@ -1,0 +1,22 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.hfut.innovate.common.mapper.AuthMapper">
+
+    <resultMap id="BaseResultMap" type="edu.hfut.innovate.common.domain.entity.Auth">
+            <id property="authId" column="auth_id" jdbcType="BIGINT"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="role" column="role" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="auth_fields">
+        auth_id,user_id,`role`
+    </sql>
+
+    <sql id="auth_as_fields">
+        auth_id as ${prefix}auth_id,user_id as ${prefix}user_id,`role` as ${prefix}`role`
+    </sql>
+    <sql id="auth_t_as_fields">
+        ${tb_alias}.auth_id as ${prefix}auth_id,${tb_alias}.user_id as ${prefix}user_id,${tb_alias}.role as ${prefix}`role`
+    </sql>
+</mapper>

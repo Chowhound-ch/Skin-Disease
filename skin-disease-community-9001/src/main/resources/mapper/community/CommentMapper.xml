@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.hfut.innovate.community.dao.CommentMapper">
+
+    <resultMap id="BaseResultMap" type="edu.hfut.innovate.community.entity.CommentEntity">
+        <id property="commentId" column="comment_id" jdbcType="BIGINT"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="topicId" column="topic_id" jdbcType="BIGINT"/>
+        <result property="likes" column="likes" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+        <association property="replies" column="comment_id" select="edu.hfut.innovate.community.dao.ReplyMapper.getByCommentId"/>
+        <association property="user" column="user_id" select="edu.hfut.innovate.community.dao.UserMapper.getUserById"/>
+    </resultMap>
+
+    <sql id="comment_fields">
+        comment_id,user_id,topic_id,
+        likes,update_time,create_time,
+        is_delete,content
+    </sql>
+
+    <sql id="comment_as_fields">
+        comment_id as ${prefix}comment_id,user_id as ${prefix}user_id,topic_id as ${prefix}topic_id,
+        likes as ${prefix}likes,update_time as ${prefix}update_time,create_time as ${prefix}create_time,
+        is_delete as ${prefix}is_delete,content as ${prefix}content
+    </sql>
+    <sql id="comment_t_as_fields">
+        ${tb_alias}.comment_id as ${prefix}comment_id,${tb_alias}.user_id as ${prefix}user_id,${tb_alias}.topic_id as ${prefix}topic_id,
+        ${tb_alias}.likes as ${prefix}likes,${tb_alias}.update_time as ${prefix}update_time,${tb_alias}.create_time as ${prefix}create_time,
+        ${tb_alias}.is_delete as ${prefix}is_delete,${tb_alias}.content as ${prefix}content
+    </sql>
+    <select id="listByTopicIds" resultMap="BaseResultMap">
+        select <include refid="comment_fields"/>
+        from comment
+        where topic_id in
+        <foreach collection="topicIds" item="topicId" open="(" separator="," close=")">
+            #{topicId}
+        </foreach>
+        order by likes desc
+    </select>
+</mapper>

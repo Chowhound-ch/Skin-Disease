@@ -15,9 +15,9 @@ import java.util.Map;
  */
 public interface ReplyService extends IService<ReplyEntity> {
 
-    Map<Long, List<ReplyVo>> mapByCommentIdsWithSizeOf(Collection<Long> idSet, Integer size);
+    Map<Long, List<ReplyVo>> mapByCommentIdsWithSizeOf(Collection<Long> idSet);
 
-    List<ReplyVo> listByCommentId(Long commentId, Integer replyItemSize);
+    List<ReplyVo> listByCommentId(Long commentId);
 
     void removeByCommentId(Long commentId);
 
@@ -25,6 +25,6 @@ public interface ReplyService extends IService<ReplyEntity> {
 
     void offsetReplyLikeCount(Long replyId, Integer offset);
 
-    List<ReplyVo> listByCommentIdWithLikes(Long commentId, Long userId, Integer replyItemSize);
+    List<ReplyVo> listByCommentIdWithLikes(Long commentId, Long userId);
 }
 

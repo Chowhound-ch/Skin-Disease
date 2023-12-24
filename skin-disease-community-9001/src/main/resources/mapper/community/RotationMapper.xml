@@ -13,8 +13,17 @@
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <sql id="Base_Column_List">
+    <sql id="rotation_fields">
         rotation_id,title,url,
         is_delete,create_time,update_time
+    </sql>
+
+    <sql id="rotation_as_fields">
+        rotation_id as ${prefix}rotation_id,title as ${prefix}title,url as ${prefix}url,
+        is_delete as ${prefix}is_delete,create_time as ${prefix}create_time,update_time as ${prefix}update_time
+    </sql>
+    <sql id="rotation_t_as_fields">
+        ${tb_alias}.rotation_id as ${prefix}rotation_id,${tb_alias}.title as ${prefix}title,${tb_alias}.url as ${prefix}url,
+        ${tb_alias}.is_delete as ${prefix}is_delete,${tb_alias}.create_time as ${prefix}create_time,${tb_alias}.update_time as ${prefix}update_time
     </sql>
 </mapper>

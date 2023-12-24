@@ -35,7 +35,8 @@ public class ReplyVo implements Serializable {
 	 * 
 	 */
 	@ApiModelProperty("被回复者")
-	private UserVo replied;
+	private Long replied;
+	private UserVo repliedUser;
 	/**
 	 * 
 	 */

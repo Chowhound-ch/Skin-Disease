@@ -23,7 +23,7 @@ public interface TopicService extends IService<TopicEntity> {
 
     void offsetTopicLikeCount(Long topicId, Integer offset);
 
-    TopicVo getTopicById(Long topicId, Long userId);
+    TopicVo getTopicByIdWithLikeInfo(Long topicId, Long userId);
 
     void offsetTopicCollectionCount(Long topicId, Integer offset);
 
@@ -32,5 +32,9 @@ public interface TopicService extends IService<TopicEntity> {
     void addForwardCount(Long topicId);
 
     List<HighlightVo<TopicVo>> search(String keyword, Long userId);
+
+    TopicVo getTopicById(Long topicId);
+
+    TopicVo getTopicByIdWithAnonymous(Long topicId);
 }
 

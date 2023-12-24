@@ -9,3 +9,10 @@ spring:
     uris: http://cloud100:9200
     username: elastic
     password: 123456
+mybatis-plus:
+  type-aliases-package: edu.hfut.innovate.community.entity
+  configuration-properties:
+    org.apache.ibatis.parsing.PropertyParser.enable-default-value: true
+#  configuration:
+#    lazy-loading-enabled: true
+#  type-handlers-package: edu.hfut.innovate.community.config

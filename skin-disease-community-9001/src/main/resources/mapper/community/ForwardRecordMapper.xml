@@ -6,14 +6,23 @@
 
     <resultMap id="BaseResultMap" type="edu.hfut.innovate.community.entity.ForwardRecord">
             <id property="forwardId" column="forward_id" jdbcType="BIGINT"/>
-            <id property="forwardKey" column="forward_key" jdbcType="BIGINT"/>
             <result property="userId" column="user_id" jdbcType="BIGINT"/>
             <result property="topicId" column="topic_id" jdbcType="BIGINT"/>
-            <result property="isDelete" column="is_delete" jdbcType="BIGINT"/>
+            <result property="forwardKey" column="forward_key" jdbcType="VARCHAR"/>
+            <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
     </resultMap>
 
-    <sql id="Base_Column_List">
-        forward_id,forward_key,user_id,
-        topic_id,is_delete
+    <sql id="forwardRecord_fields">
+        forward_id,user_id,topic_id,
+        forward_key,is_delete
+    </sql>
+
+    <sql id="forwardRecord_as_fields">
+        forward_id as ${prefix}forward_id,user_id as ${prefix}user_id,topic_id as ${prefix}topic_id,
+        forward_key as ${prefix}forward_key,is_delete as ${prefix}is_delete
+    </sql>
+    <sql id="forwardRecord_t_as_fields">
+        ${tb_alias}.forward_id as ${prefix}forward_id,${tb_alias}.user_id as ${prefix}user_id,${tb_alias}.topic_id as ${prefix}topic_id,
+        ${tb_alias}.forward_key as ${prefix}forward_key,${tb_alias}.is_delete as ${prefix}is_delete
     </sql>
 </mapper>

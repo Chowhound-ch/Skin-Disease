@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.hfut.innovate.community.dao.UserMapper">
+
+    <resultMap id="BaseResultMap" type="edu.hfut.innovate.community.entity.UserEntity">
+            <id property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="password" column="password" jdbcType="VARCHAR"/>
+            <result property="phone" column="phone" jdbcType="VARCHAR"/>
+            <result property="sex" column="sex" jdbcType="INTEGER"/>
+            <result property="age" column="age" jdbcType="INTEGER"/>
+            <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+            <result property="likes" column="likes" jdbcType="INTEGER"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+            <result property="openid" column="openid" jdbcType="VARCHAR"/>
+            <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="user_fields">
+        user_id,username,password,
+        phone,sex,age,
+        avatar,likes,update_time,
+        create_time,is_delete,openid,
+        nick_name
+    </sql>
+
+    <sql id="user_as_fields">
+        user_id as ${prefix}user_id,
+        username as ${prefix}username,
+        password as ${prefix}password,
+        phone as ${prefix}phone,
+        sex as ${prefix}sex,age as ${prefix}age,
+        avatar as ${prefix}avatar,
+        likes as ${prefix}likes,
+        update_time as ${prefix}update_time,
+        create_time as ${prefix}create_time,
+        is_delete as ${prefix}is_delete,openid as ${prefix}openid,
+        nick_name as ${prefix}nick_name
+    </sql>
+    <sql id="user_t_as_fields">
+        ${tb_alias}.user_id as ${prefix}user_id,
+        ${tb_alias}.username as ${prefix}username,
+        ${tb_alias}.password as ${prefix}password,
+        ${tb_alias}.phone as ${prefix}phone,
+        ${tb_alias}.sex as ${prefix}sex,
+        ${tb_alias}.age as ${prefix}age,
+        ${tb_alias}.avatar as ${prefix}avatar,
+        ${tb_alias}.likes as ${prefix}likes,
+        ${tb_alias}.update_time as ${prefix}update_time,
+        ${tb_alias}.create_time as ${prefix}create_time,
+        ${tb_alias}.is_delete as ${prefix}is_delete,
+        ${tb_alias}.openid as ${prefix}openid,
+        ${tb_alias}.nick_name as ${prefix}nick_name
+    </sql>
+
+
+    <select id="getUserById" resultType="edu.hfut.innovate.community.entity.UserEntity">
+        select <include refid="user_fields"/>
+        from `user`
+        where user_id = #{userId}
+    </select>
+</mapper>

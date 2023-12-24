@@ -10,10 +10,24 @@
             <result property="desId" column="des_id" jdbcType="BIGINT"/>
             <result property="desType" column="des_type" jdbcType="INTEGER"/>
             <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <sql id="Base_Column_List">
+    <sql id="likeRecord_fields">
         like_id,user_id,des_id,
-        des_type,is_delete
+        des_type,is_delete,create_time,
+        update_time
+    </sql>
+
+    <sql id="likeRecord_as_fields">
+        like_id as ${prefix}like_id,user_id as ${prefix}user_id,des_id as ${prefix}des_id,
+        des_type as ${prefix}des_type,is_delete as ${prefix}is_delete,create_time as ${prefix}create_time,
+        update_time as ${prefix}update_time
+    </sql>
+    <sql id="likeRecord_t_as_fields">
+        ${tb_alias}.like_id as ${prefix}like_id,${tb_alias}.user_id as ${prefix}user_id,${tb_alias}.des_id as ${prefix}des_id,
+        ${tb_alias}.des_type as ${prefix}des_type,${tb_alias}.is_delete as ${prefix}is_delete,${tb_alias}.create_time as ${prefix}create_time,
+        ${tb_alias}.update_time as ${prefix}update_time
     </sql>
 </mapper>

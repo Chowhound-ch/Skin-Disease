@@ -50,9 +50,6 @@ public class CommentVo implements Serializable {
     @ApiModelProperty("评论的回复(所有)")
     private List<ReplyVo> replies;
 
-    @ApiModelProperty("评论的回复(展示赞最高的几条评论)")
-    private List<ReplyVo> repliesByLikes;
-
     /**
      *
      */

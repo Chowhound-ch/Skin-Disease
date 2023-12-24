@@ -13,4 +13,21 @@
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
     </resultMap>
+
+    <sql id="notice_fields">
+        notice_id,name,title,
+        administrator_id,create_time,update_time,
+        is_delete,content
+    </sql>
+
+    <sql id="notice_as_fields">
+        notice_id as ${prefix}notice_id,name as ${prefix}name,title as ${prefix}title,
+        administrator_id as ${prefix}administrator_id,create_time as ${prefix}create_time,update_time as ${prefix}update_time,
+        is_delete as ${prefix}is_delete,content as ${prefix}content
+    </sql>
+    <sql id="notice_t_as_fields">
+        ${tb_alias}.notice_id as ${prefix}notice_id,${tb_alias}.name as ${prefix}name,${tb_alias}.title as ${prefix}title,
+        ${tb_alias}.administrator_id as ${prefix}administrator_id,${tb_alias}.create_time as ${prefix}create_time,${tb_alias}.update_time as ${prefix}update_time,
+        ${tb_alias}.is_delete as ${prefix}is_delete,${tb_alias}.content as ${prefix}content
+    </sql>
 </mapper>

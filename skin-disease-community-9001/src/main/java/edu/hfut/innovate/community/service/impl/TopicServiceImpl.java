@@ -9,10 +9,8 @@ import edu.hfut.innovate.common.domain.vo.community.*;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.Query;
 import edu.hfut.innovate.common.util.BeanUtil;
-import edu.hfut.innovate.common.util.CollectionUtil;
 import edu.hfut.innovate.common.util.CommunityTypeUtil;
-import edu.hfut.innovate.common.util.ItemSize;
-import edu.hfut.innovate.community.dao.TopicDao;
+import edu.hfut.innovate.community.dao.TopicMapper;
 import edu.hfut.innovate.community.entity.TopicEntity;
 import edu.hfut.innovate.community.service.*;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -30,7 +28,7 @@ import java.util.stream.Collectors;
 
 
 @Service("topicService")
-public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> implements TopicService {
+public class TopicServiceImpl extends ServiceImpl<TopicMapper, TopicEntity> implements TopicService {
     // region 依赖注入
     @Autowired
     private CommentService commentService;
@@ -54,7 +52,8 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
     public PageUtils<TopicVo> queryPageByUserId(Map<String, Object> params, Long userId, Long locationId) {
         IPage<TopicEntity> page = this.page(
                 new Query<TopicEntity>().getPage(params),
-                new LambdaUpdateWrapper<TopicEntity>().eq(locationId != null, TopicEntity::getLocationId, locationId)
+//                new LambdaUpdateWrapper<TopicEntity>().eq(locationId != null, TopicEntity::getLocationId, locationId)
+                new LambdaUpdateWrapper<TopicEntity>()
         );
         // 获取所有的TopicId
         Collection<Long> topicIds = new HashSet<>();
@@ -63,15 +62,15 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
 
         for (TopicEntity record : page.getRecords()) {
             topicIds.add(record.getTopicId());
-            userIds.add(record.getUserId());
+//            userIds.add(record.getUser());
             // 如果locationId为空则是按locationId查询，所有的locationId都是一样的
             if (locationId == null) {
-                locationIds.add(record.getLocationId());
+//                locationIds.add(record.getLocationId());
             }
         }
 
         // 根据TopicId分组
-        Map<Long, List<CommentVo>> commentVoMap = commentService.mapByTopicIds(topicIds, 2, 0);
+        Map<Long, List<CommentVo>> commentVoMap = commentService.mapByTopicIds(topicIds);
         // 获取所有的UserId
         Map<Long, UserVo> userVoMap = userService.mapByIds(userIds);
 
@@ -98,11 +97,11 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
         List<TopicVo> list = page.getRecords().stream().map(topicEntity -> {
             TopicVo topicVo = BeanUtil.copyProperties(topicEntity, new TopicVo());
             topicVo.setComments(commentVoMap.get(topicEntity.getTopicId()));
-            topicVo.setUser(userVoMap.get(topicEntity.getUserId()));
+            topicVo.setUser(userVoMap.get(topicEntity.getUser()));
             topicVo.setTags(tagMap.get(topicEntity.getTopicId()));
             topicVo.setIsLiked(likeSet.contains(topicEntity.getTopicId()) ? 1 : 0);
             topicVo.setIsCollected(collectionSet.contains(topicEntity.getTopicId()) ? 1 : 0);
-            topicVo.setLocation(finalLocationMap.get(topicEntity.getLocationId()));
+//            topicVo.setLocation(finalLocationMap.get(topicEntity.getLocationId()));
 
             return topicVo;
         }).toList();
@@ -112,13 +111,12 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
 
     @Override
     public void removeTopicById(Long topicId) {
-        List<CommentVo> commentVos = commentService.getByTopicId(topicId, ItemSize.ALL, ItemSize.NONE);
+        List<Long> ids = commentService.listIdByTopicId(topicId);
 
         this.removeById(topicId);
 
-        if (commentVos != null && !commentVos.isEmpty()){
-            commentService.removeAllByIdsWithReply(
-                    CollectionUtil.getCollection(commentVos, CommentVo::getCommentId));
+        if (ids != null && !ids.isEmpty()){
+            commentService.removeAllByIdsWithReply(ids);
         }
     }
 
@@ -130,23 +128,12 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
     }
 
     @Override
-    public TopicVo getTopicById(Long topicId, Long userId) {
-        TopicEntity topicEntity = getById(topicId);
-        if (topicEntity == null) {
-            return null;
-        }
-        TopicVo topicVo = BeanUtil.copyProperties(topicEntity, new TopicVo());
-        topicVo.setTags(topicTagService.getByTopicId(topicId));
-        UserVo userVo = topicVo.getIsAnonymous() == 1 ? UserVo.anonymousUser() :
-                BeanUtil.copyProperties(userService.getById(topicEntity.getUserId()), new UserVo());
-
-        topicVo.setUser(userVo);
-        topicVo.setComments(commentService.getByTopicIdWithLikes(topicId, userId, ItemSize.ALL, ItemSize.PARTS_BY_LIKES));
+    public TopicVo getTopicByIdWithLikeInfo(Long topicId, Long userId) {
+        TopicVo topicVo = getTopicByIdWithAnonymous(topicId);
+        // TODO
+        topicVo.setComments(commentService.getByTopicIdWithLikes(topicId, userId));
         topicVo.setIsLiked(likeRecordService.isLikedDesId(topicId, userId, CommunityTypeUtil.TOPIC_TYPE));
         topicVo.setIsCollected(collectionRecordService.isCollectedTopic(topicId, userId));
-        // 8.6 设置location
-        topicVo.setLocation(BeanUtil.copyProperties(
-                topicLocationService.getById(topicEntity.getLocationId()), new TopicLocationVo()));
 
         return topicVo;
     }
@@ -170,11 +157,11 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
         Collection<Long> userIds = new HashSet<>();
         Collection<Long> locationIds = new HashSet<>();
         for (TopicEntity topicEntity : topicEntities) {
-            userIds.add(topicEntity.getUserId());
-            locationIds.add(topicEntity.getLocationId());
+//            userIds.add(topicEntity.getUser());
+//            locationIds.add(topicEntity.getLocationId());
         }
 
-        userIds = CollectionUtil.getCollection(topicEntities, TopicEntity::getUserId);
+//        userIds = CollectionUtil.getCollection(topicEntities, TopicEntity::getUser);
         Map<Long, UserVo> userVoMap = userService.mapByIds(userIds);
         Map<Long, List<TopicTagVo>> tagMap = topicTagService.mapByTopicIds(topicIds);
 
@@ -183,9 +170,9 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
 
         return topicEntities.stream().map(topicEntity -> {
             TopicVo topicVo = BeanUtil.copyProperties(topicEntity, new TopicVo());
-            topicVo.setUser(userVoMap.get(topicEntity.getUserId()));
+            topicVo.setUser(userVoMap.get(topicEntity.getUser()));
             topicVo.setTags(tagMap.get(topicEntity.getTopicId()));
-            topicVo.setLocation(locationMap.get(topicEntity.getLocationId()));
+//            topicVo.setLocation(locationMap.get(topicEntity.getLocationId()));
             return topicVo;
         }).collect(Collectors.toMap(TopicVo::getTopicId, Function.identity()));
 
@@ -229,5 +216,26 @@ public class TopicServiceImpl extends ServiceImpl<TopicDao, TopicEntity> impleme
             topicVo.setComments(commentVos);
             return new HighlightVo<>(topicVo, hit.getHighlightFields());
         }).toList();
+    }
+
+    /**
+     * 包含user tags location
+     * 不包含comments
+     * 159ms
+     * @param topicId topicId
+     * @return topicVo
+     */
+    @Override
+    public TopicVo getTopicById(Long topicId) {
+        return BeanUtil.copyProperties(baseMapper.selectOneTopic(topicId), new TopicVo());
+    }
+
+    @Override
+    public TopicVo getTopicByIdWithAnonymous(Long topicId) {
+        TopicVo topic = getTopicById(topicId);
+        if (topic.getIsAnonymous() == 1) {
+            topic.setUser(UserVo.anonymousUser());
+        }
+        return topic;
     }
 }

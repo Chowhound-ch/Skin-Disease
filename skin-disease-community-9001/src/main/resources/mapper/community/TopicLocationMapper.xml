@@ -9,4 +9,21 @@
             <result property="locationName" column="location_name" jdbcType="VARCHAR"/>
             <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
     </resultMap>
+
+    <sql id="topicLocation_fields">
+        location_id,location_name,is_delete
+    </sql>
+
+    <sql id="topicLocation_as_fields">
+        location_id as ${prefix}location_id,location_name as ${prefix}location_name,is_delete as ${prefix}is_delete
+    </sql>
+    <sql id="topicLocation_t_as_fields">
+        ${tb_alias}.location_id as ${prefix}location_id,${tb_alias}.location_name as ${prefix}location_name,${tb_alias}.is_delete as ${prefix}is_delete
+    </sql>
+
+    <select id="getLocationById" resultType="edu.hfut.innovate.community.entity.TopicLocationEntity">
+        select <include refid="topicLocation_fields"/>
+        from topic_location t
+        where t.location_id = #{locationId}
+    </select>
 </mapper>

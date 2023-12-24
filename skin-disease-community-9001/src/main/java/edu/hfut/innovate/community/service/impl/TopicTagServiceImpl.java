@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hfut.innovate.common.domain.vo.community.TopicTagVo;
 import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.CollectionUtil;
-import edu.hfut.innovate.community.dao.TopicTagDao;
+import edu.hfut.innovate.community.dao.TopicTagMapper;
 import edu.hfut.innovate.community.entity.TopicTagEntity;
 import edu.hfut.innovate.community.entity.TopicTagRelationEntity;
 import edu.hfut.innovate.community.service.TopicTagRelationService;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 
 @Service("topicTagService")
-public class TopicTagServiceImpl extends ServiceImpl<TopicTagDao, TopicTagEntity> implements TopicTagService {
+public class TopicTagServiceImpl extends ServiceImpl<TopicTagMapper, TopicTagEntity> implements TopicTagService {
     @Autowired
     private TopicTagRelationService topicTagRelationService;
 

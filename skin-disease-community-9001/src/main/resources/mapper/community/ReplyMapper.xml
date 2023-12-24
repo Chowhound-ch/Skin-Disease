@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.hfut.innovate.community.dao.ReplyMapper">
+
+    <resultMap id="BaseResultMap" type="edu.hfut.innovate.community.entity.ReplyEntity">
+        <id property="replyId" column="reply_id" jdbcType="BIGINT"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="replied" column="replied" jdbcType="BIGINT"/>
+        <result property="content" column="content" jdbcType="BLOB"/>
+        <result property="likes" column="likes" jdbcType="INTEGER"/>
+        <result property="isReplyTop" column="is_reply_top" jdbcType="TINYINT"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+        <result property="commentId" column="comment_id" jdbcType="BIGINT"/>
+        <association property="user"
+                     column="user_id"
+                     columnPrefix="u_"
+                     resultMap="edu.hfut.innovate.community.dao.UserMapper.BaseResultMap"/>
+        <association property="repliedUser"
+                     columnPrefix="replied_"
+                     resultMap="edu.hfut.innovate.community.dao.UserMapper.BaseResultMap"/>
+    </resultMap>
+
+    <sql id="reply_fields">
+        reply_id,user_id,replied,
+        likes,is_reply_top,update_time,
+        create_time,is_delete,comment_id,
+        content
+    </sql>
+
+    <sql id="reply_as_fields">
+        reply_id as ${prefix}reply_id,user_id as ${prefix}user_id,replied as ${prefix}replied,
+        likes as ${prefix}likes,is_reply_top as ${prefix}is_reply_top,update_time as ${prefix}update_time,
+        create_time as ${prefix}create_time,is_delete as ${prefix}is_delete,comment_id as ${prefix}comment_id,
+        content as ${prefix}content
+    </sql>
+    <sql id="reply_t_as_fields">
+        ${tb_alias}.reply_id as ${prefix}reply_id,${tb_alias}.user_id as ${prefix}user_id,${tb_alias}.replied as ${prefix}replied,
+        ${tb_alias}.likes as ${prefix}likes,${tb_alias}.is_reply_top as ${prefix}is_reply_top,${tb_alias}.update_time as ${prefix}update_time,
+        ${tb_alias}.create_time as ${prefix}create_time,${tb_alias}.is_delete as ${prefix}is_delete,${tb_alias}.comment_id as ${prefix}comment_id,
+        ${tb_alias}.content as ${prefix}content
+    </sql>
+    <select id="getByCommentId" resultMap="BaseResultMap" >
+        select
+        <include refid="reply_t_as_fields">
+            <property name="tb_alias" value="r"/>
+            <property name="prefix" value=""/>
+        </include>
+        ,
+        <include refid="edu.hfut.innovate.community.dao.UserMapper.user_t_as_fields">
+            <property name="tb_alias" value="u"/>
+            <property name="prefix" value="u_"/>
+        </include>
+        ,
+        <include refid="edu.hfut.innovate.community.dao.UserMapper.user_t_as_fields">
+            <property name="tb_alias" value="replied"/>
+            <property name="prefix" value="replied_"/>
+        </include>
+        from reply r
+        join `user`  u on u.user_id = r.user_id
+        join `user` replied on replied.user_id = r.replied
+        where comment_id =#{commentId}
+        order by likes desc;
+    </select>
+    <select id="listByCommentIds" resultMap="BaseResultMap">
+        select
+            <include refid="reply_t_as_fields">
+                <property name="tb_alias" value="r"/>
+                <property name="prefix" value=""/>
+            </include>
+            ,
+            <include refid="edu.hfut.innovate.community.dao.UserMapper.user_t_as_fields">
+                <property name="tb_alias" value="u"/>
+                <property name="prefix" value="u_"/>
+            </include>
+            ,
+            <include refid="edu.hfut.innovate.community.dao.UserMapper.user_t_as_fields">
+                <property name="tb_alias" value="replied"/>
+                <property name="prefix" value="replied_"/>
+            </include>
+        from reply r
+        join `user`  u on u.user_id = r.user_id
+        join `user` replied on replied.user_id = r.replied
+        where comment_id in
+        <foreach item="id" collection="commentIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        order by likes desc;
+    </select>
+</mapper>

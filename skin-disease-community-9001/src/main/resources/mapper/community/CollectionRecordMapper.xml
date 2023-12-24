@@ -8,11 +8,30 @@
             <id property="collectionId" column="collection_id" jdbcType="BIGINT"/>
             <result property="userId" column="user_id" jdbcType="BIGINT"/>
             <result property="topicId" column="topic_id" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <sql id="Base_Column_List">
+    <sql id="collectionRecord_fields">
         collection_id,user_id,topic_id,
-        is_delete
+        create_time,is_delete,update_time
+    </sql>
+
+    <sql id="collectionRecord_as_fields">
+        collection_id as ${prefix}collection_id,
+        user_id as ${prefix}user_id,
+        topic_id as ${prefix}topic_id,
+        create_time as ${prefix}create_time,
+        is_delete as ${prefix}is_delete,
+        update_time as ${prefix}update_time
+    </sql>
+    <sql id="collectionRecord_t_as_fields">
+        ${tb_alias}.collection_id as ${prefix}collection_id,
+        ${tb_alias}.user_id as ${prefix}user_id,
+        ${tb_alias}.topic_id as ${prefix}topic_id,
+        ${tb_alias}.create_time as ${prefix}create_time,
+        ${tb_alias}.is_delete as ${prefix}is_delete,
+        ${tb_alias}.update_time as ${prefix}update_time
     </sql>
 </mapper>

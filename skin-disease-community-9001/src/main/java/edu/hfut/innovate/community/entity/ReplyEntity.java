@@ -1,5 +1,6 @@
 package edu.hfut.innovate.community.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import edu.hfut.innovate.common.util.entity.BaseEntity;
@@ -51,4 +52,9 @@ public class ReplyEntity extends BaseEntity implements Serializable {
 	 * 
 	 */
 	private Integer isReplyTop;
+
+	@TableField(exist = false)
+	private UserEntity user;
+	@TableField(exist = false)
+	private UserEntity repliedUser;
 }

@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hfut.innovate.common.domain.vo.community.UserVo;
 import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.CollectionUtil;
-import edu.hfut.innovate.community.dao.UserDao;
+import edu.hfut.innovate.community.dao.UserMapper;
 import edu.hfut.innovate.community.entity.UserEntity;
 import edu.hfut.innovate.community.exception.UserHasRegistered;
 import edu.hfut.innovate.community.service.UserService;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 
 @Service("userService")
-public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> implements UserService {
 
     @Override
     public UserEntity login(String username, String phone) {

@@ -1,6 +1,5 @@
 package edu.hfut.innovate.common.util;
 
-import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -15,7 +14,7 @@ public class BeanUtil {
         if (source == null) {
             return null;
         }
-        BeanUtils.copyProperties(source, targetClass);
+        cn.hutool.core.bean.BeanUtil.copyProperties(source, targetClass);
         return targetClass;
     }
 
