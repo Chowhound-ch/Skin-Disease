@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.hfut.innovate.identify.mapper.IdentifyMapper">
+
+    <resultMap id="BaseResultMap" type="edu.hfut.innovate.identify.entity.Identify">
+            <id property="identifyId" column="identify_id" jdbcType="BIGINT"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+            <result property="resId" column="res_id" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="identify_fields">
+        identify_id, user_id, img_url, 
+        res_id, create_time, update_time, 
+        is_delete
+    </sql>
+
+    <sql id="identify_as_fields">
+        identify_id as "${prefix}identify_id", 
+        user_id as "${prefix}user_id", 
+        img_url as "${prefix}img_url", 
+        res_id as "${prefix}res_id", 
+        create_time as "${prefix}create_time", 
+        update_time as "${prefix}update_time", 
+        is_delete as "${prefix}is_delete"
+    </sql>
+    <sql id="identify_t_as_fields">
+        ${tb_alias}.identify_id as "${prefix}identify_id", 
+        ${tb_alias}.user_id as "${prefix}user_id", 
+        ${tb_alias}.img_url as "${prefix}img_url", 
+        ${tb_alias}.res_id as "${prefix}res_id", 
+        ${tb_alias}.create_time as "${prefix}create_time", 
+        ${tb_alias}.update_time as "${prefix}update_time", 
+        ${tb_alias}.is_delete as "${prefix}is_delete"
+    </sql>
+</mapper>

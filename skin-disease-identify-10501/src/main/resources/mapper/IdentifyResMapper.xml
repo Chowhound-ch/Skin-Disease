@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.hfut.innovate.identify.mapper.IdentifyResMapper">
+
+    <resultMap id="BaseResultMap" type="edu.hfut.innovate.identify.entity.IdentifyRes">
+            <id property="resId" column="res_id" jdbcType="BIGINT"/>
+            <result property="normal" column="normal" jdbcType="INTEGER"/>
+            <result property="msg" column="msg" jdbcType="VARCHAR"/>
+            <result property="most" column="most" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="identifyRes_fields">
+        res_id, normal, msg, 
+        most, create_time, update_time, 
+        is_delete
+    </sql>
+
+    <sql id="identifyRes_as_fields">
+        res_id as "${prefix}res_id", 
+        normal as "${prefix}normal", 
+        msg as "${prefix}msg", 
+        most as "${prefix}most", 
+        create_time as "${prefix}create_time", 
+        update_time as "${prefix}update_time", 
+        is_delete as "${prefix}is_delete"
+    </sql>
+    <sql id="identifyRes_t_as_fields">
+        ${tb_alias}.res_id as "${prefix}res_id", 
+        ${tb_alias}.normal as "${prefix}normal", 
+        ${tb_alias}.msg as "${prefix}msg", 
+        ${tb_alias}.most as "${prefix}most", 
+        ${tb_alias}.create_time as "${prefix}create_time", 
+        ${tb_alias}.update_time as "${prefix}update_time", 
+        ${tb_alias}.is_delete as "${prefix}is_delete"
+    </sql>
+</mapper>

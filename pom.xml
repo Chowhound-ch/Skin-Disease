@@ -19,6 +19,7 @@
         <module>skin-disease-common</module>
         <module>skin-disease-community-9001</module>
         <module>skin-disease-third-9501</module>
+        <module>skin-disease-identify-10501</module>
     </modules>
     <properties>
         <java.version>17</java.version>

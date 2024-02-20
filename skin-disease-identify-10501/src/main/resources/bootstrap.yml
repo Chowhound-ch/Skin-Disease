@@ -1,0 +1,25 @@
+server:
+  port: 10501
+spring:
+  application:
+    name: skin-disease-identify
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      server-addr: cloud100:8848
+      username: nacos
+      password: nacos
+#      不使用配置中心
+#      config:
+##        skin-disease项目的开发环境配置
+#        file-extension: yml
+#        namespace: ddc49fa0-f320-4292-b80c-9d8957914983
+#        extension-configs:
+#          - data-id: datasource-${spring.profiles.active}.yml
+#            refresh: true
+#          - data-id: redis-${spring.profiles.active}.yml
+#            refresh: true
+      discovery:
+        namespace: ddc49fa0-f320-4292-b80c-9d8957914983
+
