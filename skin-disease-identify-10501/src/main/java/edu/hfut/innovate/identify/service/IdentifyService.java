@@ -1,5 +1,6 @@
 package edu.hfut.innovate.identify.service;
 
+import edu.hfut.innovate.common.domain.vo.identify.IdentifyVo;
 import edu.hfut.innovate.identify.entity.Identify;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -9,5 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2024-02-20 18:55:31
 */
 public interface IdentifyService extends IService<Identify> {
+
+    IdentifyVo getIdentifyById(Long identifyId);
 
 }

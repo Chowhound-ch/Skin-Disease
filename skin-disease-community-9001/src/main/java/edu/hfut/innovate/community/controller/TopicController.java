@@ -57,9 +57,7 @@ public class TopicController {
 
     @ApiOperation("根据话题id查询话题(详细信息)")
     @GetMapping("/{topicId}")
-    public R getTopic(@PathVariable("topicId") Long topicId,
-                      @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        UserAuth auth = tokenManager.getUserFromTokenWithBearer(token);
+    public R getTopic(@PathVariable("topicId") Long topicId, UserAuth auth) {
         TopicVo topicVo = topicService.getTopicByIdWithLikeInfo(topicId, auth.getUserId());
         if (topicVo == null) {
             return R.error(HttpStatus.NOT_FOUND.value(), "话题不存在");

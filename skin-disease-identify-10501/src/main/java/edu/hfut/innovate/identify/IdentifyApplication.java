@@ -9,7 +9,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * @since : 2024/2/20 - 16:23
  */
 @EnableDiscoveryClient
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "edu.hfut.innovate")
 public class IdentifyApplication {
     public static void main(String[] args) {
         SpringApplication.run(IdentifyApplication.class);

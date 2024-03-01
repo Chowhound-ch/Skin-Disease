@@ -1,19 +1,20 @@
 package edu.hfut.innovate.identify.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.util.Date;
+import edu.hfut.innovate.common.util.entity.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.io.Serial;
+import java.io.Serializable;
 
 /**
  * @TableName identify_res
  */
+@EqualsAndHashCode(callSuper = true)
 @TableName(value ="identify_res")
 @Data
-public class IdentifyRes implements Serializable {
+public class IdentifyRes extends BaseEntity implements Serializable {
     private Long resId;
 
     private Integer normal;
@@ -22,11 +23,7 @@ public class IdentifyRes implements Serializable {
 
     private String most;
 
-    private Date createTime;
 
-    private Date updateTime;
-
-    private Integer isDelete;
-
+    @Serial
     private static final long serialVersionUID = 1L;
 }
