@@ -56,6 +56,7 @@ public class IdentifierHelper {
             IdentifyRes identifyRes = new IdentifyRes();
             identifyRes.setMost(entry.getKey());
             identifyRes.setProb(entry.getValue());
+            return identifyRes;
         } catch (Exception e) {
             e.printStackTrace();
             log.error("识别过程出错" + e.getMessage());

@@ -2,10 +2,15 @@ package edu.hfut.innovate.identify.controller;
 
 import edu.hfut.innovate.common.domain.dto.identify.IdentifyDto;
 import edu.hfut.innovate.common.domain.entity.UserAuth;
+import edu.hfut.innovate.common.domain.vo.identify.IdentifyResVo;
 import edu.hfut.innovate.common.domain.vo.identify.IdentifyVo;
 import edu.hfut.innovate.common.renren.R;
+import edu.hfut.innovate.common.util.BeanUtil;
+import edu.hfut.innovate.identify.entity.IdentifyRes;
 import edu.hfut.innovate.identify.service.IdentifyResService;
 import edu.hfut.innovate.identify.service.IdentifyService;
+import edu.hfut.innovate.identify.util.IdentifierHelper;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -15,11 +20,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("identify")
 @RestController
 public class IdentifyController {
-    private final IdentifyResService resService;
+    private final IdentifierHelper identifierHelper;
     private final IdentifyService identifyService;
-    public IdentifyController(IdentifyService identifyService, IdentifyResService resService) {
+    private final IdentifyResService identifyResService;
+    public IdentifyController(IdentifyService identifyService, IdentifierHelper identifierHelper, IdentifyResService identifyResService) {
         this.identifyService = identifyService;
-        this.resService = resService;
+        this.identifierHelper = identifierHelper;
+        this.identifyResService = identifyResService;
     }
 
     @GetMapping("/{identify_id}")
@@ -32,6 +39,7 @@ public class IdentifyController {
         return R.ok(identify);
     }
 
+    @Transactional
     @PostMapping("/")
     public R postIdentifyByUserId(@RequestBody IdentifyDto identifyDto, UserAuth auth) throws NullPointerException{
         identifyDto.setUserId(auth.getUserId());
@@ -39,10 +47,12 @@ public class IdentifyController {
         if (identifyVo == null) {
             throw new NullPointerException("保存失败");
         }
-        // TODO 保存成功后，调用识别服务
+        IdentifyRes identifyRes = identifierHelper.doGetIdentify(identifyVo.getImgUrl());
+        identifyRes.setResId(identifyVo.getIdentifyId());
+        identifyResService.save(identifyRes);
+        identifyVo.setRes(BeanUtil.copyProperties(identifyRes, new IdentifyResVo()));
 
-
-        return R.ok();
+        return R.ok(identifyVo);
     }
 
 
