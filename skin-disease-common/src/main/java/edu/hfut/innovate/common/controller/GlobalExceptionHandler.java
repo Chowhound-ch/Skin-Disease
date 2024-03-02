@@ -17,6 +17,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler({NullPointerException.class})
+    public R handleNullPointerException(NullPointerException e) {
+        e.printStackTrace();
+
+        return R.error(HttpStatus.NOT_FOUND.value(), e.getMessage());
+    }
 
     @ExceptionHandler({Exception.class})
     public R handleException(Exception e) {

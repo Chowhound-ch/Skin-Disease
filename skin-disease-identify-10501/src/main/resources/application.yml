@@ -1,9 +1,12 @@
+custom:
+  token:
+    sign-key: B*1$w9^OrEn%nIRcT_ke7if5R:-*EMnOW
 spring:
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
   redis:
-    host: wolves.vip
+    host: cloud100
     port: 6379
     password: 123456
   datasource:
@@ -29,3 +32,4 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto
+  type-aliases-package: edu.hfut.innovate.identify.entity

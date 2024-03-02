@@ -1,5 +1,6 @@
 package edu.hfut.innovate.identify.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import edu.hfut.innovate.common.util.entity.BaseEntity;
 import lombok.Data;
@@ -15,6 +16,7 @@ import java.io.Serializable;
 @TableName(value ="identify")
 @Data
 public class Identify extends BaseEntity implements Serializable {
+    @TableId
     private Long identifyId;
 
     private Long userId;

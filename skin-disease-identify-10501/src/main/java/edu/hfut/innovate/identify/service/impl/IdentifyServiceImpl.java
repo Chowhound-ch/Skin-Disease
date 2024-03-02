@@ -1,6 +1,7 @@
 package edu.hfut.innovate.identify.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import edu.hfut.innovate.common.domain.dto.identify.IdentifyDto;
 import edu.hfut.innovate.common.domain.vo.identify.IdentifyResVo;
 import edu.hfut.innovate.common.domain.vo.identify.IdentifyVo;
 import edu.hfut.innovate.common.util.BeanUtil;
@@ -35,11 +36,19 @@ public class IdentifyServiceImpl extends ServiceImpl<IdentifyMapper, Identify>
             IdentifyResVo resVo = BeanUtil.copyProperties(res, new IdentifyResVo());
             identifyVo.setRes(resVo);
 
-
-
+            return identifyVo;
         }
 
         return null;
+    }
+
+    @Override
+    public IdentifyVo saveIdentify(IdentifyDto identifyDto) {
+        Identify identify = new Identify();
+        identify.setUserId(identifyDto.getUserId());
+        identify.setImgUrl(identifyDto.getImgUrl());
+
+        return this.save(identify) ? BeanUtil.copyProperties(identify, new IdentifyVo()) : null;
     }
 }
 
