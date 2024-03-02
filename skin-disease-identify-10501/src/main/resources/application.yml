@@ -1,6 +1,7 @@
 custom:
   token:
     sign-key: B*1$w9^OrEn%nIRcT_ke7if5R:-*EMnOW
+  python-location: D:\workspace\env\anaconda\python.exe
 spring:
   mvc:
     pathmatch:

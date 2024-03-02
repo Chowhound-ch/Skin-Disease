@@ -17,4 +17,7 @@ public class IdentifyResDto implements Serializable {
     private String msg;
 
     private String most;
+
+    private Double prob;
+
 }

@@ -25,6 +25,8 @@ public class IdentifyRes extends BaseEntity implements Serializable {
 
     private String most;
 
+    private Double prob;
+
 
     @Serial
     private static final long serialVersionUID = 1L;

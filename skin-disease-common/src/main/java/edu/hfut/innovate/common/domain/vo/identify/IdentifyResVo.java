@@ -18,6 +18,8 @@ public class IdentifyResVo implements Serializable {
 
     private String most;
 
+    private Double prob;
+
     private Date updateTime;
 
     private Date createTime;
