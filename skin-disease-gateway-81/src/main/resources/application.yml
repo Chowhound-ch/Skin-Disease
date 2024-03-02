@@ -1,0 +1,4 @@
+edu:
+  hfut:
+    gateway:
+      enable-auth: false

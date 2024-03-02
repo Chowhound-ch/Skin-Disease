@@ -6,14 +6,12 @@ import edu.hfut.innovate.common.domain.vo.community.LikeRecordVo;
 import edu.hfut.innovate.common.renren.PageUtils;
 import edu.hfut.innovate.common.renren.R;
 import edu.hfut.innovate.common.util.BeanUtil;
-import edu.hfut.innovate.common.util.TokenManager;
 import edu.hfut.innovate.community.entity.LikeRecord;
 import edu.hfut.innovate.community.service.LikeRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,8 +27,6 @@ import java.util.Map;
 public class LikeRecordController {
     @Autowired
     private LikeRecordService likeRecordService;
-    @Autowired
-    private TokenManager tokenManager;
 
     @ApiOperation(value = "点赞")
     @PostMapping("/save")
@@ -58,10 +54,7 @@ public class LikeRecordController {
 
     @ApiOperation(value = "查询点赞记录")
     @GetMapping("/")
-    public R get(
-            @ApiParam(value = "用户id", required = true)
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String token){
-        UserAuth auth = tokenManager.getUserFromTokenWithBearer(token);
+    public R get(UserAuth auth){
 
         List<LikeRecordVo> likeRecordList = likeRecordService.listTopicLikedByUserId(auth.getUserId());
 
@@ -72,9 +65,7 @@ public class LikeRecordController {
     @GetMapping("/page")
     public R list(
             @ApiParam("分页查询参数")
-            @RequestParam Map<String, Object> params,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        UserAuth auth = tokenManager.getUserFromTokenWithBearer(token);
+            @RequestParam Map<String, Object> params, UserAuth auth) {
 
         PageUtils<LikeRecordVo> page = likeRecordService.queryPageByUserId(params, auth.getUserId());
         List<LikeRecordVo> likeRecordVos = page.getList().stream()

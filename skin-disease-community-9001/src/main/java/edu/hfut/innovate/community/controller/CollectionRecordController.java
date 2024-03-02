@@ -5,14 +5,12 @@ import edu.hfut.innovate.common.domain.entity.UserAuth;
 import edu.hfut.innovate.common.domain.vo.community.CollectionRecordVo;
 import edu.hfut.innovate.common.renren.R;
 import edu.hfut.innovate.common.util.BeanUtil;
-import edu.hfut.innovate.common.util.TokenManager;
 import edu.hfut.innovate.community.entity.CollectionRecord;
 import edu.hfut.innovate.community.service.CollectionRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +27,6 @@ import java.util.Map;
 public class CollectionRecordController {
     @Autowired
     private CollectionRecordService collectionRecordService;
-    @Autowired
-    private TokenManager tokenManager;
 
     @Transactional
     @ApiOperation(value = "收藏")
@@ -59,13 +55,10 @@ public class CollectionRecordController {
 
     @ApiOperation(value = "查询收藏记录")
     @GetMapping("/")
-    public R get(
-            @ApiParam(value = "用户id", required = true)
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String token){
-        UserAuth user = tokenManager.getUserFromTokenWithBearer(token);
+    public R get(UserAuth auth){
 
         List<CollectionRecordVo> collectionRecordVoList =
-                collectionRecordService.listTopicCollectedByUserId(user.getUserId());
+                collectionRecordService.listTopicCollectedByUserId(auth.getUserId());
 
         return R.ok(collectionRecordVoList);
     }
@@ -74,10 +67,9 @@ public class CollectionRecordController {
     @GetMapping("/page/")
     public R list(
             @ApiParam("分页查询参数")
-            @RequestParam Map<String, Object> params, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        UserAuth user = tokenManager.getUserFromTokenWithBearer(token);
+            @RequestParam Map<String, Object> params, UserAuth auth) {
 
-        return R.ok(collectionRecordService.queryPageByUserId(params, user.getUserId()));
+        return R.ok(collectionRecordService.queryPageByUserId(params, auth.getUserId()));
     }
 
 

@@ -3,7 +3,6 @@ package edu.hfut.innovate.community.controller;
 import edu.hfut.innovate.common.domain.dto.community.RotationDto;
 import edu.hfut.innovate.common.renren.R;
 import edu.hfut.innovate.common.util.BeanUtil;
-import edu.hfut.innovate.common.util.TokenManager;
 import edu.hfut.innovate.community.entity.RotationEntity;
 import edu.hfut.innovate.community.service.RotationService;
 import io.swagger.annotations.ApiOperation;
@@ -20,8 +19,6 @@ import java.util.List;
 @RequestMapping("/rotation")
 @RestController
 public class RotationController {
-    @Autowired
-    private TokenManager tokenManager;
     @Autowired
     private RotationService rotationService;
 

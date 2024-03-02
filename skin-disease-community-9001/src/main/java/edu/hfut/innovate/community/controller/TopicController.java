@@ -5,7 +5,6 @@ import edu.hfut.innovate.common.domain.entity.UserAuth;
 import edu.hfut.innovate.common.domain.vo.community.TopicVo;
 import edu.hfut.innovate.common.renren.R;
 import edu.hfut.innovate.common.util.BeanUtil;
-import edu.hfut.innovate.common.util.TokenManager;
 import edu.hfut.innovate.community.entity.TopicEntity;
 import edu.hfut.innovate.community.entity.TopicTagRelationEntity;
 import edu.hfut.innovate.community.service.TopicService;
@@ -14,7 +13,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +33,6 @@ public class TopicController {
     private TopicService topicService;
     @Autowired
     private TopicTagRelationService topicTagRelationService;
-    @Autowired
-    private TokenManager tokenManager;
 
     /**
      * 分页查询话题
@@ -48,9 +44,7 @@ public class TopicController {
             @RequestParam Integer page,
             @RequestParam Integer limit,
             @RequestParam Long locationId,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        UserAuth auth = tokenManager.getUserFromTokenWithBearer(token);
-
+            UserAuth auth) {
 
         return R.ok(topicService.queryPageByUserId(page, limit, auth.getUserId(), locationId));
     }
@@ -123,11 +117,8 @@ public class TopicController {
 
     @ApiOperation("模糊查询")
     @GetMapping("/search")
-    public R search(@RequestParam("keyword") String keyword,
-                    @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        UserAuth auth = tokenManager.getUserFromTokenWithBearer(token);
+    public R search(@RequestParam("keyword") String keyword, UserAuth auth) {
 
-//        topicService.
         return R.ok(topicService.search(keyword, auth.getUserId()));
     }
 

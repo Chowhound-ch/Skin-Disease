@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "edu.hfut.gateway.enable-auth",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Description for edu.hfut.gateway.enable-auth."
+  }
+] }
