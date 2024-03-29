@@ -43,10 +43,11 @@ public class TopicController {
             @ApiParam("分页查询参数")
             @RequestParam Integer page,
             @RequestParam Integer limit,
-            @RequestParam Long locationId,
+            @RequestParam(required = false) Long locationId,
+            @RequestParam(required = false) Integer sort,
             UserAuth auth) {
 
-        return R.ok(topicService.queryPageByUserId(page, limit, auth.getUserId(), locationId));
+        return R.ok(topicService.queryPageByUserId(page, limit, auth.getUserId(), locationId, sort));
     }
 
     @ApiOperation("根据话题id查询话题(详细信息)")

@@ -47,8 +47,9 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, TopicEntity> impl
 
     @Transactional
     @Override
-    public List<TopicVo> queryPageByUserId(Integer page, Integer limit, Long userId, Long locationId) {
-        List<TopicEntity> topicEntities = baseMapper.listTopics(page == null ? 0 : (page - 1) * limit, limit == null ? 10 : limit, locationId);
+    public List<TopicVo> queryPageByUserId(Integer page, Integer limit, Long userId, Long locationId, Integer sort) {
+        List<TopicEntity> topicEntities = baseMapper
+                .listTopics(page == null ? 0 : (page - 1) * limit, limit == null ? 10 : limit, locationId, sort);
         // 获取所有的TopicId
         Collection<Long> topicIds = CollectionUtil.getCollection(topicEntities, TopicEntity::getTopicId);
 
@@ -63,6 +64,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, TopicEntity> impl
         return topicEntities.stream().map(topicEntity -> {
             TopicVo topicVo = BeanUtil.copyProperties(topicEntity, new TopicVo());
             topicVo.setComments(commentVoMap.get(topicEntity.getTopicId()));
+            if (topicVo.getUser() == null) topicVo.setUser(BeanUtil.copyProperties(topicEntity.getUser(), new UserVo()));
             topicVo.setIsLiked(likeSet.contains(topicEntity.getTopicId()) ? 1 : 0);
             topicVo.setIsCollected(collectionSet.contains(topicEntity.getTopicId()) ? 1 : 0);
             return topicVo;

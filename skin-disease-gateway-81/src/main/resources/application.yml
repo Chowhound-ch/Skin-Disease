@@ -1,4 +1,4 @@
 edu:
   hfut:
     gateway:
-      enable-auth: false
+      enable-auth: true

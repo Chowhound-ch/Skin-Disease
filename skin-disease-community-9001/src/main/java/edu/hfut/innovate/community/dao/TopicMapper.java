@@ -16,5 +16,5 @@ import java.util.List;
 public interface TopicMapper extends BaseMapper<TopicEntity> {
 	TopicEntity getTopicById(@Param("topicId")Long topicId);
 
-	List<TopicEntity> listTopics(@Param("page") Integer page, @Param("limit") Integer limit, @Param("locationId") Long locationId);
+	List<TopicEntity> listTopics(@Param("page") Integer page, @Param("limit") Integer limit, @Param("locationId") Long locationId, @Param("sort") Integer sort);
 }

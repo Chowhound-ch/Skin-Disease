@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public interface TopicService extends IService<TopicEntity> {
 
-    List<TopicVo> queryPageByUserId(Integer page, Integer limit, Long userId, Long locationId);
+    List<TopicVo> queryPageByUserId(Integer page, Integer limit, Long userId, Long locationId, Integer sort);
 
     void removeTopicById(Long topicId);
 

@@ -32,6 +32,7 @@ public class CollectionRecordServiceImpl extends ServiceImpl<CollectionRecordMap
 
     @Override
     public Set<Long> setOfCollectedTopics(Collection<Long> topicIds, Long userId) {
+        if (topicIds == null || topicIds.isEmpty()) return null;
         List<CollectionRecord> collectionRecordList = list(new LambdaQueryWrapper<CollectionRecord>()
                 .in(CollectionRecord::getTopicId, topicIds)
                 .eq(CollectionRecord::getUserId, userId));

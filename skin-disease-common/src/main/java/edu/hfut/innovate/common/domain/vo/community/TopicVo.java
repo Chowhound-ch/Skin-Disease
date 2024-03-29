@@ -77,7 +77,7 @@ public class TopicVo implements Serializable {
 
 	@ApiModelProperty("话题的评论")
 	private List<CommentVo> comments;
-
+	private Integer sort;
 	/**
 	 * 
 	 */

@@ -1,5 +1,6 @@
 package edu.hfut.innovate.community.controller;
 
+import edu.hfut.innovate.common.config.mvc.TokenValue;
 import edu.hfut.innovate.common.domain.dto.community.UserDto;
 import edu.hfut.innovate.common.domain.dto.community.WeChatUserInfoDto;
 import edu.hfut.innovate.common.domain.entity.LoginInfo;
@@ -59,23 +60,38 @@ public class UserController {
         String openId = miniProgramUtil.getOpenId(info.getJsCode());
         UserEntity userEntity = userService.wechatLogin(openId);
         if (userEntity == null){
-            log.info("用户不存在, 需要授权注册");
+            log.info("用户{}不存在, 需要授权注册", openId);
             return R.error(HttpStatus.FORBIDDEN.value(), "用户不存在, 需要授权注册");
         }
         UserVo userVo = BeanUtil.copyProperties(userEntity, new UserVo());
 
-        return R.ok(Map.of("token", tokenManager.createToken(userVo),
-                "user", userVo));
+        return R.ok(tokenManager.createDoubleToken(userVo));
     }
 
-    @GetMapping("/check/wechat")
-    @ApiOperation("刷新token存在时间")
-    public R wechatLoginCheck(@RequestHeader("Authorization") String token){
-        UserAuth user = tokenManager.getUserVoFromTokenWithBearer(token);
-        tokenManager.deleteTokenWithBearer(token);
+    @PostMapping("/login/refresh")
+    @ApiOperation("微信小程序登录")
+    public R refreshToken(@TokenValue String token){
+        UserAuth userAuth = tokenManager.getUserAuth(token, TokenManager.REFRESH_TOKEN);
+        if (userAuth == null) {
+            log.info("无效的refresh_token");
+            return R.error(HttpStatus.FORBIDDEN.value(), "无效token");
+        }
+        UserVo userVo = BeanUtil.copyProperties(userAuth, new UserVo());
+        String accessToken = tokenManager.refreshAccessToken(userVo, token);
 
-        return R.ok(Map.of("token", tokenManager.createToken(userService.getVoById(user.getUserId())), "user", user));
+        return R.ok().putData(Map.of(TokenManager.ACCESS_TOKEN, accessToken));
     }
+
+
+
+//    @GetMapping("/check/wechat")
+//    @ApiOperation("刷新token存在时间")
+//    public R wechatLoginCheck(@RequestHeader("Authorization") String token){
+//        UserAuth user = tokenManager.getUserVoFromTokenWithBearer(token);
+//        tokenManager.deleteTokenWithBearer(token);
+//
+//        return R.ok(Map.of("token", tokenManager.createToken(userService.getVoById(user.getUserId())), "user", user));
+//    }
     @PostMapping("/register/wechat")
     @ApiOperation("微信小程序授权")
     public R wechatEmpower(@RequestBody WeChatUserInfoDto info){
@@ -135,8 +151,8 @@ public class UserController {
     }
     @ApiOperation(value = "个人信息")
     @GetMapping("/")
-    public R getCommentById(@RequestHeader("Authorization") String token){
-        UserAuth userAu = tokenManager.getUserVoFromTokenWithBearer(token);
+    public R getCommentById(UserAuth userAu){
+        ;
         if (userAu == null){
             return R.error(404,  "用户不存在");
         }
@@ -146,8 +162,7 @@ public class UserController {
     @ApiOperation(value = "更新用户信息")
     @PostMapping("/update")
     public R updateUserInfo(@RequestBody UserDto userDto,
-                            @RequestHeader("Authorization") String token){
-        UserAuth userVo = tokenManager.getUserVoFromTokenWithBearer(token);
+                            UserAuth userVo){
         UserEntity userEntity = BeanUtil.copyProperties(userDto, new UserEntity());
         userEntity.setUserId(userVo.getUserId());
         userEntity.setLikes(null);

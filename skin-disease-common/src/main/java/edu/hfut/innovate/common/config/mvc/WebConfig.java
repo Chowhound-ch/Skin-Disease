@@ -16,10 +16,13 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Autowired
-    private UserIdArgumentResolvers userIdArgumentResolvers;
+    private UserIdArgumentResolver userIdArgumentResolver;
+    @Autowired
+    private TokenValueArgumentResolver tokenValueArgumentResolver;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(userIdArgumentResolvers);
+        resolvers.add(userIdArgumentResolver);
+        resolvers.add(tokenValueArgumentResolver);
     }
 }

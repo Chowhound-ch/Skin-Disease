@@ -43,4 +43,6 @@ public class TopicDto implements Serializable {
 
 	@ApiModelProperty("话题的标签")
 	private List<Long> tagIds;
+
+	private Integer sort;
 }

@@ -17,6 +17,7 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
         <result property="content" column="content" jdbcType="BLOB"/>
+        <result property="sort" column="sort" jdbcType="INTEGER"/>
 
         <result property="locationId" column="location_id" jdbcType="BIGINT"/>
         <result property="userId" column="user_id" jdbcType="BIGINT"/>
@@ -37,7 +38,7 @@
         likes,click,forward,
         collect,is_anonymous,anonymous_name,
         update_time,create_time,is_delete,
-        location_id,content
+        location_id,content,sort
     </sql>
     <sql id="topic_as_fields">
         topic_id as ${prefix}topic_id,
@@ -53,7 +54,8 @@
         create_time as ${prefix}create_time,
         is_delete as ${prefix}is_delete,
         location_id as ${prefix}location_id,
-        content as ${prefix}content
+        content as ${prefix}content,
+        sort as ${prefix}sort
     </sql>
     <sql id="topic_t_as_fields">
         ${tb_alias}.topic_id as ${prefix}topic_id,
@@ -69,6 +71,7 @@
         ${tb_alias}.create_time as ${prefix}create_time,
         ${tb_alias}.is_delete as ${prefix}is_delete,
         ${tb_alias}.location_id as ${prefix}location_id,
+        ${tb_alias}.sort as ${prefix}sort,
         ${tb_alias}.content as ${prefix}content
     </sql>
     <!--	TopicEntity selectOneTopic(@Param("topicId")Long topicId);-->
@@ -112,9 +115,15 @@
         from topic t
         join `user` u on t.user_id = u.user_id
         join topic_location loc on loc.location_id = t.location_id
-        <if test="locationId != null">
-            where t.location_id = #{locationId}
-        </if>
+        <where>
+            <if test="locationId != null">
+                and t.location_id = #{locationId}
+            </if>
+            <if test="sort != null">
+                and t.sort = #{sort}
+            </if>
+        </where>
+
         limit ${page}, ${limit}
     </select>
 

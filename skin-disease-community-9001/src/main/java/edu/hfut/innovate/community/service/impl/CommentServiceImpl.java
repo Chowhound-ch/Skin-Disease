@@ -47,6 +47,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
      */
     @Override
     public Map<Long, List<CommentVo>> mapByTopicIds(Collection<Long> idSet) {
+        if (idSet == null || idSet.isEmpty()) return null;
         List<CommentEntity> commentEntities = baseMapper.listByTopicIds(idSet);
 
         if (commentEntities.isEmpty()) {

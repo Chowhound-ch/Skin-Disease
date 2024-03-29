@@ -1,8 +1,8 @@
 package edu.hfut.innovate.gateway.security.jwt;
 
-import cn.hutool.core.util.StrUtil;
 import edu.hfut.innovate.common.domain.entity.UserAuth;
 import edu.hfut.innovate.common.util.TokenManager;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,23 +31,23 @@ public class JwtTokenAuthenticationFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        String token = tokenManager.resolveToken(
-                exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
+        String realToken = TokenManager.getRealToken(exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
         return chain.filter(exchange).contextWrite(
-                ReactiveSecurityContextHolder.withAuthentication(getAuthentication(token)));
+                ReactiveSecurityContextHolder.withAuthentication(getAuthentication(realToken)));
 
     }
 
     public Authentication getAuthentication(String token) {
-        if (StrUtil.isNotBlank(token) && tokenManager.isTokenExist(token)){
+        UserAuth userAuth;
+        try {
+            userAuth = tokenManager.getUserAuth(token);
+        } catch (ExpiredJwtException e) {
+            userAuth = null;
+        }
 
-            UserAuth auth = tokenManager.getUserFromToken(token);
-            // token存在，但是用户不存在，返回一个空的认证信息
-            if (auth == null || auth.getUserId() == null) {
-                return new UsernamePasswordAuthenticationToken(null, null);
-            }
+        if (userAuth != null){
 
-            return new UsernamePasswordAuthenticationToken(auth.getUsername(), auth.getPhone(), Collections.emptyList());
+            return new UsernamePasswordAuthenticationToken(userAuth.getUsername(), userAuth.getPhone(), Collections.emptyList());
         }
         return new UsernamePasswordAuthenticationToken(null, null);
     }

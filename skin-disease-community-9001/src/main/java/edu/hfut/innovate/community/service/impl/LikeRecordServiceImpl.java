@@ -46,6 +46,7 @@ public class LikeRecordServiceImpl extends ServiceImpl<LikeRecordMapper, LikeRec
 
     @Override
     public Set<Long> setOfLikedDesIds(Collection<Long> desIds, Long userId, Integer desType) {
+        if (desIds == null || desIds.isEmpty()) return null;
         List<LikeRecord> likeRecords = list(new LambdaQueryWrapper<LikeRecord>()
                 .in(LikeRecord::getDesId, desIds)
                 .eq(LikeRecord::getDesType, desType)

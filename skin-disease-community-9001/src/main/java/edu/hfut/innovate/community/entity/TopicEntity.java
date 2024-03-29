@@ -70,6 +70,8 @@ public class TopicEntity extends BaseEntity implements Serializable {
 	 */
 	private Integer collect;
 
+	private Integer sort;
+
 	@TableField(exist = false)
 	private List<TopicTagEntity> tags;
 }

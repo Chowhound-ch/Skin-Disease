@@ -16,7 +16,6 @@ public class AccessDecision implements ReactiveAuthorizationManager<Authorizatio
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> authentication, AuthorizationContext object) {
         return authentication.map(auth -> {
-            Object authResult = auth.isAuthenticated();
             //数据读取非空，说明前期在auth的时候，jwt认证返回非空
             if (!enableAuth || auth.isAuthenticated()) {
                 return new AuthorizationDecision(true);
