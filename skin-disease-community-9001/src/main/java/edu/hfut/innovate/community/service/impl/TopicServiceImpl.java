@@ -96,6 +96,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, TopicEntity> impl
     @Override
     public TopicVo getTopicByIdWithLikeInfo(Long topicId, Long userId) {
         TopicVo topicVo = getTopicByIdWithAnonymous(topicId);
+        if (topicVo == null) return null;
         // TODO
         topicVo.setComments(commentService.getByTopicIdWithLikes(topicId, userId));
         topicVo.setIsLiked(likeRecordService.isLikedDesId(topicId, userId, CommunityTypeUtil.TOPIC_TYPE));
@@ -170,22 +171,8 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, TopicEntity> impl
         builder.withHighlightBuilder(highlightBuilder);
         SearchHits<ElasticTopicVo> hits = elasticsearchTemplate.search(builder.build(), ElasticTopicVo.class);
 
-        return hits.get().map(hit -> {
-            ElasticTopicVo elasticTopicVo = hit.getContent();
-            TopicVo topicVo = BeanUtil.copyProperties(elasticTopicVo, new TopicVo());
-
-            topicVo.setUser(BeanUtil.copyProperties(elasticTopicVo.getUser(), new UserVo()));
-            topicVo.setTags(BeanUtil.copyPropertiesList(elasticTopicVo.getTags(), TopicTagVo.class));
-            topicVo.setLocation(BeanUtil.copyProperties(elasticTopicVo.getLocation(), new TopicLocationVo()));
-            List<CommentVo> commentVos = elasticTopicVo.getComments().stream().map(elasticCommentVo -> {
-                CommentVo commentVo = BeanUtil.copyProperties(elasticCommentVo, new CommentVo());
-                commentVo.setUser(BeanUtil.copyProperties(elasticCommentVo.getUser(), new UserVo()));
-                return commentVo;
-            }).toList();
-
-            topicVo.setComments(commentVos);
-            return new HighlightVo<>(topicVo, hit.getHighlightFields());
-        }).toList();
+        return hits.get().map(hit ->
+                new HighlightVo<>(hit.getContent().toTopicVo(), hit.getHighlightFields())).toList();
     }
 
     /**
@@ -199,7 +186,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, TopicEntity> impl
     public TopicVo getTopicById(Long topicId) {
         TopicEntity topic = baseMapper.getTopicById(topicId);
         TopicVo topicVo = BeanUtil.copyProperties(topic, new TopicVo());
-        if (topic.getImgs() != null) {
+        if (topic != null && topic.getImgs() != null) {
             topicVo.setImgs(Arrays.stream(topic.getImgs().split(",")).toList());
         }
 
@@ -209,7 +196,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, TopicEntity> impl
     @Override
     public TopicVo getTopicByIdWithAnonymous(Long topicId) {
         TopicVo topic = getTopicById(topicId);
-        if (topic.getIsAnonymous() == 1) {
+        if (topic != null && topic.getIsAnonymous() == 1) {
             topic.setUser(UserVo.anonymousUser());
         }
         return topic;

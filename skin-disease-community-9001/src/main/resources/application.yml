@@ -6,7 +6,7 @@ spring:
     serialization:
       write-dates-as-timestamps: true
   elasticsearch:
-    uris: http://cloud100:9200
+    uris: http://wolves.vip:9200
     username: elastic
     password: 123456
 mybatis-plus:

@@ -3,11 +3,13 @@ package edu.hfut.innovate.community.controller;
 import edu.hfut.innovate.common.config.mvc.TokenUser;
 import edu.hfut.innovate.common.domain.dto.community.TopicDto;
 import edu.hfut.innovate.common.domain.entity.UserAuth;
+import edu.hfut.innovate.common.domain.es.ElasticTopicVo;
 import edu.hfut.innovate.common.domain.vo.community.TopicVo;
 import edu.hfut.innovate.common.renren.R;
 import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.community.entity.TopicEntity;
 import edu.hfut.innovate.community.entity.TopicTagRelationEntity;
+import edu.hfut.innovate.community.service.TopicESService;
 import edu.hfut.innovate.community.service.TopicService;
 import edu.hfut.innovate.community.service.TopicTagRelationService;
 import io.swagger.annotations.Api;
@@ -34,6 +36,8 @@ public class TopicController {
     private TopicService topicService;
     @Autowired
     private TopicTagRelationService topicTagRelationService;
+    @Autowired
+    private TopicESService esService;
 
     /**
      * 分页查询话题
@@ -69,7 +73,7 @@ public class TopicController {
     @PostMapping("/save")
     public R save(@RequestBody TopicDto topic){
         TopicEntity topicEntity = BeanUtil.copyProperties(topic, new TopicEntity());
-        if (topic.getIsAnonymous() == 1) {
+        if (topic.getIsAnonymous() != null && topic.getIsAnonymous() == 1) {
             topicEntity.setAnonymousName("匿名用户");
         }
         if (topic.getImgs() != null && !topic.getImgs().isEmpty()) {
@@ -77,16 +81,21 @@ public class TopicController {
         }
         topicService.save(topicEntity);
 
-        List<TopicTagRelationEntity> tagRelationEntities = topic.getTagIds().stream().map(tagId -> {
-            TopicTagRelationEntity topicTagRelationEntity = new TopicTagRelationEntity();
-            topicTagRelationEntity.setTagId(tagId);
-            topicTagRelationEntity.setTopicId(topicEntity.getTopicId());
+        if (topic.getTagIds() != null) {
+            List<TopicTagRelationEntity> tagRelationEntities = topic.getTagIds().stream().map(tagId -> {
+                TopicTagRelationEntity topicTagRelationEntity = new TopicTagRelationEntity();
+                topicTagRelationEntity.setTagId(tagId);
+                topicTagRelationEntity.setTopicId(topicEntity.getTopicId());
 
-            return topicTagRelationEntity;
-        }).toList();
+                return topicTagRelationEntity;
+            }).toList();
 
-        topicTagRelationService.saveBatch(tagRelationEntities);
+            topicTagRelationService.saveBatch(tagRelationEntities);
+        }
 
+
+        TopicVo topicVo = topicService.getTopicById(topicEntity.getTopicId());
+        esService.save(ElasticTopicVo.get(topicVo));
 
 
         return R.ok();
@@ -104,7 +113,14 @@ public class TopicController {
         topicEntity.setTitle(topic.getTitle());
 
 		topicService.updateById(topicEntity);
+        TopicVo topicVo = topicService.getTopicById(topic.getTopicId());
+        ElasticTopicVo elasticTopicVo = ElasticTopicVo.get(topicVo);
+        ElasticTopicVo esTopicVo = esService.getByTopicId(topicEntity.getTopicId());
+        if (esTopicVo != null) {
+            elasticTopicVo.setEsId(esTopicVo.getEsId());
+        }
 
+        esService.update(elasticTopicVo);
         return R.ok();
     }
 
@@ -116,6 +132,7 @@ public class TopicController {
     @PostMapping("/delete/{topicId}")
     public R delete(@PathVariable Long topicId){
         topicService.removeTopicById(topicId);
+        esService.delete(topicId);
         return R.ok();
     }
 

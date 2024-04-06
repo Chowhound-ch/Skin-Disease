@@ -28,6 +28,9 @@ public class ElasticUserVo implements Serializable {
 	 */
 	@Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
 	private String username;
+
+	@Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+	private String nickName;
 	/**
 	 *
 	 */

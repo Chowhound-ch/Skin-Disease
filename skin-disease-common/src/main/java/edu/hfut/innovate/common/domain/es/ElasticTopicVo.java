@@ -1,5 +1,7 @@
 package edu.hfut.innovate.common.domain.es;
 
+import edu.hfut.innovate.common.domain.vo.community.*;
+import edu.hfut.innovate.common.util.BeanUtil;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -21,6 +23,8 @@ import java.util.List;
 public class ElasticTopicVo implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
+	@Field(type = FieldType.Text, index = false)
+	private List<String> imgs;
 
 	@Id
 	private String  esId;
@@ -83,6 +87,9 @@ public class ElasticTopicVo implements Serializable {
 	@Field(type = FieldType.Object)
 	private List<ElasticCommentVo> comments;
 
+	@Field(type = FieldType.Integer)
+	private Integer sort;
+
 	/**
 	 * 
 	 */
@@ -93,5 +100,42 @@ public class ElasticTopicVo implements Serializable {
 	 */
 	@Field(type = FieldType.Date,index = false)
 	private Date createTime;
+
+	public static ElasticTopicVo get(TopicVo topicVo) {
+		ElasticTopicVo elasticTopicVo = BeanUtil.copyProperties(topicVo, new ElasticTopicVo());
+		elasticTopicVo.setUser(BeanUtil.copyProperties(topicVo.getUser(), new ElasticUserVo()));
+		elasticTopicVo.setTags(BeanUtil.copyPropertiesList(topicVo.getTags(), ElasticTopicTagVo.class));
+		elasticTopicVo.setLocation(BeanUtil.copyProperties(topicVo.getLocation(), new ElasticTopicLocationVo()));
+		if (topicVo.getComments() != null) {
+			List<ElasticCommentVo> commentVos = topicVo.getComments().stream().map(commentVo -> {
+				ElasticCommentVo elasticCommentVo = BeanUtil.copyProperties(commentVo, new ElasticCommentVo());
+				elasticCommentVo.setUser(BeanUtil.copyProperties(commentVo.getUser(), new ElasticUserVo()));
+				return elasticCommentVo;
+			}).toList();
+			elasticTopicVo.setComments(commentVos);
+
+		}
+
+
+		return elasticTopicVo;
+	}
+
+	public TopicVo toTopicVo(){
+		TopicVo topicVo = BeanUtil.copyProperties(this, new TopicVo());
+
+		topicVo.setUser(BeanUtil.copyProperties(this.getUser(), new UserVo()));
+		topicVo.setTags(BeanUtil.copyPropertiesList(this.getTags(), TopicTagVo.class));
+		topicVo.setLocation(BeanUtil.copyProperties(this.getLocation(), new TopicLocationVo()));
+		if (this.getComments() != null) {
+			List<CommentVo> commentVos = this.getComments().stream().map(elasticCommentVo -> {
+				CommentVo commentVo = BeanUtil.copyProperties(elasticCommentVo, new CommentVo());
+				commentVo.setUser(BeanUtil.copyProperties(elasticCommentVo.getUser(), new UserVo()));
+				return commentVo;
+			}).toList();
+
+			topicVo.setComments(commentVos);
+		}
+		return topicVo;
+	}
 
 }

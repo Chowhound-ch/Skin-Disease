@@ -39,7 +39,7 @@
         likes,click,forward,
         collect,is_anonymous,anonymous_name,
         update_time,create_time,is_delete,
-        location_id,content,sort
+        location_id,content,sort, imgs
     </sql>
     <sql id="topic_as_fields">
         topic_id as ${prefix}topic_id,
@@ -57,6 +57,7 @@
         location_id as ${prefix}location_id,
         content as ${prefix}content,
         sort as ${prefix}sort
+        imgs as ${prefix}imgs
     </sql>
     <sql id="topic_t_as_fields">
         ${tb_alias}.topic_id as ${prefix}topic_id,
@@ -73,6 +74,7 @@
         ${tb_alias}.is_delete as ${prefix}is_delete,
         ${tb_alias}.location_id as ${prefix}location_id,
         ${tb_alias}.sort as ${prefix}sort,
+        ${tb_alias}.imgs as ${prefix}imgs,
         ${tb_alias}.content as ${prefix}content
     </sql>
     <!--	TopicEntity selectOneTopic(@Param("topicId")Long topicId);-->
