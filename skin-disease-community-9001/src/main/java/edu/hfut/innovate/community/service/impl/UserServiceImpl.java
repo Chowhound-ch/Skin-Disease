@@ -41,12 +41,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     }
 
     @Override
-    public void register(UserEntity userEntity) {
-        if (this.getOne(new LambdaQueryWrapper<UserEntity>()
-                .eq(UserEntity::getOpenid, userEntity.getOpenid())) != null) {
-            throw new UserHasRegistered("该用户已经注册过了");
+    public UserVo register(UserEntity userEntity) {
+        UserEntity last = this.getOne(new LambdaQueryWrapper<UserEntity>()
+                .eq(UserEntity::getOpenid, userEntity.getOpenid()));
+        if (last != null) {
+            return BeanUtil.copyProperties(last, new UserVo());
         }
         this.save(userEntity);
+        return BeanUtil.copyProperties(userEntity, new UserVo());
     }
 
     @Override

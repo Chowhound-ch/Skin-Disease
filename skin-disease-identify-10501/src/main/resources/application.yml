@@ -2,12 +2,13 @@ custom:
   token:
     sign-key: B*1$w9^OrEn%nIRcT_ke7if5R:-*EMnOW
   python-location: D:\workspace\env\anaconda\python.exe
+  file-path: D:\workspace\project\Java\skin disease\Skin-Disease\skin-disease-identify-10501\src\main\resources\Resnet\
 spring:
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
   redis:
-    host: cloud100
+    host: wolves.vip
     port: 6379
     password: 123456
   datasource:

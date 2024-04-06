@@ -1,5 +1,6 @@
 package edu.hfut.innovate.community.controller;
 
+import edu.hfut.innovate.common.config.mvc.TokenUser;
 import edu.hfut.innovate.common.domain.dto.community.CollectionRecordDto;
 import edu.hfut.innovate.common.domain.entity.UserAuth;
 import edu.hfut.innovate.common.domain.vo.community.CollectionRecordVo;
@@ -55,7 +56,7 @@ public class CollectionRecordController {
 
     @ApiOperation(value = "查询收藏记录")
     @GetMapping("/")
-    public R get(UserAuth auth){
+    public R get(@TokenUser UserAuth auth){
 
         List<CollectionRecordVo> collectionRecordVoList =
                 collectionRecordService.listTopicCollectedByUserId(auth.getUserId());
@@ -67,7 +68,7 @@ public class CollectionRecordController {
     @GetMapping("/page/")
     public R list(
             @ApiParam("分页查询参数")
-            @RequestParam Map<String, Object> params, UserAuth auth) {
+            @RequestParam Map<String, Object> params, @TokenUser UserAuth auth) {
 
         return R.ok(collectionRecordService.queryPageByUserId(params, auth.getUserId()));
     }

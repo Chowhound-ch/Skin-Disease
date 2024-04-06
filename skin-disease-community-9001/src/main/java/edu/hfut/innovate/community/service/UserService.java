@@ -28,7 +28,7 @@ public interface UserService extends IService<UserEntity> {
      */
     Map<Long, UserVo> mapByIds(Collection<Long> ids);
 
-    void register(UserEntity userEntity);
+    UserVo register(UserEntity userEntity);
 
     UserVo getVoById(Long id);
 }

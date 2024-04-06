@@ -1,5 +1,6 @@
 package edu.hfut.innovate.community.controller;
 
+import edu.hfut.innovate.common.config.mvc.TokenUser;
 import edu.hfut.innovate.common.domain.dto.community.TopicDto;
 import edu.hfut.innovate.common.domain.entity.UserAuth;
 import edu.hfut.innovate.common.domain.vo.community.TopicVo;
@@ -45,14 +46,14 @@ public class TopicController {
             @RequestParam Integer limit,
             @RequestParam(required = false) Long locationId,
             @RequestParam(required = false) Integer sort,
-            UserAuth auth) {
+            @TokenUser UserAuth auth) {
 
         return R.ok(topicService.queryPageByUserId(page, limit, auth.getUserId(), locationId, sort));
     }
 
     @ApiOperation("根据话题id查询话题(详细信息)")
     @GetMapping("/{topicId}")
-    public R getTopic(@PathVariable("topicId") Long topicId, UserAuth auth) {
+    public R getTopic(@PathVariable("topicId") Long topicId, @TokenUser UserAuth auth) {
         TopicVo topicVo = topicService.getTopicByIdWithLikeInfo(topicId, auth.getUserId());
         if (topicVo == null) {
             return R.error(HttpStatus.NOT_FOUND.value(), "话题不存在");
@@ -70,6 +71,9 @@ public class TopicController {
         TopicEntity topicEntity = BeanUtil.copyProperties(topic, new TopicEntity());
         if (topic.getIsAnonymous() == 1) {
             topicEntity.setAnonymousName("匿名用户");
+        }
+        if (topic.getImgs() != null && !topic.getImgs().isEmpty()) {
+            topicEntity.setImgs(String.join(",", topic.getImgs()));
         }
         topicService.save(topicEntity);
 
@@ -118,7 +122,7 @@ public class TopicController {
 
     @ApiOperation("模糊查询")
     @GetMapping("/search")
-    public R search(@RequestParam("keyword") String keyword, UserAuth auth) {
+    public R search(@RequestParam("keyword") String keyword, @TokenUser UserAuth auth) {
 
         return R.ok(topicService.search(keyword, auth.getUserId()));
     }

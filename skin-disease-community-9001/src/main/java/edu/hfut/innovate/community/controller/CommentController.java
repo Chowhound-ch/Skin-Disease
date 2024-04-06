@@ -1,5 +1,6 @@
 package edu.hfut.innovate.community.controller;
 
+import edu.hfut.innovate.common.config.mvc.TokenUser;
 import edu.hfut.innovate.common.domain.dto.community.CommentDto;
 import edu.hfut.innovate.common.domain.entity.UserAuth;
 import edu.hfut.innovate.common.domain.vo.community.CommentVo;
@@ -28,7 +29,7 @@ public class CommentController {
 
     @ApiOperation(value = "根据评论Id查询评论", notes = "包括评论的回复(全部), 以及评论的用户信息")
     @GetMapping("/{comment_id}")
-    public R getCommentById(@PathVariable("comment_id") Long commentId, UserAuth auth){
+    public R getCommentById(@PathVariable("comment_id") Long commentId, @TokenUser UserAuth auth){
 
         CommentVo commentVo = commentService.getCommentById(commentId, auth.getUserId());
 
@@ -51,7 +52,7 @@ public class CommentController {
      * TODO 仅可删除自己的评论，后续应该进行token验证用户身份
      */
     @RequestMapping("/delete/{comment_id}")
-    public R delete(@PathVariable("comment_id") Long commentId, UserAuth auth){
+    public R delete(@PathVariable("comment_id") Long commentId, @TokenUser UserAuth auth){
         CommentEntity commentEntity = commentService.getById(commentId);
         // 如果有管理员角色
 

@@ -46,6 +46,8 @@ public class TopicEntity extends BaseEntity implements Serializable {
 	 */
 	private String content;
 
+	private String imgs;
+
 	private Integer isAnonymous;
 
 	private String anonymousName;
@@ -74,4 +76,5 @@ public class TopicEntity extends BaseEntity implements Serializable {
 
 	@TableField(exist = false)
 	private List<TopicTagEntity> tags;
+
 }

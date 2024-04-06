@@ -26,11 +26,13 @@ import java.util.Map;
 public class IdentifierHelper {
     @Value("${custom.python-location}")
     public String PYTHON_LOCATION;
+    @Value("${custom.file-path}")
+    public String FILE_PATH;
 
     public IdentifyRes doGetIdentify(String imgUrl) {
-        String resourcesPath = getResourcesPath();
+        String resourcesPath = FILE_PATH;
         byte[] bytes = HttpDownloader.downloadBytes(imgUrl);
-        String imgPath = resourcesPath + "Resnet/img.jpg";
+        String imgPath = resourcesPath + "tulip.jpg";
         FileUtil.del(imgPath);
         File file = FileUtil.newFile(imgPath);
         try {
@@ -42,8 +44,7 @@ public class IdentifierHelper {
         try {
             Runtime runtime = Runtime.getRuntime();
 
-            Process exec = runtime.exec(new String[]{PYTHON_LOCATION, resourcesPath + "Resnet/predict.py"}
-            ,null, new File(resourcesPath + "Resnet"));
+            Process exec = runtime.exec(new String[]{PYTHON_LOCATION, FILE_PATH + "predict.py"}, null, new File(FILE_PATH));
             exec.waitFor();
 
             Map<String, Double> strMap = new HashMap<>();

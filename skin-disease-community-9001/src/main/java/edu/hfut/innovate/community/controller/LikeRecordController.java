@@ -1,5 +1,6 @@
 package edu.hfut.innovate.community.controller;
 
+import edu.hfut.innovate.common.config.mvc.TokenUser;
 import edu.hfut.innovate.common.domain.dto.community.LikeRecordDto;
 import edu.hfut.innovate.common.domain.entity.UserAuth;
 import edu.hfut.innovate.common.domain.vo.community.LikeRecordVo;
@@ -54,7 +55,7 @@ public class LikeRecordController {
 
     @ApiOperation(value = "查询点赞记录")
     @GetMapping("/")
-    public R get(UserAuth auth){
+    public R get(@TokenUser UserAuth auth){
 
         List<LikeRecordVo> likeRecordList = likeRecordService.listTopicLikedByUserId(auth.getUserId());
 
@@ -65,7 +66,7 @@ public class LikeRecordController {
     @GetMapping("/page")
     public R list(
             @ApiParam("分页查询参数")
-            @RequestParam Map<String, Object> params, UserAuth auth) {
+            @RequestParam Map<String, Object> params, @TokenUser UserAuth auth) {
 
         PageUtils<LikeRecordVo> page = likeRecordService.queryPageByUserId(params, auth.getUserId());
         List<LikeRecordVo> likeRecordVos = page.getList().stream()

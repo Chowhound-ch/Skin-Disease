@@ -67,6 +67,10 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, TopicEntity> impl
             if (topicVo.getUser() == null) topicVo.setUser(BeanUtil.copyProperties(topicEntity.getUser(), new UserVo()));
             topicVo.setIsLiked(likeSet.contains(topicEntity.getTopicId()) ? 1 : 0);
             topicVo.setIsCollected(collectionSet.contains(topicEntity.getTopicId()) ? 1 : 0);
+            if (topicEntity.getImgs() != null) {
+                topicVo.setImgs(Arrays.stream(topicEntity.getImgs().split(",")).toList());
+            }
+
             return topicVo;
         }).toList();
     }
@@ -96,6 +100,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, TopicEntity> impl
         topicVo.setComments(commentService.getByTopicIdWithLikes(topicId, userId));
         topicVo.setIsLiked(likeRecordService.isLikedDesId(topicId, userId, CommunityTypeUtil.TOPIC_TYPE));
         topicVo.setIsCollected(collectionRecordService.isCollectedTopic(topicId, userId));
+
 
         return topicVo;
     }
@@ -134,6 +139,10 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, TopicEntity> impl
             TopicVo topicVo = BeanUtil.copyProperties(topicEntity, new TopicVo());
             topicVo.setUser(userVoMap.get(topicEntity.getUser()));
             topicVo.setTags(tagMap.get(topicEntity.getTopicId()));
+            if (topicEntity.getImgs() != null) {
+                topicVo.setImgs(Arrays.stream(topicEntity.getImgs().split(",")).toList());
+            }
+
 //            topicVo.setLocation(locationMap.get(topicEntity.getLocationId()));
             return topicVo;
         }).collect(Collectors.toMap(TopicVo::getTopicId, Function.identity()));
@@ -168,7 +177,6 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, TopicEntity> impl
             topicVo.setUser(BeanUtil.copyProperties(elasticTopicVo.getUser(), new UserVo()));
             topicVo.setTags(BeanUtil.copyPropertiesList(elasticTopicVo.getTags(), TopicTagVo.class));
             topicVo.setLocation(BeanUtil.copyProperties(elasticTopicVo.getLocation(), new TopicLocationVo()));
-
             List<CommentVo> commentVos = elasticTopicVo.getComments().stream().map(elasticCommentVo -> {
                 CommentVo commentVo = BeanUtil.copyProperties(elasticCommentVo, new CommentVo());
                 commentVo.setUser(BeanUtil.copyProperties(elasticCommentVo.getUser(), new UserVo()));
@@ -189,7 +197,13 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, TopicEntity> impl
      */
     @Override
     public TopicVo getTopicById(Long topicId) {
-        return BeanUtil.copyProperties(baseMapper.getTopicById(topicId), new TopicVo());
+        TopicEntity topic = baseMapper.getTopicById(topicId);
+        TopicVo topicVo = BeanUtil.copyProperties(topic, new TopicVo());
+        if (topic.getImgs() != null) {
+            topicVo.setImgs(Arrays.stream(topic.getImgs().split(",")).toList());
+        }
+
+        return topicVo;
     }
 
     @Override

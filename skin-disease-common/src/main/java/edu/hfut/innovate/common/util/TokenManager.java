@@ -76,7 +76,7 @@ public class TokenManager {
         }
         String realToken = getRealToken(token);
         Long userId = getUserIdFromToken(realToken);
-        UserAuth userAuth = getUserAuthFromRedis(token, prefix);
+        UserAuth userAuth = getUserAuthFromRedis(realToken, prefix);
 
         if (userId == null || userAuth == null || !Objects.equals(userId, userAuth.getUserId())){
             return  null;

@@ -1,7 +1,9 @@
 package edu.hfut.innovate.identify.controller;
 
+import edu.hfut.innovate.common.config.mvc.TokenUser;
 import edu.hfut.innovate.common.domain.dto.identify.IdentifyDto;
 import edu.hfut.innovate.common.domain.entity.UserAuth;
+import edu.hfut.innovate.common.domain.vo.community.UserVo;
 import edu.hfut.innovate.common.domain.vo.identify.IdentifyResVo;
 import edu.hfut.innovate.common.domain.vo.identify.IdentifyVo;
 import edu.hfut.innovate.common.renren.R;
@@ -12,6 +14,8 @@ import edu.hfut.innovate.identify.service.IdentifyService;
 import edu.hfut.innovate.identify.util.IdentifierHelper;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author : Chowhound
@@ -38,21 +42,35 @@ public class IdentifyController {
 
         return R.ok(identify);
     }
+    @GetMapping("/")
+    public R getIdentifyByToken(@TokenUser UserAuth userAuth) throws NullPointerException{
+        List<IdentifyVo> identify = identifyService.getIdentifyByUserId(userAuth.getUserId());
+        if (identify == null) {
+            throw new NullPointerException("Identify not found");
+        }
+
+        return R.ok(identify);
+    }
 
     @Transactional
     @PostMapping("/")
-    public R postIdentifyByUserId(@RequestBody IdentifyDto identifyDto, UserAuth auth) throws NullPointerException{
+    public R postIdentifyByUserId(@RequestBody IdentifyDto identifyDto, @TokenUser UserAuth auth) throws NullPointerException{
         identifyDto.setUserId(auth.getUserId());
-        IdentifyVo identifyVo = identifyService.saveIdentify(identifyDto);
-        if (identifyVo == null) {
-            throw new NullPointerException("保存失败");
+        IdentifyVo identifyVo = identifyService.getByImg(identifyDto.getImgUrl(), auth.getUserId());
+        if (identifyVo != null) {
+            return R.ok(identifyVo);
         }
-        IdentifyRes identifyRes = identifierHelper.doGetIdentify(identifyVo.getImgUrl());
-        identifyRes.setResId(identifyVo.getIdentifyId());
-        identifyResService.save(identifyRes);
-        identifyVo.setRes(BeanUtil.copyProperties(identifyRes, new IdentifyResVo()));
+        IdentifyRes identifyRes = identifierHelper.doGetIdentify(identifyDto.getImgUrl());
+        IdentifyResVo resVo = BeanUtil.copyProperties(identifyRes, new IdentifyResVo());
+        identifyVo = BeanUtil.copyProperties(identifyDto, new IdentifyVo());
+        identifyVo.setRes(resVo);
 
-        return R.ok(identifyVo);
+        UserVo userVo = new UserVo();
+        userVo.setUserId(auth.getUserId());
+        identifyVo.setUser(userVo);
+
+        IdentifyVo identify = identifyService.saveIdentifyWithRes(identifyVo);
+        return R.ok(identify);
     }
 
 

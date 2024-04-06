@@ -25,7 +25,7 @@ public class RotationController {
 
     @GetMapping("/list/enabled")
     @ApiOperation("获得轮播图")
-    public R getRotations(@RequestHeader("Authorization") String token){
+    public R getRotations(){
 //        UserAuth userAuth = tokenManager.getUserFromTokenWithBearer(token);
 
         return R.ok(rotationService.getEnabledRotationList());
@@ -33,7 +33,7 @@ public class RotationController {
 
     @GetMapping("/list/all")
     @ApiOperation("获得轮播图")
-    public R getRotationsAll(@RequestHeader("Authorization") String token){
+    public R getRotationsAll(){
 //        UserAuth userAuth = tokenManager.getUserFromTokenWithBearer(token);
 
         return R.ok(rotationService.getRotationList());

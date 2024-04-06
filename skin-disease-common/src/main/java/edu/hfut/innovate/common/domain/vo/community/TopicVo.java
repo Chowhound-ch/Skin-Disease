@@ -60,6 +60,8 @@ public class TopicVo implements Serializable {
 	 */
 	@ApiModelProperty("转发数")
 	private Integer forward;
+
+	private List<String> imgs;
 	/**
 	 * 
 	 */

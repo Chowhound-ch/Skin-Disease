@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 
 from model import resnet34
 
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 def main():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -19,7 +20,7 @@ def main():
          transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
 
     # load image
-    img_path = "../tulip.jpg"
+    img_path = "./tulip.jpg"
     assert os.path.exists(img_path), "file: '{}' dose not exist.".format(img_path)
     img = Image.open(img_path)
     plt.imshow(img)
@@ -57,7 +58,7 @@ def main():
     for i in range(len(predict)):
         print("class: {:10}   prob: {:.3}".format(class_indict[str(i)],
                                                   predict[i].numpy()))
-    plt.show()
+    #plt.show()
 
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 package edu.hfut.innovate.community.controller;
 
+import edu.hfut.innovate.common.config.mvc.TokenUser;
 import edu.hfut.innovate.common.config.mvc.TokenValue;
 import edu.hfut.innovate.common.domain.dto.community.UserDto;
 import edu.hfut.innovate.common.domain.dto.community.WeChatUserInfoDto;
@@ -11,7 +12,6 @@ import edu.hfut.innovate.common.util.BeanUtil;
 import edu.hfut.innovate.common.util.MiniProgramUtil;
 import edu.hfut.innovate.common.util.TokenManager;
 import edu.hfut.innovate.community.entity.UserEntity;
-import edu.hfut.innovate.community.exception.UserHasRegistered;
 import edu.hfut.innovate.community.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -107,16 +107,9 @@ public class UserController {
         userEntity.setSex(2); // 2: 未知
         userEntity.setOpenid(openId);
 
-        try {
-            userService.register(userEntity);
-        } catch (UserHasRegistered e) {
-            log.error("用户已存在");
-            return R.error(HttpStatus.FORBIDDEN.value(), "用户已存在");
-        }
+        UserVo userVo = userService.register(userEntity);
 
-        UserVo userVo = BeanUtil.copyProperties(userEntity, new UserVo());
-
-        return R.ok(Map.of("token", tokenManager.createToken(userVo), "user", userVo));
+        return R.ok(tokenManager.createDoubleToken(userVo));
     }
 
     /**
@@ -151,7 +144,7 @@ public class UserController {
     }
     @ApiOperation(value = "个人信息")
     @GetMapping("/")
-    public R getCommentById(UserAuth userAu){
+    public R getCommentById(@TokenUser UserAuth userAu){
         ;
         if (userAu == null){
             return R.error(404,  "用户不存在");
@@ -162,7 +155,7 @@ public class UserController {
     @ApiOperation(value = "更新用户信息")
     @PostMapping("/update")
     public R updateUserInfo(@RequestBody UserDto userDto,
-                            UserAuth userVo){
+                            @TokenUser UserAuth userVo){
         UserEntity userEntity = BeanUtil.copyProperties(userDto, new UserEntity());
         userEntity.setUserId(userVo.getUserId());
         userEntity.setLikes(null);
