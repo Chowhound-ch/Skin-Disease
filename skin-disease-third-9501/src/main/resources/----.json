@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "轻症和色素沉着障碍",
+    "nameEn": "Light Diseases and Disorders of Pigmentation",
+    "etiology": "主要由于xxx",
+    "describe":"我是描述",
+    "clinical": "我是临床表现",
+    "diagnosis": "我是诊断",
+    "treatment": "我是治疗",
+    "prevent": "我是预防",
+    "img": "http://skin.wolves.vip/FkZC0XAGl8ZvFEx3WME_vArmtQJv"
+  },
+  {
+    "id": 2,
+    "name": "病2",
+    "nameEn": "name 2",
+    "etiology": "主要由于xxx",
+    "describe":"我是描述",
+    "clinical": "我是临床表现",
+    "diagnosis": "我是诊断",
+    "treatment": "我是治疗",
+    "prevent": "我是预防",
+    "img": "http://skin.wolves.vip/FkZC0XAGl8ZvFEx3WME_vArmtQJv"
+  },
+  {
+    "id": 3,
+    "name": "病225588",
+    "nameEn": "name 225588",
+    "etiology": "主要由于xxx",
+    "describe":"我是描述",
+    "clinical": "我是临床表现",
+    "diagnosis": "我是诊断",
+    "treatment": "我是治疗",
+    "prevent": "我是预防",
+    "img": "http://skin.wolves.vip/FkZC0XAGl8ZvFEx3WME_vArmtQJv"
+  }
+]
