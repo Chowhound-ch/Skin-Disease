@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,6 +48,10 @@ public class IdentifierHelper {
 
             Process exec = runtime.exec(new String[]{PYTHON_LOCATION, FILE_PATH + "predict.py"}, null, new File(FILE_PATH));
             exec.waitFor();
+
+            InputStream stream = exec.getErrorStream();
+            String err = IoUtil.read(stream, StandardCharsets.UTF_8);
+            log.error(err);
 
             Map<String, Double> strMap = new HashMap<>();
             IoUtil.readUtf8Lines(exec.getInputStream(), (LineHandler) line -> {
